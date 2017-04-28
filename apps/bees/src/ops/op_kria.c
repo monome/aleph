@@ -12,7 +12,7 @@
 
 //---- descriptor strings
 static const char* op_kria_instring = "FOCUS\0  CLOCK\0  ";
-static const char* op_kria_outstring ="TR0\0    TR1\0    CVA\0    CVB\0    ";
+static const char* op_kria_outstring ="TR0\0    CV0\0    TR1\0    CV1\0    ";
 static const char* op_kria_opstring = "KRIA";
 
 //-------------------------------------------------
@@ -51,20 +51,6 @@ static op_in_fn op_kria_in_fn[2] = {
 #define L1 8
 #define L0 4
 
-#define FIRSTRUN_KEY 0x22
-
-
-// for i in range(0,120):
-// print '%.f, ' % (i * 4092.0 / 120.0)
-const u16 ET[120] = {
-  0, 34, 68, 102, 136, 170, 205, 239, 273, 307, 341, 375, 409, 443, 477, 511, 545, 580, 614, 648, 682, 716, 750, 784, 818, 852, 886,
-  920, 955, 989, 1023, 1057, 1091, 1125, 1159, 1193, 1227, 1261, 1295, 1330, 1364, 1398, 1432, 1466, 1500, 1534, 1568, 1602, 1636,
-  1670, 1705, 1739, 1773, 1807, 1841, 1875, 1909, 1943, 1977, 2011, 2046, 2080, 2114, 2148, 2182, 2216, 2250, 2284, 2318, 2352,
-  2386, 2421, 2455, 2489, 2523, 2557, 2591, 2625, 2659, 2693, 2727, 2761, 2796, 2830, 2864, 2898, 2932, 2966, 3000, 3034, 3068,
-  3102, 3136, 3171, 3205, 3239, 3273, 3307, 3341, 3375, 3409, 3443, 3477, 3511, 3546, 3580, 3614, 3648, 3682, 3716, 3750, 3784,
-  3818, 3852, 3886, 3921, 3955, 3989, 4023, 4057
-};
-
 const u8 SCALE[49] = {
   2, 2, 1, 2, 2, 2, 1,	// ionian
   2, 1, 2, 2, 2, 1, 2,	// dorian
@@ -88,7 +74,6 @@ typedef enum {
 } mod_modes;
 
 #define NUM_PARAMS 7
-
 
 typedef struct {
   u8 tr[16];
@@ -118,7 +103,6 @@ typedef const struct {
   u8 fresh;
   modes mode;
   u8 preset_select;
-  u8 glyph[8][8];
   kria_set k[8];
   u8 scales[42][7];
 } nvram_data_t;
@@ -126,7 +110,6 @@ typedef const struct {
 kria_set k;
 
 u8 preset_mode, preset_select, front_timer;
-u8 glyph[8];
 
 modes mode = mTr;
 mod_modes mod_mode = modNone;
@@ -165,7 +148,7 @@ u16 dur[2];
 u8 note[2];
 u8 sc[2];
 u16 trans[2];
-u16 cv0, cv1;
+u16 cv[2];
 
 u8 dirty = 0;
 
@@ -212,7 +195,7 @@ static void note1offTimer_callback(void* o) {
   op_kria_t *kria = (op_kria_t *) o;
   if(need1off) {
     need1off = 0;
-    net_activate(kria, 1, 0);
+    net_activate(kria, 2, 0);
   }
 }
 
@@ -391,37 +374,37 @@ static inline void op_kria_track_tick (u8 t) {
     return;
   }
 
-  if(kria_next_step(0,tTrans)) {
+  if(kria_next_step(t,tTrans)) {
     trans[t] = k.kp[t][p].trans[pos[t][tTrans]];
   }
 
-  if(kria_next_step(0, tScale)) {
+  if(kria_next_step(t, tScale)) {
     if(sc[t] != k.kp[t][p].sc[pos[t][tScale]]) {
       sc[t] = k.kp[t][p].sc[pos[t][tScale]];
-      calc_scale(0);
+      calc_scale(t);
     }
   }
 
-  if(kria_next_step(0, tDur)) {
+  if(kria_next_step(t, tDur)) {
     dur[t] = (k.kp[t][p].dur[pos[t][tDur]]+1) * (k.kp[t][p].dur_mul<<2);
   }
     
-  if(kria_next_step(0, tOct)) {
+  if(kria_next_step(t, tOct)) {
     oct[t] = k.kp[t][p].oct[pos[t][tOct]];
   }
 
-  if(kria_next_step(0, tNote)) {
+  if(kria_next_step(t, tNote)) {
     note[t] = k.kp[t][p].note[pos[t][tNote]];
   }
 
-  if(kria_next_step(0, tAc)) {
+  if(kria_next_step(t, tAc)) {
     ac[t] = k.kp[t][p].ac[pos[t][tAc]];
   }
 
-  if(kria_next_step(0,tTr)) {
+  if(kria_next_step(t,tTr)) {
     if(k.kp[t][p].tr[pos[t][tTr]]) {
       tr[t] = 1 + ac[t];
-      cv0 = ET[cur_scale[t][note[t]] + (oct[t] * 12) + (trans[t] & 0xf) + ((trans[t] >> 4)*5)];
+      cv[t] = cur_scale[t][note[t]] + (oct[t] * 12) + (trans[t] & 0xf) + ((trans[t] >> 4)*5);
     }
     else {
       tr[t] = 0;
@@ -434,15 +417,15 @@ static void op_kria_in_clock(op_kria_t* op, const io_t v) {
   op_kria_track_tick(0);
   op_kria_track_tick(1);
   if(tr[0]) {
-    net_activate(op, 2, cv0);
+    net_activate(op, 1, cv[0]);
     net_activate(op, 0, tr[0]);
     need0off = 1;
     timer_reset_set(&note0offTimer, dur[0]);
 
   }
   if(tr[1]) {
-    net_activate(op, 3, cv1);
-    net_activate(op, 1, tr[1]);
+    net_activate(op, 3, cv[1]);
+    net_activate(op, 2, tr[1]);
     need1off = 1;
     timer_reset_set(&note1offTimer, dur[1]);
   }
