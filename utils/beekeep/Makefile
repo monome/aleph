@@ -50,6 +50,7 @@ src += \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
+	$(bees)/src/ops/op_kria.c \
 	$(bees)/src/ops/op_iter.c \
 	$(bees)/src/ops/op_life_raw.c \
 	$(bees)/src/ops/op_life_classic.c \
@@ -57,6 +58,7 @@ src += \
 	$(bees)/src/ops/op_list8.c \
 	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/ops/op_logic.c \
+	$(bees)/src/ops/op_maginc.c \
 	$(bees)/src/ops/op_mem0d.c \
 	$(bees)/src/ops/op_mem1d.c \
 	$(bees)/src/ops/op_mem2d.c \
@@ -104,7 +106,7 @@ src += \
 	$(bees)/src/scalers/scaler_integrator.c \
 	$(bees)/src/scalers/scaler_integrator_short.c \
 	$(bees)/src/scalers/scaler_note.c \
-	$(bees)/src/scalers/scaler_patch.c \
+	$(bees)/src/scalers/scaler_label.c \
 	$(bees)/src/scalers/scaler_short.c \
 	$(bees)/src/scalers/scaler_svf_fc.c
 
