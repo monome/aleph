@@ -126,10 +126,10 @@ void module_set_param(u32 idx, ParamValue v) {
   /*   break; */
 
   case eParam_mode0: 
-    filter_svf_set_mode(  &(voice[0].svf), v >> 16 );
+    svf_mode[0] = v >> 16 ;
     break;
   case eParam_mode1:
-    filter_svf_set_mode(  &(voice[1].svf), v >> 16 );
+    svf_mode[1] = v >> 16 ;
     break;
 
 

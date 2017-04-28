@@ -11,7 +11,8 @@ ldr_name = $(module_name)-$(version).ldr
 
 module_obj = waves.o  \
 	osc_waves.o \
-	svf_waves.o \
+	$(audio_dir)/filter_svf.o \
+	$(audio_dir)/ricks_tricks.o \
 	$(audio_dir)/conversion.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/interpolate.o \

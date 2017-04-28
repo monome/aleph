@@ -117,5 +117,5 @@ extern void osc_wm_in(osc* osc, fract32 wm);
 
 // compute next value
 extern fract32 osc_next( osc* osc);
-
+extern u8 svf_mode[2];
 #endif
