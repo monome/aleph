@@ -220,6 +220,14 @@ void op_ww_init(void* mem) {
   op->outs[5] = -1;
   op->outs[6] = -1;
 
+  op->out_vals[0] = 0;
+  op->out_vals[1] = 0;
+  op->out_vals[2] = 0;
+  op->out_vals[3] = 0;
+  op->out_vals[4] = 0;
+  op->out_vals[5] = 0;
+  op->out_vals[6] = 0;
+
 
   op->focus = 0;
   op->clk = 0;
@@ -565,12 +573,30 @@ static void op_ww_in_clock(op_ww_t* op, const io_t v) {
 
 
 
-  if(tr[0] != op->outs[0]) net_activate(op->outs[0], tr[0], op);
-  if(tr[1] != op->outs[1]) net_activate(op->outs[1], tr[1], op);
-  if(tr[2] != op->outs[2]) net_activate(op->outs[2], tr[2], op);
-  if(tr[3] != op->outs[3]) net_activate(op->outs[3], tr[3], op);
-  if(cv0 != op->outs[4]) net_activate(op->outs[4], cv0, op);
-  if(cv1 != op->outs[5]) net_activate(op->outs[5], cv1, op);
+  if(tr[0] != op->out_vals[0]) {
+    net_activate(op->outs[0], tr[0], op);
+    op->out_vals[0] = tr[0];
+  }
+  if(tr[1] != op->out_vals[1]) {
+    net_activate(op->outs[1], tr[1], op);
+    op->out_vals[1] = tr[1];
+  }
+  if(tr[2] != op->out_vals[2]) {
+    net_activate(op->outs[2], tr[2], op);
+    op->out_vals[2] = tr[2];
+  }
+  if(tr[3] != op->out_vals[3]) {
+    net_activate(op->outs[3], tr[3], op);
+    op->out_vals[3] = tr[3];
+  }
+  if(cv0 != op->out_vals[4]) {
+    net_activate(op->outs[4], cv0, op);
+    op->out_vals[4] = cv0;
+  }
+  if(cv1 != op->out_vals[5]) {
+    net_activate(op->outs[5], cv1, op);
+    op->out_vals[5] = cv1;
+  }
   // print_dbg("\r\n pos: ");
   // print_dbg_ulong(pos);
   net_activate(op->outs[6], pos, op);

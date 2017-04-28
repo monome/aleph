@@ -18,6 +18,8 @@ typedef struct op_ww_struct {
   volatile io_t* in_val[3];
   // outputs: a,b,c,d
   op_out_t outs[7];
+  io_t out_vals[7];
+
   // internal:
 
 
