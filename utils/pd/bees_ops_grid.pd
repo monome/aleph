@@ -25,8 +25,8 @@
 #X msg 788 63 1;
 #X obj 215 389 BEES_METRO;
 #X msg 202 332 1;
-#X obj 310 231 vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 12700 1;
+#X obj 328 181 vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
 #X msg 135 337 0;
 #X obj 206 473 BEES_WW 0 0 0 0;
 #X obj 278 534 print tr1;
@@ -39,10 +39,20 @@
 #X obj 696 493 BEES_KRIA;
 #X msg 727 383 1;
 #X msg 772 392 1;
-#X obj 638 600 print tr1;
-#X obj 781 599 print tr2;
-#X obj 851 600 print cv2;
-#X obj 710 600 print cv1;
+#X floatatom 651 542 5 0 0 0 - - -, f 5;
+#X floatatom 695 543 5 0 0 0 - - -, f 5;
+#X floatatom 782 541 5 0 0 0 - - -, f 5;
+#X floatatom 739 541 5 0 0 0 - - -, f 5;
+#X obj 306 338 * 5;
+#X obj 946 540 BEES_SEMI;
+#X floatatom 941 469 5 0 0 0 - - -, f 5;
+#X floatatom 904 627 5 0 0 0 - - -, f 5;
+#X obj 968 589 / 8192;
+#X floatatom 974 640 5 0 0 0 - - -, f 5;
+#X obj 939 664 *;
+#X floatatom 936 697 5 0 0 0 - - -, f 5;
+#X floatatom 1053 597 5 0 0 0 - - -, f 5;
+#X obj 1039 556 / 409.6;
 #X connect 2 0 7 0;
 #X connect 2 1 8 0;
 #X connect 2 2 9 0;
@@ -65,7 +75,7 @@
 #X connect 24 0 28 2;
 #X connect 24 0 36 2;
 #X connect 25 0 24 1;
-#X connect 26 0 24 2;
+#X connect 26 0 43 0;
 #X connect 27 0 24 1;
 #X connect 28 0 29 0;
 #X connect 28 1 30 0;
@@ -75,8 +85,18 @@
 #X connect 28 5 34 0;
 #X connect 28 6 35 0;
 #X connect 36 0 39 0;
-#X connect 36 1 42 0;
-#X connect 36 2 40 0;
+#X connect 36 1 40 0;
+#X connect 36 2 42 0;
 #X connect 36 3 41 0;
 #X connect 37 0 36 1;
 #X connect 38 0 36 2;
+#X connect 43 0 24 2;
+#X connect 44 0 46 0;
+#X connect 44 1 47 0;
+#X connect 44 2 52 0;
+#X connect 45 0 44 1;
+#X connect 46 0 49 0;
+#X connect 47 0 48 0;
+#X connect 48 0 49 1;
+#X connect 49 0 50 0;
+#X connect 52 0 51 0;

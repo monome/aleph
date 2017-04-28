@@ -65,6 +65,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpRoute8,
   eOpRoute16,
   eOpScreen,
+  eOpSemi,
   eOpSerial,
   eOpShl,
   eOpShr,
@@ -379,6 +380,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_kria_t),
     .init = &op_kria_init,
     .deinit = &op_kria_deinit
+  }, {
+    .name = "SEMI",
+    .size = sizeof(op_semi_t),
+    .init = &op_semi_init,
+    .deinit = NULL
   }
 };
 

@@ -73,6 +73,7 @@ src += \
 	$(bees)/src/ops/op_monome_arc.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
+	$(bees)/src/ops/op_semi.c \
 	$(bees)/src/ops/op_serial.c \
 	$(bees)/src/ops/op_shl.c \
 	$(bees)/src/ops/op_shr.c \

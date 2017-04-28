@@ -53,6 +53,7 @@
 #include "ops/op_mul.h"
 #include "ops/op_param.h"
 #include "ops/op_preset.h"
+#include "ops/op_semi.h"
 #include "ops/op_serial.h"
 #include "ops/op_shl.h"
 #include "ops/op_shr.h"
