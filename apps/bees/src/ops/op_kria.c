@@ -11,8 +11,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_kria_instring = "FOCUS\0  CLOCK\0  ";
-static const char* op_kria_outstring ="TR0\0    CV0\0    TR1\0    CV1\0    ";
+static const char* op_kria_instring = "FOCUS\0  CLOCK\0  OCTAVE\0 TUNING\0 ";
+static const char* op_kria_outstring ="TR0\0    NOTE0\0  TR1\0    NOTE1\0  ";
 static const char* op_kria_opstring = "KRIA";
 
 //-------------------------------------------------
@@ -23,6 +23,8 @@ static const char* op_kria_opstring = "KRIA";
 //// network inputs:
 static void op_kria_in_focus(op_kria_t* grid, const io_t val);
 static void op_kria_in_clock(op_kria_t* grid, const io_t val);
+static void op_kria_in_octave(op_kria_t* grid, const io_t val);
+static void op_kria_in_tuning(op_kria_t* grid, const io_t val);
 
 // pickles
 static u8* op_kria_pickle(op_kria_t* enc, u8* dst);
@@ -40,9 +42,11 @@ static void op_kria_poll_handler(void* op);
 static void op_kria_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
-static op_in_fn op_kria_in_fn[2] = {
+static op_in_fn op_kria_in_fn[4] = {
   (op_in_fn)&op_kria_in_focus,
   (op_in_fn)&op_kria_in_clock,
+  (op_in_fn)&op_kria_in_octave,
+  (op_in_fn)&op_kria_in_tuning,
 };
 
 //////////////////////////////////////////////////
@@ -246,7 +250,7 @@ void op_kria_init(void* mem) {
   op->super.type = eOpKria;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
-  op->super.numInputs = 2;
+  op->super.numInputs = 4;
   op->super.numOutputs = 4;
 
   op->super.in_val = op->in_val;
@@ -259,19 +263,19 @@ void op_kria_init(void* mem) {
   op->in_val[0] = &(op->focus);
   op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->clk);
+  op->in_val[2] = &(op->octave);
+  op->in_val[3] = &(op->tuning);
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
   op->outs[3] = -1;
 
-
   op->focus = 0;
   op->clk = 0;
-  op->param = 0;
-
+  op->octave = 12;
+  op->tuning = 5;
 
   u8 c;
-
   // clear out some reasonable defaults
   for(c=0;c<2;c++) {
     for(i1=0;i1<16;i1++) {
@@ -366,7 +370,7 @@ bool kria_next_step(uint8_t t, uint8_t param) {
 }
 
 // t = track
-static inline void op_kria_track_tick (u8 t) {
+static inline void op_kria_track_tick (op_kria_t *kria, u8 t) {
   if(p_next != p) {
     p = p_next;
     phase_reset0();
@@ -404,7 +408,7 @@ static inline void op_kria_track_tick (u8 t) {
   if(kria_next_step(t,tTr)) {
     if(k.kp[t][p].tr[pos[t][tTr]]) {
       tr[t] = 1 + ac[t];
-      cv[t] = cur_scale[t][note[t]] + (oct[t] * 12) + (trans[t] & 0xf) + ((trans[t] >> 4)*5);
+      cv[t] = cur_scale[t][note[t]] + (oct[t] * kria->octave) + (trans[t] & 0xf) + ((trans[t] >> 4)*kria->tuning);
     }
     else {
       tr[t] = 0;
@@ -412,10 +416,18 @@ static inline void op_kria_track_tick (u8 t) {
   }
 }
 
+static void op_kria_in_octave(op_kria_t* op, const io_t v) {
+  op->octave = v;
+}
+
+static void op_kria_in_tuning(op_kria_t* op, const io_t v) {
+  op->tuning = v;
+}
 
 static void op_kria_in_clock(op_kria_t* op, const io_t v) {
-  op_kria_track_tick(0);
-  op_kria_track_tick(1);
+  op->clk = 0;
+  op_kria_track_tick(op, 0);
+  op_kria_track_tick(op, 1);
   if(tr[0]) {
     net_activate(op, 1, cv[0]);
     net_activate(op, 0, tr[0]);
@@ -1204,7 +1216,8 @@ static void kria_refresh(op_monome_t *op_monome) {
 // pickle / unpickle
 u8* op_kria_pickle(op_kria_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
-  dst = pickle_io(mgrid->param, dst);
+  dst = pickle_io(mgrid->octave, dst);
+  dst = pickle_io(mgrid->tuning, dst);
 
   u32 *kria_state = (u32*)&k;
   while ((u8*)kria_state < ((u8*) &k) + sizeof(kria_set)) {
@@ -1217,22 +1230,14 @@ u8* op_kria_pickle(op_kria_t* mgrid, u8* dst) {
 
 const u8* op_kria_unpickle(op_kria_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
-  // FIXME should probably auto-detect grid size here::::
-  src = unpickle_io(src, (u32*)&(mgrid->param));
+  src = unpickle_io(src, (u32*)&(mgrid->octave));
+  src = unpickle_io(src, (u32*)&(mgrid->tuning));
+
   u32 *kria_state = (u32*)&k;
   while ((u8*)kria_state < ((u8*) &k) + sizeof(kria_set)) {
     src = unpickle_32(src, kria_state);
     kria_state +=1;
   }
-  /*
-    probably shouldn't call this here...
-    if we assume that network monome device focus is null during unpickling,
-    it will be ok.  that assumption should hold true, but if it doesn't,
-    or if we change something and forget to update this,
-    the result is both and hard to track (dereferencing a garbage pointer.)
-    we should just explicitly check for focused grid ops after scene recall, last one wins...
-  */
-  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
   return src;
 }
 
