@@ -50,12 +50,14 @@ beekeep_src += \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
 	$(bees)/src/ops/op_iter.c \
+	$(bees)/src/ops/op_kria.c \
 	$(bees)/src/ops/op_life_classic.c \
 	$(bees)/src/ops/op_life_raw.c \
 	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
 	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/ops/op_logic.c \
+	$(bees)/src/ops/op_maginc.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
 	$(bees)/src/ops/op_midi_note.c \
@@ -170,3 +172,6 @@ include Makefile.pdlibbuilder
 
 tags:
 	find . ../avr32_sim/src ../../common ../../apps/bees ~/git_checkouts/pure-data -name '*.[ch]' | etags -
+
+test:
+	cp bees_op.pd_linux ~/pd-externals; pd bees_ops_grid.pd
