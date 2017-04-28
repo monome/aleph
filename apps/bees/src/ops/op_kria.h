@@ -14,7 +14,8 @@ typedef struct op_kria_struct {
   // inputs: mode, focus, step
   volatile io_t focus;
   volatile io_t clk;
-  volatile io_t param;
+  volatile io_t octave;
+  volatile io_t tuning;
   volatile io_t* in_val[3];
   // outputs: a,b,c,d
   op_out_t outs[7];
