@@ -5,58 +5,16 @@
 
 */
 
-// std
-////// later...
-// #include <stdarg.h>
-
 // asf
 #include "print_funcs.h"
 
 // avr32_lib
-//#include "flash.h"
+#include "flash.h"
 
 // bees
-//#include "flash_bees.h"
+#include "flash_bees.h"
 #include "param_scaler.h"
 #include "types.h"
-
-
-//------ scaler data
-// including default scaler data as const byte arrays.
-const u8 scaler_amp_rep_data[] = {
-  #include "scaler_amp_rep.dat_le.inc"
-};
-
-const u8 scaler_amp_val_data[] = {
-  #include "scaler_amp_val.dat_le.inc"
-};
-
-const u8 scaler_integrator_rep_data[] = {
-  #include "scaler_integrator_rep.dat_le.inc"
-};
-
-const u8 scaler_integrator_val_data[] = {
-  #include "scaler_integrator_val.dat_le.inc"
-};
-
-const u8 scaler_integrator_short_rep_data[] = {
-  #include "scaler_integrator_short_rep.dat_le.inc"
-};
-
-const u8 scaler_integrator_short_val_data[] = {
-  #include "scaler_integrator_short_val.dat_le.inc"
-};
-
-const u8 scaler_note_val_data[] = {
-  #include "scaler_note_val.dat_le.inc"
-};
-
-const u8 scaler_svf_fc_val_data[] = {
-  #include "scaler_svf_fc_val.dat_le.inc"
-};
-
-//-------
-
 
 // array of words required for param val per param type
 static u32 scalerDataWords[eParamNumTypes] = {
@@ -69,6 +27,7 @@ static u32 scalerDataWords[eParamNumTypes] = {
   0,//  eParamTypeFract,
   0, // eParamTypeShort,   
   0, // eParamTypeIntegratorShort,  
+  0, // eParamTypePatchMatrix,  
 
 };
 
@@ -77,13 +36,13 @@ static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   1024, 	//  eParamTypeAmp,
-  //  1024, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
   0,//  eParamTypeFract,
   0, // eParamTypeShort,   
-  0, // eParamTypeIntegratorShort,  
+  0, // eParamTypeIntegratorShort,
+  0, // eParamTypePatchMatrix,  
 
 };
 
@@ -97,7 +56,9 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
   "",//  eParamTypeFract,
   "", // eParamTypeShort,   
-  "", // eParamTypeIntegratorShort,  
+  "", // eParamTypeIntegratorShort,
+  "", // eParamTypePatchMatrix,  
+
 
 };
 
@@ -106,13 +67,13 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeBool,
   "", 	//  eParamTypeFix,
   "scaler_amp_rep.dat", 	//  eParamTypeAmp,
-  //  "scaler_integrator_rep.dat", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeNote,
   "", 	//  eParamTypeSvfFreq,
   "",//  eParamTypeFract,
   "", // eParamTypeShort,   
   "", // eParamTypeIntegratorShort,  
+  "", // eParamTypePatchMatrix,  
 
 };
 
@@ -125,9 +86,10 @@ static const u32 scalerDataOffset[eParamNumTypes] = {
     1024, 	//  eParamTypeIntegrator,
     2048, 	//  eParamTypeNote,
     3072, 	//  eParamTypeSvfFreq,
-  0,//  eParamTypeFract,
-  0, // eParamTypeShort,   
-  0, // eParamTypeIntegratorShort,  
+    0,//  eParamTypeFract,
+    0, // eParamTypeShort,   
+    0, // eParamTypeIntegratorShort,  
+    0, // eParamTypePatchMatrix,  
 
 };
 // put rep data after value data, just easier to check visually
@@ -135,13 +97,13 @@ static const u32 scalerRepOffset[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   4096, 	//  eParamTypeAmp,
-  //  5120, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
   0,//  eParamTypeFract,
   0, // eParamTypeShort,   
   0, // eParamTypeIntegratorShort,  
+  0, // eParamTypePatchMatrix,  
 
 };
 
@@ -154,10 +116,10 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
   &scaler_integrator_init,
   &scaler_note_init,
   &scaler_svf_fc_init,
-  scaler_fract_init,//  eParamTypeFract,
-  scaler_short_init, // eParamTypeShort,   
-  scaler_integrator_short_init, // eParamTypeIntegratorShort,  
-  &scaler_patch_init,
+  &scaler_fract_init,//  eParamTypeFract,
+  &scaler_short_init, // eParamTypeShort,   
+  &scaler_integrator_short_init, // eParamTypeIntegratorShort,  
+  &scaler_labels_init, // eParamTypePatchMatrix
 
 };
 
@@ -176,10 +138,10 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   &scaler_integrator_val,
   &scaler_note_val,
   &scaler_svf_fc_val,
-  scaler_fract_val,//  eParamTypeFract,
-  scaler_short_val, // eParamTypeShort,   
-  scaler_integrator_short_val, // eParamTypeIntegratorShort,  
-  &scaler_patch_val,
+  &scaler_fract_val,//  eParamTypeFract,
+  &scaler_short_val, // eParamTypeShort,   
+  &scaler_integrator_short_val, // eParamTypeIntegratorShort,  
+  &scaler_labels_val, // eParamTypePatchMatrix
 
 };
 
@@ -191,10 +153,10 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   &scaler_integrator_str,
   &scaler_note_str,
   &scaler_svf_fc_str,
-  scaler_fract_str,//  eParamTypeFract,
-  scaler_short_str, // eParamTypeShort,   
-  scaler_integrator_short_str, // eParamTypeIntegratorShort,  
-  &scaler_patch_str,
+  &scaler_fract_str,//  eParamTypeFract,
+  &scaler_short_str, // eParamTypeShort,   
+  &scaler_integrator_short_str, // eParamTypeIntegratorShort,  
+  &scaler_labels_str, // eParamTypePatchMatrix
 
 };
 
@@ -207,10 +169,10 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   &scaler_integrator_in,
   &scaler_note_in,
   &scaler_svf_fc_in,
-  scaler_fract_in,//  eParamTypeFract,
-  scaler_short_in, // eParamTypeShort,   
-  scaler_integrator_short_in, // eParamTypeIntegratorShort,  
-  &scaler_patch_in,
+  &scaler_fract_in,//  eParamTypeFract,
+  &scaler_short_in, // eParamTypeShort,   
+  &scaler_integrator_short_in, // eParamTypeIntegratorShort,  
+  &scaler_labels_in, // eParamTypePatchMatrix
 
 };
 
@@ -222,10 +184,10 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
   &scaler_integrator_inc,
   &scaler_note_inc,
   &scaler_svf_fc_inc,
-  scaler_fract_inc,//  eParamTypeFract,
-  scaler_short_inc, // eParamTypeShort,   
-  scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
-  &scaler_patch_inc,
+  &scaler_fract_inc,//  eParamTypeFract,
+  &scaler_short_inc, // eParamTypeShort,   
+  &scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
+  &scaler_labels_inc, // eParamTypePatchMatrix
 
 };
 
@@ -245,14 +207,11 @@ void scaler_init(ParamScaler* sc, const ParamDesc* const desc) {
 
 // get DSP value given input
 s32 scaler_get_value(ParamScaler* sc, io_t in) {
-  print_dbg("\r\n scaler_get_value, type: ");
-  print_dbg_ulong(sc->desc->type);
-
   scaler_get_value_fn fn = scaler_get_val_pr[sc->desc->type];
   if(fn != NULL) {
     return (*fn)(sc, in);
   } else {
-    print_dbg("\r\n null function pointer in scaler_get_value");
+    /* print_dbg("\r\n null function pointer in scaler_get_value"); */
     return 0;
   }
 }
@@ -272,14 +231,6 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
   scaler_get_in_fn fn =  scaler_get_in_pr[sc->desc->type];
   if( fn != NULL) {
     val = (*fn)(sc, value);
-    print_dbg("\r\n getting input value for scaler. ");
-    print_dbg(" param type from desc: ");
-    print_dbg_ulong(sc->desc->type);
-    print_dbg(", default DSP value: 0x");
-    print_dbg_hex(value);
-    print_dbg(", setting input node: 0x");
-    print_dbg_hex(val);
-
     return val;
   } else {
     return 0;
@@ -289,17 +240,10 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
 // increment input
 extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   scaler_inc_fn fn =  scaler_inc_pr[sc->desc->type];
-  print_dbg("\r\n incrementing scaler at address 0x");
-  print_dbg_hex((u32)sc);
-  print_dbg(" ; type: ");
-  print_dbg_ulong((u32)sc->desc->type);
-  print_dbg(" ; inc function pointer: 0x");
-  print_dbg_hex((u32)fn);
-
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
-    print_dbg("\r\n error, null scaler increment");
+    /* print_dbg("\r\n error, null scaler increment"); */
     return 0;
   }
 }
@@ -336,41 +280,11 @@ u32 scaler_get_rep_offset(ParamType p) {
 
 // get pointers to NV memory for table assignment
 const s32* scaler_get_nv_data(ParamType p) {
-  // hackish... ignore any param type that doesn't actually use nv data
-  switch(p) {
-  case  eParamTypeAmp :
-    return (s32*)scaler_amp_val_data;
-    break;
-  case  eParamTypeIntegrator :
-    return (s32*)scaler_integrator_val_data;
-    break;
-  case  eParamTypeNote :
-    return (s32*)scaler_note_val_data;
-    break;
-  case  eParamTypeSvfFreq :
-    return (s32*)scaler_svf_fc_val_data;
-    break;
-  case  eParamTypeIntegratorShort :
-    return (s32*)scaler_integrator_short_val_data;
-    break;
-  default:
-    return NULL;
-  }
+  void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
+  return (s32*)scalerBytes + scaler_get_data_offset(p);
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
-  // hackish... ignore any param type that doesn't actually use nv data
-  switch(p) {
-  case  eParamTypeAmp :
-    return (s32*)scaler_amp_rep_data;
-    break;
-  case  eParamTypeIntegrator :
-    return (s32*)scaler_integrator_rep_data;
-    break;
-  /* case  eParamTypeNote : */
-  /*   return (s32*)scaler_note_rep_data; */
-  /*   break; */
-  default:
-    return NULL;
-  }
+  void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
+  return (s32*)scalerBytes + scaler_get_rep_offset(p);
 }

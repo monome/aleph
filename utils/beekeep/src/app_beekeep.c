@@ -100,25 +100,25 @@ void beekeep_test_timers(void) {
   timer_remove(&t2);
 }
 
-#include "scalers/scaler_patch.h"
+#include "scalers/scaler_label.h"
 
-void beekeep_print_scaler_patch (void) {
+void beekeep_print_label (void) {
   int i;
   char str[256];
-  for(i=0; i < scaler_n_patchPoints; i++) {
-    scaler_patch_str(str, NULL, i);
+  for(i=0; i < scaler_n_labels; i++) {
+    scaler_labels_str(str, NULL, i);
     printf("\r\nscaler %d: %s", i, str);
   }
 }
 
-void beekeep_dummy_load_patchlabel (void) {
-  scaler_start_parse_patchnames ();
+void beekeep_dummy_load_label (void) {
+  scaler_start_parse_labels ();
 
   FILE *f;
   f = fopen("dummy_patchlabel.lab", "r");
   char c;
   while ((c = getc(f)) != EOF) {
-    scaler_parse_patchname_char(c);
+    scaler_parse_labels_char(c);
   }
   fclose(f);
 }
@@ -129,19 +129,19 @@ void app_init(void) {
   //  beekeep_test_timers();
   initBigMemPool();
   initSmallMemPool();
-  ParamDesc pd = {.type = eParamTypePatchMatrix};
+  ParamDesc pd = {.type = eParamTypeLabel};
   ParamScaler ps;
   scaler_init(&ps, &pd);
-  scaler_patch_init(&ps);
+  scaler_labels_init(&ps);
 
-  // first print off the default patchmatrix config
-  printf("\r\ndefault patch matrix:");
-  beekeep_print_scaler_patch();
+  // first print off the default label config
+  printf("\r\ndefault label:");
+  beekeep_print_label();
 
   // now test out the code to load new patch labels (char-by-char)
   printf("\r\nexample patch matrix from .ldr:");
-  beekeep_dummy_load_patchlabel();
-  beekeep_print_scaler_patch();
+  beekeep_dummy_load_label();
+  beekeep_print_label();
   //hm
   print_dbg("\r\n preset_init...");  
   presets_init();
