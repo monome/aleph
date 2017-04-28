@@ -515,7 +515,7 @@ static inline void handle_bottom_row_key(u8 x, u8 z) {
   }
 }
 
-void mode_mTr_handle_key(u8 x, u8 y, u8 z) {
+static inline void mode_mTr_handle_key(u8 x, u8 y, u8 z) {
   if(mod_mode == modNone) {
     if(z) {
       if(y==0)
