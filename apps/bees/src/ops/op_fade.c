@@ -65,13 +65,13 @@ static void op_fade_in_a(op_fade_t* fade, const io_t v) {
   // do the math for crossfade:
   fade->val = (fade->a * (128 - fade->x)) / 128 + (fade->b * fade->x) / 128;
   // activate output
-  net_activate(fade->outs[0], fade->val, fade);
+  net_activate(fade, 0, fade->val);
 }
 
 static void op_fade_in_b(op_fade_t* fade, const io_t v) {
   fade->b = v;
   fade->val = (fade->a * (128 - fade->x)) / 128 + (fade->b * fade->x) / 128;
-  net_activate(fade->outs[0], fade->val, fade);
+  net_activate(fade, 0, fade->val);
 }
 
 static void op_fade_in_x(op_fade_t* fade, const io_t v) {
@@ -81,7 +81,7 @@ static void op_fade_in_x(op_fade_t* fade, const io_t v) {
   else if(fade->x > 128) fade->x = 128;
 
   fade->val = (fade->a * (128 - fade->x)) / 128 + (fade->b * fade->x) / 128;
-  net_activate(fade->outs[0], fade->val, fade);
+  net_activate(fade, 0, fade->val);
 }
 
 

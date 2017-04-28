@@ -19,6 +19,7 @@
 //--- these are common to all pages
 // a region for the center scroll
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
+static region newOpRegion = { .w = 64, .h = 8, .x = 64, .y = 24 };
 // a scroll class that manages write/read offsets into the scroll region
 static scroll centerScroll;
 
@@ -140,12 +141,12 @@ void render_op_type(void) {
   const char* name = op_registry[userOpTypes[newOpType]].name;
   //  print_dbg("\r\n new op selection: ");
   //  print_dbg(name);
-  region_fill(headRegion, 0x0);
+  region_fill(&newOpRegion, 0x2);
   clearln();
   appendln_char('+');
   appendln(name);
   endln();
-  font_string_region_clip(headRegion, lineBuf, 0, 0, 0xa, 0);
+  font_string_region_clip(&newOpRegion, lineBuf, 0, 0, 0xa, 0x2);
 }
 
 
@@ -251,13 +252,16 @@ void handle_key_2(s32 val) {
     if(altMode) {
       // remove operator at cursor
       net_remove_op(*pageSelect);
+      select_scroll(-1);
     } else {
       // create new operator of selected type at cursor
       net_add_op_at(userOpTypes[newOpType], *pageSelect);
+      select_scroll(1);
     }
     redraw_ins();
     redraw_outs();
     redraw_ops();
+    render_op_type();
   }
   show_foot();
 }
@@ -299,6 +303,7 @@ void handle_enc_1(s32 val) {
 void handle_enc_0(s32 val) {
   // scroll selection
   select_scroll(val);
+  render_op_type();
 }
 
 
@@ -310,6 +315,7 @@ void init_page_ops(void) {
   print_dbg("\r\n alloc OPS page");
   // allocate regions
   region_alloc(&scrollRegion);
+  region_alloc(&newOpRegion);
   // init scroll
   scroll_init(&centerScroll, &scrollRegion);
   // fill regions
@@ -335,6 +341,7 @@ void select_ops(void) {
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll(&centerScroll);
+  render_op_type();
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "OPERATORS", 0, 0, 0xf, 0x1);
@@ -348,6 +355,7 @@ void select_ops(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+  render_set_custom_region(&newOpRegion);
 
 }
 

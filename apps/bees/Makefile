@@ -44,4 +44,7 @@ deploy:
 	make -k R=1
 	cp  $(project).hex ../../release/	
 	cp  $(project)-$(maj).$(min).$(rev).hex ../../release/	
-	cp  $(project)-$(maj).$(min).$(rev)-dbg.hex ../../release/	
+	cp  $(project)-$(maj).$(min).$(rev)-dbg.hex ../../release/
+
+tags:
+	find . ../../avr32_lib/ ../../common -name '*.[ch]' | etags -

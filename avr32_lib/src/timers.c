@@ -20,11 +20,28 @@ static volatile softTimer_t* head = NULL;
 static volatile softTimer_t* tail = NULL;
 static volatile u32 num = 0;
 
+static volatile u32 now = 0;
+
+
 //------------------------------
 //--- extern functions
 
 void init_timers(void) {
   ;; // nothing to do
+}
+
+u8 timer_already_linked (softTimer_t* t);
+
+u8 timer_already_linked (softTimer_t* t) {
+  int i;
+  softTimer_t *this = head;
+  for(i=0; i < num; i++) {
+    if(this == t) {
+      return 1;
+    }
+    this = this->next;
+  }
+  return 0;
 }
 
 // set a periodic timer with a callback
@@ -39,10 +56,10 @@ u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
   // print_dbg("\r\n timer_add, @ 0x");
   // print_dbg_hex((u32)t);
 
-  if(t->prev == NULL || t->next == NULL) {
+  if(!timer_already_linked(t)) {
     // print_dbg(" ; timer is unlinked ");
     // is list empty?
-    if( (head == NULL) || (tail == NULL)) {
+    if( (head == NULL) || (tail == NULL) || (num == 0)) {
       // print_dbg(" ; list was empty ");
       head = tail = t;
       t->next = t->prev = t;
@@ -125,6 +142,10 @@ u8 timer_remove( softTimer_t* t) {
     (t->prev)->next = t->next;
     t->next = t->prev = 0;
     --num;
+    if(num == 0) {
+      head = NULL;
+      tail = NULL;
+    }
   }
 
   // enable timer interrupts
@@ -159,6 +180,7 @@ void timers_clear(void) {
 void process_timers( void ) {
   u32 i;
   volatile softTimer_t* t = head;
+  now++;
 
   //  print_dbg("\r\n processing timers. head: 0x");
   //  print_dbg_hex((u32)head);
@@ -184,3 +206,31 @@ void process_timers( void ) {
   }
 }
 
+
+void timer_set(softTimer_t* timer, u32 ticks) {
+  timer->ticks = ticks;
+  if(timer->ticksRemain > ticks) timer->ticksRemain = ticks;
+}
+
+void timer_reset(softTimer_t* timer) {
+  timer->ticksRemain = timer->ticks;
+}
+
+void timer_reset_set(softTimer_t* timer, u32 ticks) {
+  timer->ticks = ticks;
+  timer->ticksRemain = ticks;
+}
+
+void timer_manual(softTimer_t* timer) {
+  timer->ticksRemain = 1;
+}
+
+
+
+u32 time_now() {
+  return now;
+}
+
+void time_clear() {
+  now = 0;
+}

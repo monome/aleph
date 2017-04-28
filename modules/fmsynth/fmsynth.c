@@ -276,13 +276,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_op1Mod1Source :
-    voice.opMod1Source[0] = v >> 16;
+    voice.opMod1Source[0] = v;
     break;
   case eParam_op1Mod1Gain :
     voice.opMod1Gain[0] = v;
     break;
   case eParam_op1Mod2Source :
-    voice.opMod2Source[0] = v >> 16;
+    voice.opMod2Source[0] = v;
     break;
   case eParam_op1Mod2Gain :
     voice.opMod2Gain[0] = v;
@@ -307,13 +307,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_op2Mod1Source :
-    voice.opMod1Source[1] = v >> 16;
+    voice.opMod1Source[1] = v;
     break;
   case eParam_op2Mod1Gain :
     voice.opMod1Gain[1] = v;
     break;
   case eParam_op2Mod2Source :
-    voice.opMod2Source[1] = v >> 16;
+    voice.opMod2Source[1] = v;
     break;
   case eParam_op2Mod2Gain :
     voice.opMod2Gain[1] = v;
@@ -338,13 +338,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_op3Mod1Source :
-    voice.opMod1Source[2] = v >> 16;
+    voice.opMod1Source[2] = v;
     break;
   case eParam_op3Mod1Gain :
     voice.opMod1Gain[2] = v;
     break;
   case eParam_op3Mod2Source :
-    voice.opMod2Source[2] = v >> 16;
+    voice.opMod2Source[2] = v;
     break;
   case eParam_op3Mod2Gain :
     voice.opMod2Gain[2] = v;
@@ -369,13 +369,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_op4Mod1Source :
-    voice.opMod1Source[3] = v >> 16;
+    voice.opMod1Source[3] = v;
     break;
   case eParam_op4Mod1Gain :
     voice.opMod1Gain[3] = v;
     break;
   case eParam_op4Mod2Source :
-    voice.opMod2Source[3] = v >> 16;
+    voice.opMod2Source[3] = v;
     break;
   case eParam_op4Mod2Gain :
     voice.opMod2Gain[3] = v;

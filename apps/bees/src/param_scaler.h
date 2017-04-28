@@ -34,6 +34,7 @@
 #include "scalers/scaler_integrator.h"
 #include "scalers/scaler_integrator_short.h"
 #include "scalers/scaler_note.h"
+#include "scalers/scaler_label.h"
 #include "scalers/scaler_short.h"
 #include "scalers/scaler_svf_fc.h"
 

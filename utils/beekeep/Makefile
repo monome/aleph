@@ -50,11 +50,18 @@ src += \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
-	$(bees)/src/ops/op_life.c \
+	$(bees)/src/ops/op_kria.c \
+	$(bees)/src/ops/op_iter.c \
+	$(bees)/src/ops/op_life_raw.c \
+	$(bees)/src/ops/op_life_classic.c \
 	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
 	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/ops/op_logic.c \
+	$(bees)/src/ops/op_maginc.c \
+	$(bees)/src/ops/op_mem0d.c \
+	$(bees)/src/ops/op_mem1d.c \
+	$(bees)/src/ops/op_mem2d.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
 	$(bees)/src/ops/op_midi_note.c \
@@ -62,9 +69,11 @@ src += \
 	$(bees)/src/ops/op_midi_out_note.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
+	$(bees)/src/ops/op_monome_grid_classic.c \
 	$(bees)/src/ops/op_monome_arc.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
+	$(bees)/src/ops/op_semi.c \
 	$(bees)/src/ops/op_serial.c \
 	$(bees)/src/ops/op_shl.c \
 	$(bees)/src/ops/op_shr.c \
@@ -98,6 +107,7 @@ src += \
 	$(bees)/src/scalers/scaler_integrator.c \
 	$(bees)/src/scalers/scaler_integrator_short.c \
 	$(bees)/src/scalers/scaler_note.c \
+	$(bees)/src/scalers/scaler_label.c \
 	$(bees)/src/scalers/scaler_short.c \
 	$(bees)/src/scalers/scaler_svf_fc.c
 
@@ -178,8 +188,10 @@ cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
 cflags += -g -O0
+cflags += -Wall
 
 lflags += -Bstatic -ljansson
+lflags += -fno-common
 
 cflags += $(shell pkg-config --cflags gtk+-3.0)
 lflags += -Bdynamic $(shell pkg-config --libs gtk+-3.0)
@@ -196,3 +208,6 @@ all: beekeep
 
 clean:
 	rm $(obj)
+
+tags:
+	find . ../avr32_sim/ ../../common ../../apps/bees -name '*.[ch]' | etags -

@@ -60,8 +60,8 @@ static void op_divr_in_a(op_divr_t* divr, const io_t v) {
   divr->a = v;
   divr->val = op_div(divr->a, divr->b);
   divr->r = divr->a % divr->b;
-  net_activate(divr->outs[0], divr->val, divr);
-  net_activate(divr->outs[1], divr->r, divr);
+  net_activate(divr, 0, divr->val);
+  net_activate(divr, 1, divr->r);
 }
 
 // set operand B
@@ -73,8 +73,8 @@ static void op_divr_in_b(op_divr_t* divr, const io_t v) {
   divr->val = op_div(divr->a, divr->b);
   divr->r = divr->a % divr->b;
   if(divr->btrig) {
-    net_activate(divr->outs[0], divr->val, divr);
-    net_activate(divr->outs[1], divr->r, divr);
+    net_activate(divr, 0, divr->val);
+    net_activate(divr, 1, divr->r);
   }
 }
 

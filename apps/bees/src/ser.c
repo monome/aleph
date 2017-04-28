@@ -227,12 +227,12 @@ void serial_bfinProgEcho (volatile u8* buf, int len) {
 
 void serial_triggerParam (s16 idx, io_t data) {
   //param thwacking code goes here
-  net_activate(idx+net->numIns, data, NULL);
+  net_activate_in(idx+net->numIns, data, NULL);
 }
 
 void serial_triggerIn (s16 idx, io_t data) {
   //bees thwacking code goes here
-  net_activate(idx, data, NULL);
+  net_activate_in(idx, data, NULL);
 }
 
 

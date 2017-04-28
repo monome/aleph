@@ -8,19 +8,21 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_mgrid_raw_instring = "FOCUS\0  TOG\0    MONO\0   ";
-static const char* op_mgrid_raw_outstring = "COL\0    ROW\0    VAL\0    ";
-static const char* op_mgrid_raw_opstring = "GRID";
+static const char* op_mgrid_raw_instring  = "FOCUS\0  X\0      Y\0      VAL\0    ON\0     ";
+static const char* op_mgrid_raw_outstring = "X\0      Y\0      BUT\0    ";
+static const char* op_mgrid_raw_opstring  = "GRIDRAW";
 
 //-------------------------------------------------
 //----- static function declaration
 
 //---- input functions
 
-//// network inputs: 
-static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t val);
-static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t val);
-static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t val);
+//// network inputs:
+static void op_mgrid_raw_in_focus(op_mgrid_classic_t* op, const io_t v);
+static void op_mgrid_raw_in_x(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_y(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_val(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_on(op_mgrid_raw_t* grid, const io_t val);
 
 // pickles
 static u8* op_mgrid_raw_pickle(op_mgrid_raw_t* enc, u8* dst);
@@ -30,10 +32,12 @@ static const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* enc, const u8* src);
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
-static op_in_fn op_mgrid_raw_in_fn[3] = {
+static op_in_fn op_mgrid_raw_in_fn[5] = {
   (op_in_fn)&op_mgrid_raw_in_focus,
-  (op_in_fn)&op_mgrid_raw_in_tog,
-  (op_in_fn)&op_mgrid_raw_in_mono,
+  (op_in_fn)&op_mgrid_raw_in_x,
+  (op_in_fn)&op_mgrid_raw_in_y,
+  (op_in_fn)&op_mgrid_raw_in_val,
+  (op_in_fn)&op_mgrid_raw_in_on,
 };
 
 //-------------------------------------------------
@@ -50,14 +54,14 @@ void op_mgrid_raw_init(void* mem) {
 
   //--- monome
   op->monome.handler = (monome_handler_t)&op_mgrid_raw_handler;
-  op->monome.op = op;
+  net_monome_init(&op->monome, op);
 
   // superclass state
 
   op->super.type = eOpMonomeGridRaw;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
-  op->super.numInputs = 3;
+  op->super.numInputs = 5;
   op->super.numOutputs = 3;
 
   op->super.in_val = op->in_val;
@@ -68,14 +72,15 @@ void op_mgrid_raw_init(void* mem) {
   op->super.outString = op_mgrid_raw_outstring;
 
   op->in_val[0] = &(op->focus);
-  op->in_val[1] = &(op->tog);  
-  op->in_val[2] = &(op->mono);
+  op->monome.focus = &(op->focus);
+  op->in_val[1] = &(op->x);
+  op->in_val[2] = &(op->y);
+  op->in_val[3] = &(op->ledVal);
+  op->in_val[4] = &(op->ledOn);
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
 
-  op->lastPos = 0;
-  op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);
 }
 
@@ -89,96 +94,77 @@ void op_mgrid_raw_deinit(void* op) {
 //----- static function definition
 
 //--- network input functions
-static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
+static void op_mgrid_raw_in_focus(op_mgrid_classic_t* op, const io_t v) {
   if((v) > 0) {
     op->focus = OP_ONE;
   } else {
-    if(op->focus > 0) { net_monome_grid_clear(); }
+    // if(op->focus > 0) { net_monome_grid_clear(); }
     op->focus = 0;
   }
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
-static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t v) {
-  op->tog  = (v > 0) ? OP_ONE : 0;
+static void op_mgrid_raw_in_x(op_mgrid_raw_t* op, const io_t v) {
+  if(v > 15)
+    op->x = 15;
+  else if (v < 0)
+    op->x = 0;
+  else
+    op->x = v;
 }
 
-static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t v) {
-  op->mono  = (v > 0) ? OP_ONE : 0;
+static void op_mgrid_raw_in_y(op_mgrid_raw_t* op, const io_t v) {
+  if(v > 15)
+    op->y = 15;
+  else if (v < 0)
+    op->y = 0;
+  else
+    op->y = v;
+}
+
+static void op_mgrid_raw_in_val(op_mgrid_raw_t* op, io_t v) {
+  if(v > 15) {
+    op->ledVal = 15;
+    op->ledOn = 1;
+  }
+  else if (v <= 0) {
+    op->ledVal = 0;
+    op->ledOn = 0;
+  }
+  else {
+    op->ledVal = v;
+    op->ledOn = 1;
+  }
+  op->monome.opLedBuffer[monome_xy_idx(op->x, op->y)]= op->ledVal;
+  if(op->focus > 0) {
+    monome_calc_quadrant_flag(op->x, op->y);
+  }
+}
+
+static void op_mgrid_raw_in_on(op_mgrid_raw_t* op, io_t v) {
+  if(v <= 0) {
+    op->ledVal = 0;
+    op->ledOn = 0;
+  }
+  else {
+    op->ledVal = 15;
+    op->ledOn = 1;
+  }
+  op->monome.opLedBuffer[monome_xy_idx(op->x, op->y)]= op->ledVal;
+  if(op->focus > 0) {
+    monome_calc_quadrant_flag(op->x, op->y);
+  }
 }
 
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
   static u8 x, y, z;
-  static u32 pos;
-  static u8 val;
 
   op_mgrid_raw_t* op = (op_mgrid_raw_t*)(op_monome->op);
 
-
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
-
-  /* print_dbg("\r\n op_mgrid_raw_handler received event; x: 0x"); */
-  /* print_dbg_hex(x); */
-  /* print_dbg("; y: 0x"); */
-  /* print_dbg_hex(y); */
-  /* print_dbg("; z: 0x"); */
-  /* print_dbg_hex(z); */
-
-  // flat position into led buffer
-  pos = monome_xy_idx(x, y);
-
-  if(op->mono) {
-    if(op->tog > 0) { // mono, toggle
-      if(z > 0) {        // ignore lift
-	val = ( monomeLedBuffer[pos] == 0 );
-	monomeLedBuffer[pos] = val * 15;
-	if(pos != op->lastPos) {
-	  monomeLedBuffer[op->lastPos] = 0;
-	}
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
-	// refresh flag for current quadrant
-	monome_calc_quadrant_flag(x, y);
-	// refresh flag for previous quadrant
-	monome_idx_xy(op->lastPos, &x, &y);
-	monome_calc_quadrant_flag(x, y);
-      }
-    } else { // mono, momentary
-      val = z;
-      monomeLedBuffer[pos] =  val * 15;
-      monomeLedBuffer[op->lastPos] = 0;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
-      // refresh flag for current quadrant
-      monome_calc_quadrant_flag(x, y);
-      // refresh flag for previous quadrant
-      monome_idx_xy(op->lastPos, &x, &y);
-      monome_calc_quadrant_flag(x, y);  
-    }
-  } else {
-    if(op->tog > 0) { // poly, toggle
-      if(z > 0) {      /// ignore lift
-	val = ( monomeLedBuffer[pos] == 0 );
-	monomeLedBuffer[pos] = val * 15;
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
-	// refresh flag for current quadrant
-	monome_calc_quadrant_flag(x, y);
-      }
-    } else {   // poly, momentary
-      val = z;
-      monomeLedBuffer[pos] = val * 15;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
-      // refresh flag for current quadrant
-      monome_calc_quadrant_flag(x, y);
-    }
-  }
-  op->lastPos = pos;
+  net_activate(op, 0, x);
+  net_activate(op, 1, y);
+  net_activate(op, 2, z);
 }
 
 
@@ -186,15 +172,14 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 // pickle / unpickle
 u8* op_mgrid_raw_pickle(op_mgrid_raw_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
-  dst = pickle_io(mgrid->tog, dst);
-  dst = pickle_io(mgrid->mono, dst);
+  dst = pickle_io(mgrid->x, dst);
+  dst = pickle_io(mgrid->y, dst);
   return dst;
 }
 
 const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
-  src = unpickle_io(src, (u32*)&(mgrid->tog));
-  src = unpickle_io(src, (u32*)&(mgrid->mono));
-  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
+  src = unpickle_io(src, (u32*)&(mgrid->x));
+  src = unpickle_io(src, (u32*)&(mgrid->y));
   return src;
 }

@@ -133,7 +133,7 @@ void op_metro_poll_handler(void* op) {
   op_metro_t* metro = (op_metro_t*)op;
   //  print_dbg("\r\n op_metro timer callback, value: 0x");
   //  print_dbg_hex((u32)(metro->value));
-  net_activate(metro->outs[0], metro->value, &(metro->super));
+  net_activate(metro, 0, metro->value);
 }
 
 

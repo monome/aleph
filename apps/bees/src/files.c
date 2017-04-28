@@ -214,8 +214,9 @@ u8 files_load_dsp_name(const char* name) {
       // write module name in global scene data
       scene_set_module_name(name);
 
+      render_boot("loading labels descriptor...");
+      files_load_labels(name);
       render_boot("loading module descriptor...");
-
       ret = files_load_desc(name);
 
     } else {
@@ -508,6 +509,43 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
     fp = NULL;
   }
   return fp;
+}
+
+// search for named .lab file and load into network param desc memory
+// return 1 on success, 0 on failure
+extern u8 files_load_labels(const char* name) {
+  char path[64] = DSP_PATH;
+  void * fp;
+  u8 nbuf;
+  u8 ret = 1;
+
+  app_pause();
+
+  print_dbg("\r\n files_load_labels(): name = ");
+  print_dbg(name);
+
+  strcat(path, name);
+  strip_ext(path);
+  strcat(path, ".lab");
+
+  print_dbg("\r\n ...path = ");
+  print_dbg(path);
+
+  fp = fl_fopen(path, "r");
+  if(fp == NULL) {
+    print_dbg("\r\n file_load_labels(): fl_fopen(...) => NULL");
+    ret = 0;
+  } else {
+    // get number of parameters
+    scaler_start_parse_labels();
+    do {
+      fake_fread(&nbuf, 1, fp);
+      scaler_parse_labels_char(nbuf);
+    } while (nbuf != 255);
+  }
+  fl_fclose(fp);
+  app_resume();
+  return ret;
 }
 
 // search for named .dsc file and load into network param desc memory
