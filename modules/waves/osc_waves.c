@@ -258,3 +258,4 @@ fract32 osc_next(osc* osc) {
   // lookup 
   return osc_lookup(osc);
 }
+u8 svf_mode[2] = {0, 0};

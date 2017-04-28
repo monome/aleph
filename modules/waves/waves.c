@@ -28,7 +28,7 @@
 
 // waves
 #include "osc_waves.h"
-#include "svf_waves.h"
+#include "filter_svf.h"
 #include "slew.h"
 
 #define WAVES_NVOICES 2
@@ -197,7 +197,21 @@ static void calc_frame(void) {
     filter_svf_set_rq( &(v->svf), v->rqSlew.y );
 
     // process filter
-    v->svfOut = filter_svf_next( &(v->svf), shr_fr1x32(v->oscOut, 1) );
+    switch(svf_mode[i]) {
+    case 0 :
+      v->svfOut = filter_svf_lpf_next( &(v->svf), shr_fr1x32(v->oscOut, 1) );
+      break;
+    case 1 :
+      v->svfOut = filter_svf_hpf_next( &(v->svf), shr_fr1x32(v->oscOut, 1) );
+      break;
+    case 2 :
+      v->svfOut = filter_svf_bpf_next( &(v->svf), shr_fr1x32(v->oscOut, 1) );
+      break;
+    default :
+      v->svfOut = filter_svf_lpf_next( &(v->svf), shr_fr1x32(v->oscOut, 1) );
+      break;
+    }
+    /* v->svfOut = v->oscOut; */
 
     // process amp/mix smoothing
     slew32_calc(v->ampSlew);
