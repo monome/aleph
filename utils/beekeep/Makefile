@@ -47,6 +47,7 @@ src += \
 	$(bees)/src/ops/op_enc.c \
 	$(bees)/src/ops/op_fade.c \
 	$(bees)/src/ops/op_gate.c \
+	$(bees)/src/ops/op_harry.c \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
