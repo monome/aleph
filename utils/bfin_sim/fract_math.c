@@ -138,9 +138,9 @@ fract16 shr_fr1x16 (fract16 x, int shft) {
 }
 
 fract32 mult_fr1x32(fract16 x, fract16 y) {
-  fract32 x_32 = x;
-  fract32 y_32 = y;
-  return x * y;
+  long x_long = x;
+  long y_long = y;
+  return clip_to_fr32(x_long * y_long);
 }
 
 fract16 trunc_fr1x32(fract32 x) {
