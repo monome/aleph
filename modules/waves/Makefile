@@ -68,7 +68,6 @@ deploy: $(module_name).ldr
 sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	waves.c  \
 	osc_waves.c \
-	svf_waves.c \
 	$(audio_dir)/conversion.c \
 	$(audio_dir)/filter_1p.c \
 	$(audio_dir)/interpolate.c \
@@ -95,3 +94,6 @@ sim:
 	touch $(sim_outfile)
 	rm ./$(sim_outfile)
 	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
+
+tags:
+	find . ../../dsp ../../common -name "*.[ch]" | etags -
