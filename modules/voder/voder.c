@@ -173,10 +173,14 @@ void module_init(void) {
   FILE *foo;
   foo = fopen("foo", "w");
   for (i=FR32_MIN;i<FR32_MAX;i = add_fr1x32(i,FR32_MAX / 1000)) {
-    fprintf (foo,"%d %d %d\n",
+    fprintf (foo,"%d %d %d %d %d %d %d %d\n",
 	     polyblep(i, FR32_MAX / 24),
 	     saw_polyblep(i, FR32_MAX / 24),
-	     square_polyblep(i, FR32_MAX / 24));
+	     square_polyblep(i, FR32_MAX / 24),
+	     osc(i),
+	     osc16(i),
+	     osc_triangle(i),
+	     osc_triangle16(i));
   }
   fclose(foo);
   printf("done fettling foo\n");

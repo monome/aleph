@@ -155,18 +155,28 @@ void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf,
   return buf + idx;
 }
 
-fract16 add_fr1x16(fract16 _x, fract16 _y) {
-  return _x + _y ;
+fract16 sub_fr1x16(fract16 x, fract16 y) {
+  return clip_to_fr16((long) x - (long) y);
 }
 
-fract16 sub_fr1x16(fract16 _x, fract16 _y) {
-  return _x - _y ;
+fract16 add_fr1x16(fract16 x, fract16 y) {
+  return clip_to_fr16((long) x + (long) y);
+}
+
+fract16 multr_fr1x16(fract16 _x, fract16 _y) {
+  long x = _x;
+  long y = _y;
+  long res = x * y;
+  res = res >> 15;
+  return clip_to_fr16(res);
+  return res;
 }
 
 fract16 mult_fr1x16(fract16 _x, fract16 _y) {
-  fract32 x = _x;
-  fract32 y = _y;
-  return (x * y) >> 16;
+  long x = _x;
+  long y = _y;
+  long res = (x * y);
+  return clip_to_fr16(res);
 }
 
 fract16 abs_fr1x16 (fract16 x) {
