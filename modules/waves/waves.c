@@ -186,10 +186,6 @@ static void calc_frame(void) {
     // oscillator class includes hz and mod integrators
     v->oscOut = shr_fr1x32( osc_next( &(v->osc) ), 2);
 
-    // /set modulation - FIXME this is redundant...
-    osc_pm_in( &(v->osc), v->pmIn );
-    osc_wm_in( &(v->osc), v->wmIn );
-
     // set filter params
     slew32_calc(v->cutSlew);
     slew32_calc(v->rqSlew);
@@ -238,9 +234,9 @@ static void calc_frame(void) {
     v->modDelWrIdx = (v->modDelWrIdx + 1) & WAVES_PM_DEL_SAMPS_1;
     v->modDelRdIdx = (v->modDelRdIdx + 1) & WAVES_PM_DEL_SAMPS_1;
     // set pm input from delay
-    v->pmIn = v->modDelBuf[v->modDelRdIdx];    
+    osc_pm_in(&(v->osc), v->modDelBuf[v->modDelRdIdx]);
     // no tricky modulation routing here!
-    v->wmIn = v->modDelBuf[v->modDelRdIdx];    
+    osc_wm_in(&(v->osc), v->modDelBuf[v->modDelRdIdx]);
     // advance pointers
     vout++;
     v++;
@@ -345,8 +341,8 @@ void module_init(void) {
   param_setup(  eParamWet1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamDry0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamDry1Slew, PARAM_SLEW_DEFAULT );
-  param_setup(  eParamHz1, 	220 << 16 );
-  param_setup(  eParamHz0, 	330 << 16 );
+  param_setup(  eParamHz1, 	440 << 16 );
+  param_setup(  eParamHz0, 	660 << 16 );
   param_setup(  eParamTune1, 	FIX16_ONE );
   param_setup(  eParamTune0, 	FIX16_ONE );
   param_setup(  eParamWave1, 	0 );
