@@ -46,6 +46,7 @@ beekeep_src += \
 	$(bees)/src/ops/op_enc.c \
 	$(bees)/src/ops/op_fade.c \
 	$(bees)/src/ops/op_gate.c \
+	$(bees)/src/ops/op_harry.c \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
@@ -159,8 +160,8 @@ beekeep_src += 	dot.c \
 #	json_write_native.c \
 
 lib.name = bees_op
-cflags = -D BEEKEEP -D PD -fno-common
-ldflags = -llo -fno-common
+cflags = -D BEEKEEP -D PD -fno-common -g
+ldflags = -llo -fno-common -g
 common.sources =  $(beekeep_src)
 class.sources = bees_op.c
 

@@ -36,6 +36,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpGate,
   eOpMonomeGridClassic, // "grid"
   eOpMonomeGridRaw, // "gridraw"
+  eOpHarry,
   eOpHid,
   eOpHistory,
   eOpIs,
@@ -379,6 +380,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_kria_t),
     .init = &op_kria_init,
     .deinit = &op_kria_deinit
+  }, {
+    .name = "HARRY",
+    .size = sizeof(op_harry_t),
+    .init = &op_harry_init,
+    .deinit = NULL
   }
 };
 
