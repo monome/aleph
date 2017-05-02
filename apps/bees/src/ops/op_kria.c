@@ -77,24 +77,13 @@ u8 pscale_edit;
 u8 scales[42][7];
 
 u8 key_alt, mod1, mod2;
-u8 held_keys[32], key_count, key_times[256];
-u8 keyfirst_pos, keysecond_pos;
-s8 keycount_pos;
 s8 loop_count;
 u8 loop_edit;
 
-u8 clock_phase;
-u16 clock_time, clock_temp;
-
-u32 basetime;
-u32 calctimes[2][NUM_PARAMS];
-u32 timeerrors[2][NUM_PARAMS];
 u8 need0off;
 u8 need1off;
 
 u8 cur_scale[2][7];
-
-u16 adc[4];
 
 u8 tr[2];
 
@@ -291,8 +280,6 @@ static void op_kria_in_focus(op_kria_t* op, const io_t v) {
     op->focus = 0;
   }
 
-  keycount_pos = 0;
-  key_count = 0;
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
