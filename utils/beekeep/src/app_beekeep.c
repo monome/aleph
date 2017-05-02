@@ -33,6 +33,7 @@
 #include "render.h"
 #include "scene.h"
 #include "op_pool.h"
+#include "op.h"
 //-------------------------------------------
 //-- extern vars (here)
 
@@ -127,6 +128,10 @@ void beekeep_dummy_load_label (void) {
 // allocate memory.
 void app_init(void) {
   //  beekeep_test_timers();
+  int i;
+  for(i=0; i < numOpClasses; i++) {
+    printf("size of %s: %d\n", op_registry[i].name, op_registry[i].size);
+  }
   initBigMemPool();
   initSmallMemPool();
   ParamDesc pd = {.type = eParamTypeLabel};
@@ -135,13 +140,13 @@ void app_init(void) {
   scaler_labels_init(&ps);
 
   // first print off the default label config
-  printf("\r\ndefault label:");
-  beekeep_print_label();
+  /* printf("\r\ndefault label:"); */
+  /* beekeep_print_label(); */
 
   // now test out the code to load new patch labels (char-by-char)
-  printf("\r\nexample patch matrix from .ldr:");
-  beekeep_dummy_load_label();
-  beekeep_print_label();
+  /* printf("\r\nexample patch matrix from .ldr:"); */
+  /* beekeep_dummy_load_label(); */
+  /* beekeep_print_label(); */
   //hm
   print_dbg("\r\n preset_init...");  
   presets_init();
