@@ -160,7 +160,7 @@ void init_app_timers(void) {
 
 // monome: start polling
 void timers_set_monome(void) {
-  timer_add(&monomePollTimer, 	 20, &monome_poll_timer_callback, NULL );
+  timer_add(&monomePollTimer, 	 2, &monome_poll_timer_callback, NULL );
   timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback, NULL );
 }
 
