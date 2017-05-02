@@ -318,7 +318,7 @@ bool kria_next_step(op_kria_t *kria, uint8_t t, uint8_t param) {
 }
 
 // t = track
-static inline void op_kria_track_tick (op_kria_t *kria, u8 t) {
+static void op_kria_track_tick (op_kria_t *kria, u8 t) {
   if(p_next != p) {
     p = p_next;
     phase_reset0(kria);
@@ -406,7 +406,7 @@ static void op_kria_poll_handler(void* op) {
   dirty = 0;
 }
 
-static inline void handle_bottom_row_key(op_kria_t *kria, u8 x, u8 z) {
+static void handle_bottom_row_key(op_kria_t *kria, u8 x, u8 z) {
   if(z) {
     if(x == 3) {
       mode = mTr;
@@ -463,7 +463,7 @@ static inline void handle_bottom_row_key(op_kria_t *kria, u8 x, u8 z) {
   }
 }
 
-static inline void mode_mTr_handle_key(op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mTr_handle_key(op_kria_t *kria, u8 x, u8 y, u8 z) {
   if(mod_mode == modNone) {
     if(z) {
       if(y==0)
@@ -531,7 +531,7 @@ static inline void mode_mTr_handle_key(op_kria_t *kria, u8 x, u8 y, u8 z) {
   }
 }
 
-static inline void mode_mDur_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mDur_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   if(z) {
     if(mod_mode != modTime) {
       if(y==0)
@@ -560,7 +560,7 @@ static inline void mode_mDur_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   else if(mod_mode == modLoop) loop_count--;
 }
 
-static inline void mode_mNote_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mNote_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   if(z) {
     if(mod_mode != modTime) {
       if(mod_mode == modNone)
@@ -585,7 +585,7 @@ static inline void mode_mNote_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   else if(mod_mode == modLoop) loop_count--;
 }
 
-static inline void mode_mScale_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mScale_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   if(z) {
     if(mod_mode != modTime) {
       if(mod_mode == modNone)
@@ -617,7 +617,7 @@ static inline void mode_mScale_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   }
   else if(mod_mode == modLoop) loop_count--;
 }
-static inline void mode_mTrans_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mTrans_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   if(z) {
     if(mod_mode != modTime) {
       if(y == 0) {
@@ -646,7 +646,7 @@ static inline void mode_mTrans_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   else if(mod_mode == modLoop) loop_count--;
 }
 
-static inline void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   u8 i1;
   if(z) {
     if(x==0) {
@@ -700,7 +700,7 @@ static inline void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z
   else if(mod_mode == modLoop) loop_count--;
 }
 
-static inline void mode_mPattern_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+static void mode_mPattern_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
   u8 i1;
   if(z && y==0) {
     if(key_alt) {
@@ -825,7 +825,7 @@ static void calc_scale(op_kria_t *kria, u8 c) {
   }
 }
 
-static inline void bottom_strip_redraw (op_monome_t *op_monome) {
+static void bottom_strip_redraw (op_monome_t *op_monome) {
   u8 i1;
   op_monome->opLedBuffer[112+(ch==0)] = L0;
   op_monome->opLedBuffer[112+ch] = L2;
@@ -845,7 +845,7 @@ static inline void bottom_strip_redraw (op_monome_t *op_monome) {
   else op_monome->opLedBuffer[127] = 0;
 }
 
-static inline void mode_mTr_redraw (op_monome_t *op_monome) {
+static void mode_mTr_redraw (op_monome_t *op_monome) {
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1, i2;
   if(mod_mode != modTime) {
@@ -943,7 +943,7 @@ static inline void mode_mTr_redraw (op_monome_t *op_monome) {
   }
 }
 
-static inline void mode_mDur_redraw (op_monome_t *op_monome) {
+static void mode_mDur_redraw (op_monome_t *op_monome) {
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1, i2;
   if(mod_mode != modTime) {
@@ -983,7 +983,7 @@ static inline void mode_mDur_redraw (op_monome_t *op_monome) {
   }
 }
 
-static inline void mode_mNote_redraw (op_monome_t *op_monome) {
+static void mode_mNote_redraw (op_monome_t *op_monome) {
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1;
   if(mod_mode != modTime) {
@@ -1014,7 +1014,7 @@ static inline void mode_mNote_redraw (op_monome_t *op_monome) {
   }
 }
 
-static inline void mode_mScale_redraw (op_monome_t *op_monome) {
+static void mode_mScale_redraw (op_monome_t *op_monome) {
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1, i2;
   if(mod_mode != modTime) {
@@ -1054,7 +1054,7 @@ static inline void mode_mScale_redraw (op_monome_t *op_monome) {
   }
 }
 
-static inline void mode_mTrans_redraw (op_monome_t *op_monome) {
+static void mode_mTrans_redraw (op_monome_t *op_monome) {
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1;
   if(mod_mode != modTime) {
@@ -1092,7 +1092,7 @@ static inline void mode_mTrans_redraw (op_monome_t *op_monome) {
   }
 }
 
-static inline void mode_mScaleEdit_redraw (op_monome_t *op_monome) {
+static void mode_mScaleEdit_redraw (op_monome_t *op_monome) {
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1;
   op_monome->opLedBuffer[112] = L1;
@@ -1125,7 +1125,7 @@ static inline void mode_mScaleEdit_redraw (op_monome_t *op_monome) {
   }
 }
 
-static inline void mode_mPattern_redraw (op_monome_t *op_monome) {
+static void mode_mPattern_redraw (op_monome_t *op_monome) {
   u8 i1;
   op_monome->opLedBuffer[112] = L1;
   op_monome->opLedBuffer[113] = L1;
