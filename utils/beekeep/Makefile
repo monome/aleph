@@ -91,6 +91,7 @@ src += \
 	$(bees)/src/ops/op_route16.c \
 	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/ops/op_ww.c \
+	$(bees)/src/ops/op_poly.c \
 	$(bees)/src/ops/op_param.c \
 	$(bees)/src/pages/page_dsp.c \
 	$(bees)/src/pages/page_gathered.c \

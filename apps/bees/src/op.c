@@ -61,6 +61,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpCascades, // "mp"
   eOpMul,
   eOpParam,
+  eOpPoly,
   eOpRandom,
   eOpRoute,
   eOpRoute8,
@@ -384,6 +385,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "HARRY",
     .size = sizeof(op_harry_t),
     .init = &op_harry_init,
+    .deinit = NULL
+  }, {
+    .name = "POLY",
+    .size = sizeof(op_poly_t),
+    .init = &op_poly_init,
     .deinit = NULL
   }
 };
