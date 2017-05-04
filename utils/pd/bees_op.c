@@ -173,7 +173,7 @@ void bees_tick(t_bees_pd_class *client) {
   clock_delay(monome_clock, 1.0);
 }
 
-static softTimer_t monomePDPollTimer = { .next = NULL, .prev = NULL };
+static softTimer_t monomeGridLedTimer = { .next = NULL, .prev = NULL };
 
 void bees_op_setup(void) {
   bees_op_class = class_new(gensym("bees_op"),
@@ -241,7 +241,7 @@ void bees_op_setup(void) {
   /* pthread_create( &monome_updater, NULL, always_update_128_grid, NULL); */
   /* pthread_create( &timer_poller, NULL, always_poll_timers, NULL); */
   /* timers_set_monome(); */
-  timer_add(&monomePDPollTimer, 50, &monome_update_128_grid, NULL);
+  timer_add(&monomeGridLedTimer, 20, &monome_update_128_grid, NULL);
 
   monome_clock = clock_new(NULL, bees_tick);
   clock_delay(monome_clock, 1.0);
