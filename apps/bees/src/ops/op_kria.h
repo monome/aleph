@@ -21,7 +21,7 @@ typedef enum {
 
 #define NUM_PARAMS 7
 
-const u8 SCALE[49];
+static const u8 SCALE[49];
 
 typedef struct {
   u8 tr[16];

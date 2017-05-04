@@ -54,7 +54,7 @@ static op_in_fn op_kria_in_fn[4] = {
 #define L0 4
 
 //////////////////////////////////////////////////
-const u8 SCALE[49] = {
+static const u8 SCALE[49] = {
   2, 2, 1, 2, 2, 2, 1,	// ionian
   2, 1, 2, 2, 2, 1, 2,	// dorian
   1, 2, 2, 2, 1, 2, 2,	// phyrgian
