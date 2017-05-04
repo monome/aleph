@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 #include "m_pd.h"
 #include "net.h"
 #include "op_mul.h"
@@ -18,6 +17,8 @@ typedef struct _bees_pd_class {
   op_t *bees_op;
   t_outlet *f_out[16];
 } t_bees_pd_class;
+
+t_clock *monome_clock;
 
 static t_class *bees_pd_classes[numOpClasses];
 op_t *dummy_ops[numOpClasses];
@@ -138,7 +139,7 @@ void *bees_op_new(t_symbol *s, int argc, t_atom *argv) {
   return NULL;
 }
 
-lo_server_thread monome_server;
+lo_server monome_server;
 
 void monome_server_error(int num, const char *m, const char *path);
 int monome_key_handler(const char *path, const char *types, lo_arg ** argv,
@@ -152,6 +153,27 @@ void* always_update_128_grid( void* argument );
 void* always_poll_timers( void* argument );
 void monome_send_quadrant (int x, int y, int *testdata);
 void monome_update_128_grid ();
+
+void check_events(void) {
+  static event_t e;
+  if( event_next(&e) ) {
+    (app_event_handlers)[e.type](e.data);
+  }
+}
+
+void bees_tick(t_bees_pd_class *client) {
+  /* post("bees tick"); */
+  process_timers();
+  lo_server_recv_noblock(monome_server, 0);
+  static event_t e;
+  while( event_next(&e) ) {
+    (app_event_handlers)[e.type](e.data);
+  }
+
+  clock_delay(monome_clock, 1.0);
+}
+
+static softTimer_t monomePDPollTimer = { .next = NULL, .prev = NULL };
 
 void bees_op_setup(void) {
   bees_op_class = class_new(gensym("bees_op"),
@@ -206,47 +228,46 @@ void bees_op_setup(void) {
       dummyLedBuffer[i+j*16] = 15-(i/2 + j);
     }
   }
-  monome_update_128_grid();
+  monome_update_128_grid(NULL);
   lo_address a = lo_address_new(NULL, "13188");
   lo_send(a, "/sys/port", "i", 6001);
 
-  monome_server = lo_server_thread_new("6001", monome_server_error);
+  monome_server = lo_server_new("6001", monome_server_error);
 
   /* add method that will match any path and args */
-  lo_server_thread_add_method(monome_server, "/monome/grid/key", "iii",
-			      monome_key_handler, NULL);
-  lo_server_thread_start(monome_server);
-  pthread_create( &monome_updater, NULL, always_update_128_grid, NULL);
-  pthread_create( &timer_poller, NULL, always_poll_timers, NULL);
+  lo_server_add_method(monome_server, "/monome/grid/key", "iii",
+		       monome_key_handler, NULL);
+  /* lo_server_thread_start(monome_server); */
+  /* pthread_create( &monome_updater, NULL, always_update_128_grid, NULL); */
+  /* pthread_create( &timer_poller, NULL, always_poll_timers, NULL); */
+  /* timers_set_monome(); */
+  timer_add(&monomePDPollTimer, 50, &monome_update_128_grid, NULL);
+
+  monome_clock = clock_new(NULL, bees_tick);
+  clock_delay(monome_clock, 1.0);
 }
 
-void check_events(void) {
-  static event_t e;
-  if( event_next(&e) ) {
-    (app_event_handlers)[e.type](e.data);
-  }
-}
+/* void* always_poll_timers( void* argument ) { */
+/*   while(1) { */
+/*     usleep(1000); */
+/*     process_timers(); */
 
-void* always_poll_timers( void* argument ) {
-  while(1) {
-    usleep(1000);
-    process_timers();
+/*     /\* check_events(); *\/ */
+/*     // we have no event loop in BEES pd external - in order to poll */
+/*     // timers, added a hack to app_custom_event_callback, instead of */
+/*     // calling check_events(); */
+/*   } */
+/*   return NULL; */
+/* } */
 
-    /* check_events(); */
-    // we have no event loop in BEES pd external - in order to poll
-    // timers, added a hack to app_custom_event_callback, instead of
-    // calling check_events();
-  }
-  return NULL;
-}
+/* void* always_update_128_grid( void* argument ) { */
+/*   while(1) { */
+/*     usleep(20000); */
+/*     monome_update_128_grid(); */
+/*   } */
+/*   return NULL; */
+/* } */
 
-void* always_update_128_grid( void* argument ) {
-  while(1) {
-    usleep(20000);
-    monome_update_128_grid();
-  }
-  return NULL;
-}
 void monome_testbang () {
   lo_address a = lo_address_new(NULL, "13188");
   int i, j;
@@ -256,7 +277,7 @@ void monome_testbang () {
     }
   }
 }
-void monome_update_128_grid () {
+void monome_update_128_grid (void *noarg) {
   int i, j;
   int testdata[64];
   if(!monomeFrameDirty) {
