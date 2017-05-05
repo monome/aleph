@@ -27,9 +27,6 @@ char *pd_op_names[numOpClasses];
 
 static t_class *bees_op_class;
 // pointer to puredata bees object
-/* t_bees_pd_class *bees_pd_object_to_bang; */
-// XXX FIXME this fails when triggering up/down a complex routing
-// network...
 
 void net_activate(void *op_void, s16 outIdx, const io_t val) {
   op_t *op = (op_t*) op_void;
@@ -154,15 +151,9 @@ void* always_poll_timers( void* argument );
 void monome_send_quadrant (int x, int y, int *testdata);
 void monome_update_128_grid ();
 
-void check_events(void) {
-  static event_t e;
-  if( event_next(&e) ) {
-    (app_event_handlers)[e.type](e.data);
-  }
-}
-
 void bees_tick(t_bees_pd_class *client) {
   /* post("bees tick"); */
+  double tick_start = clock_getlogicaltime();
   process_timers();
   lo_server_recv_noblock(monome_server, 0);
   static event_t e;
@@ -170,7 +161,7 @@ void bees_tick(t_bees_pd_class *client) {
     (app_event_handlers)[e.type](e.data);
   }
 
-  clock_delay(monome_clock, 1.0);
+  clock_delay(monome_clock, 1.0 - clock_gettimesince(tick_start));
 }
 
 static softTimer_t monomeGridLedTimer = { .next = NULL, .prev = NULL };
@@ -237,36 +228,11 @@ void bees_op_setup(void) {
   /* add method that will match any path and args */
   lo_server_add_method(monome_server, "/monome/grid/key", "iii",
 		       monome_key_handler, NULL);
-  /* lo_server_thread_start(monome_server); */
-  /* pthread_create( &monome_updater, NULL, always_update_128_grid, NULL); */
-  /* pthread_create( &timer_poller, NULL, always_poll_timers, NULL); */
-  /* timers_set_monome(); */
   timer_add(&monomeGridLedTimer, 20, &monome_update_128_grid, NULL);
 
   monome_clock = clock_new(NULL, bees_tick);
   clock_delay(monome_clock, 1.0);
 }
-
-/* void* always_poll_timers( void* argument ) { */
-/*   while(1) { */
-/*     usleep(1000); */
-/*     process_timers(); */
-
-/*     /\* check_events(); *\/ */
-/*     // we have no event loop in BEES pd external - in order to poll */
-/*     // timers, added a hack to app_custom_event_callback, instead of */
-/*     // calling check_events(); */
-/*   } */
-/*   return NULL; */
-/* } */
-
-/* void* always_update_128_grid( void* argument ) { */
-/*   while(1) { */
-/*     usleep(20000); */
-/*     monome_update_128_grid(); */
-/*   } */
-/*   return NULL; */
-/* } */
 
 void monome_testbang () {
   lo_address a = lo_address_new(NULL, "13188");
