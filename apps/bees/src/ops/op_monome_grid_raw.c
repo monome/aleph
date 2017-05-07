@@ -174,6 +174,11 @@ u8* op_mgrid_raw_pickle(op_mgrid_raw_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
   dst = pickle_io(mgrid->x, dst);
   dst = pickle_io(mgrid->y, dst);
+  int i;
+  for (i=0; i < MONOME_MAX_LED_BYTES; i++) {
+    *dst = mgrid->monome.opLedBuffer[i];
+    dst++;
+  }
   return dst;
 }
 
@@ -181,5 +186,11 @@ const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
   src = unpickle_io(src, (u32*)&(mgrid->x));
   src = unpickle_io(src, (u32*)&(mgrid->y));
+  int i;
+  for (i=0; i < MONOME_MAX_LED_BYTES; i++) {
+    mgrid->monome.opLedBuffer[i] = *src;
+    src++;
+  }
+  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
   return src;
 }
