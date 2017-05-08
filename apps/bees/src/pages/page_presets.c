@@ -336,6 +336,7 @@ void select_presets(void) {
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
+  render_reset_custom_region();
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "PRESETS", 0, 0, 0xf, 0x1);
   show_foot();

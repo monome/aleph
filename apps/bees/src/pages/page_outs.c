@@ -11,6 +11,7 @@
 #include "pages.h"
 #include "preset.h"
 #include "render.h"
+#include "net_protected.h"
 
 //====================================
 //==== static variables
@@ -129,6 +130,10 @@ static void render_line(s16 idx, u8 fg) {
     appendln( net_out_name(idx) );
     endln();
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+  }
+  // draw something to indicate play mode visibility
+  if(net_get_out_play(idx)) {
+    font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
   }
   // draw something to indicate preset inclusion
   if(net_get_out_preset(idx)) {
@@ -373,10 +378,18 @@ static void show_foot2(void) {
     fill = 0x5;
   }
   region_fill(footRegion[2], fill);
-  if(targetSelect) {
-    font_string_region_clip(footRegion[2], "CONN", 0, 0, 0xf, fill);
+  if(altMode) {
+    if(net_get_out_play(*pageSelect)) {
+      font_string_region_clip(footRegion[2], "HIDE", 0, 0, 0xf, fill);
+    } else {
+      font_string_region_clip(footRegion[2], "SHOW", 0, 0, 0xf, fill);
+    }
   } else {
-    font_string_region_clip(footRegion[2], "DISC", 0, 0, 0xf, fill);
+    if(targetSelect) {
+      font_string_region_clip(footRegion[2], "CONN", 0, 0, 0xf, fill);
+    } else {
+      font_string_region_clip(footRegion[2], "DISC", 0, 0, 0xf, fill);
+    }
   }
 }
 
@@ -439,6 +452,7 @@ void select_outs(void) {
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
+  render_reset_custom_region();
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "OUTPUTS", 0, 0, 0xf, 0x1);
   show_foot();
@@ -511,18 +525,28 @@ void handle_key_1(s32 val) {
 
 void handle_key_2(s32 val) {
   if(val == 0) { return; }
-  if(check_key(2)) {  
-    if(targetSelect) {
-      // we are selecting a target, so perform the connection
-      net_connect(*pageSelect, tmpTarget);
-      targetSelect = 0;
-    } else {
-      // not selecting, clear current connection
-      net_disconnect(*pageSelect);
-      // re-draw selected line 
-      render_line(*pageSelect, 0xf);
-      // copy to scroll with hi,ghlight
-      render_to_scroll_line(SCROLL_CENTER_LINE, 1);   
+  if(check_key(2)) {
+    if(altMode) {
+      	// show / hide on play screen
+	net_toggle_out_play(*pageSelect);
+	// render to tmp buffer
+	render_line(*pageSelect, 0xf);
+	// copy to scroll with highlight
+	render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+    }
+    else {
+      if(targetSelect) {
+	// we are selecting a target, so perform the connection
+	net_connect(*pageSelect, tmpTarget);
+	targetSelect = 0;
+      } else {
+	// not selecting, clear current connection
+	net_disconnect(*pageSelect);
+	// re-draw selected line
+	render_line(*pageSelect, 0xf);
+	// copy to scroll with hi,ghlight
+	render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      }
     }
   }
   show_foot();
@@ -632,9 +656,29 @@ void handle_enc_0(s32 val) {
     redraw_outs();
   }
   if(altMode) {
-    // alt: page selection			
-    select_scroll(val > 0 ? 7 : -7);
-    //    redraw_ins();
+    // don't blow up if *pageSelect is insane
+    if(*pageSelect >= net->numOuts || *pageSelect < 0) {
+      select_scroll(val > 0 ? 1 : -1);
+      return;
+    }
+    // alt: warp to next op input
+    s16 current_opIdx = net->outs[*pageSelect].opIdx;
+    s16 target_opIdx = current_opIdx + (val > 0 ? 1 : -1);
+    if(target_opIdx < 0 || target_opIdx >= net_num_ops()) {
+      // if can't zoom to next op, zoom 1 out up/down
+      select_scroll(val > 0 ? 1 : -1);
+    } else {
+      s16 scroll_opIdx = current_opIdx;
+      int offset = 0;
+      int scroll_opOutIdx = 0;
+      while(scroll_opIdx == current_opIdx || scroll_opOutIdx != 0) {
+	offset += (val > 0 ? 1 : -1);
+	scroll_opIdx = net->outs[*pageSelect+offset].opIdx;
+	scroll_opOutIdx = net->outs[*pageSelect+offset].opOutIdx;
+      }
+      select_scroll(offset);
+    }
+
   } else {
     // scroll selection
     select_scroll(val > 0 ? 1 : -1);

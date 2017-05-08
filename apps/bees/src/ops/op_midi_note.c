@@ -120,8 +120,8 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
     // got here, so channel matched, or we want all channels
     num = (data & 0xff0000) >> 16;
     vel = (data & 0xff00) >> 8;
-    net_activate(op->outs[0], op_from_int(num), op);
-    net_activate(op->outs[1], op_from_int(vel), op);
+    net_activate(op, 0, op_from_int(num));
+    net_activate(op, 1, op_from_int(vel));
     
   } else if (com == 0x8) {
     // note off
@@ -134,9 +134,9 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
     // got here, so channel matched, or we want all channels
     num = (data & 0xff0000) >> 16;
     vel = (data & 0xff00) >> 8;
-    net_activate(op->outs[0], op_from_int(num), op);
-    net_activate(op->outs[1], 0, op);
-    net_activate(op->outs[2], op_from_int(vel), op);
+    net_activate(op, 0, op_from_int(num));
+    net_activate(op, 1, 0);
+    net_activate(op, 2, op_from_int(vel));
   }
 }
 

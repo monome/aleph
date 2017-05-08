@@ -91,12 +91,10 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader(eParam_noteVelocity, "noteVelocity");
 
   param_desc_aux(desc, eParam_op1Mod1Source, "op1Mod1Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op1Mod1Gain, "op1Mod1Gain");
   param_desc_aux(desc, eParam_op1Mod2Source, "op1Mod2Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op1Mod2Gain, "op1Mod2Gain");
   param_desc_ratio(eParam_op1Tune, "op1Tune");
   param_desc_adsrTime(eParam_op1Attack, "op1Attack");
@@ -108,12 +106,10 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 32);
 
   param_desc_aux(desc, eParam_op2Mod1Source, "op2Mod1Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op2Mod1Gain, "op2Mod1Gain");
   param_desc_aux(desc, eParam_op2Mod2Source, "op2Mod2Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op2Mod2Gain, "op2Mod2Gain");
   param_desc_ratio(eParam_op2Tune, "op2Tune");
   param_desc_adsrTime(eParam_op2Attack, "op2Attack");
@@ -125,12 +121,10 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 32);
 
   param_desc_aux(desc, eParam_op3Mod1Source, "op3Mod1Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op3Mod1Gain, "op3Mod1Gain");
   param_desc_aux(desc, eParam_op3Mod2Source, "op3Mod2Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op3Mod2Gain, "op3Mod2Gain");
   param_desc_ratio(eParam_op3Tune, "op3Tune");
   param_desc_adsrTime(eParam_op3Attack, "op3Attack");
@@ -142,12 +136,10 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 32);
 
   param_desc_aux(desc, eParam_op4Mod1Source, "op4Mod1Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op4Mod1Gain, "op4Mod1Gain");
   param_desc_aux(desc, eParam_op4Mod2Source, "op4Mod2Source",
-		 eParamTypeFix, 0x00000000, 0x00040000,
-		 32);
+		 eParamTypeLabel, 0, 3, 1);
   param_desc_fader(eParam_op4Mod2Gain, "op4Mod2Gain");
   param_desc_ratio(eParam_op4Tune, "op4Tune");
   param_desc_adsrTime(eParam_op4Attack, "op4Attack");

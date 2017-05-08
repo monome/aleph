@@ -30,6 +30,8 @@
 /// custom
 #include "params.h"
 
+#include "ricks_tricks.h"
+
 
 // total SDRAM is 64M
 // each line 16 bit address
@@ -171,8 +173,6 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-#define simple_slew(x, y) x = y/100 + x/100 * 99
-
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
 fract32 delayOutput, delayInput;
@@ -181,14 +181,14 @@ void module_process_frame(void) {
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
-    simple_slew(auxL[i], auxLTarget[i]);
-    simple_slew(auxR[i], auxRTarget[i]);
-    simple_slew(pan[i], panTarget[i]);
-    simple_slew(fader[i], faderTarget[i]);
-    simple_slew(effect[i],effectTarget[i]);
-    simple_slew(pitchShiftFader[i], pitchShiftFaderTarget[i]);
+    simple_slew(auxL[i], auxLTarget[i], SLEW_10MS);
+    simple_slew(auxR[i], auxRTarget[i], SLEW_10MS);
+    simple_slew(pan[i], panTarget[i], SLEW_10MS);
+    simple_slew(fader[i], faderTarget[i], SLEW_10MS);
+    simple_slew(effect[i],effectTarget[i], SLEW_10MS);
+    simple_slew(pitchShiftFader[i], pitchShiftFaderTarget[i], SLEW_10MS);
   }
-  simple_slew(feedbackTarget, feedback);
+  simple_slew(feedbackTarget, feedback, SLEW_10MS);
   
   //define delay input & output
 
@@ -209,25 +209,6 @@ void module_process_frame(void) {
     simple_busmix (delayOutput, pitchShift_next(&(grains[i]), delayInput), pitchShiftFader[i]);
   }
   mix_panned_mono(delayOutput, &(out[0]), &(out[1]),PAN_DEFAULT ,FADER_DEFAULT );
-}
-
-void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
-    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
-    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
-}
-
-
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) {
-    fract32 pan_factor, post_fader;
-
-    pan_factor = (fract32) ( pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
-
-    pan_factor = (fract32) ( PAN_MAX - pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
-
 }
 
 

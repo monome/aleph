@@ -32,11 +32,17 @@ void pitchShift_init(pitchShift* dl, fract32* data, u32 frames) {
   dl->tapRd1.max = 256 * 1023;
   dl->tapRd1.time= 256 * 512;
 
+  dl->pitchDetect = 0;
+
 }
 
 fract32 pitchShift_next(pitchShift* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
+  fract32 signalPeriod = pitchTrack(&(dl->pitchDetector), in);
+  //DEBUG forcing detected Period to 1ms
+  /* signalPeriod = 48 * 256; */
+  fract32 desiredPitchShift = (fract32)dl->scrubCentrePitch;
 
   buffer_tapN_write(&(dl->tapWr), in);
 

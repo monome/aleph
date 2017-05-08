@@ -74,27 +74,27 @@ static void op_logic_in_a(op_logic_t* logic, const io_t v) {
     i = logic->v_and;
     logic->v_and = (logic->a && logic->b) ^ logic->invert;
     if(i != logic->v_and)
-      net_activate(logic->outs[0], logic->v_and, logic);
+      net_activate(logic, 0, logic->v_and);
 
     i = logic->v_or;
     logic->v_or = (logic->a || logic->b) ^ logic->invert;
     if(i != logic->v_or)
-      net_activate(logic->outs[1], logic->v_or, logic);
+      net_activate(logic, 1, logic->v_or);
 
     i = logic->v_xor;
     logic->v_xor = (logic->a ^ logic->b) ^ logic->invert;
     if(i != logic->v_xor)
-      net_activate(logic->outs[2], logic->v_xor, logic);
+      net_activate(logic, 2, logic->v_xor);
   } 
   else {
     logic->v_and = (logic->a && logic->b) ^ logic->invert;
-    net_activate(logic->outs[0], logic->v_and, logic);
+    net_activate(logic, 0, logic->v_and);
 
     logic->v_or = (logic->a || logic->b) ^ logic->invert;
-    net_activate(logic->outs[1], logic->v_or, logic);
+    net_activate(logic, 1, logic->v_or);
 
     logic->v_xor = (logic->a ^ logic->b) ^ logic->invert;
-    net_activate(logic->outs[2], logic->v_xor, logic);
+    net_activate(logic, 2, logic->v_xor);
   }
 }
 

@@ -59,7 +59,7 @@ static void op_shl_in_a(op_shl_t* shl, const io_t v) {
   // printf("shl at %d received A %d\n", (int)shl, (int)*v);
   shl->a = v;
   shl->val = shl->a << shl->b;
-  net_activate(shl->outs[0], shl->val, shl);
+  net_activate(shl, 0, shl->val);
 }
 
 // set operand B
@@ -68,7 +68,7 @@ static void op_shl_in_b(op_shl_t* shl, const io_t v) {
   shl->b = v;
   shl->val = shl->a << shl->b;
   if(shl->btrig) {
-    net_activate(shl->outs[0], shl->val, shl);
+    net_activate(shl, 0, shl->val);
   }
 }
 

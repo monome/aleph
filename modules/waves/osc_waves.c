@@ -1,12 +1,14 @@
 // bfin
 #include <fract2float_conv.h>
 #include "fract_math.h"
+#include "libfixmath/fix16_fract.h"
 
 // aleph/dsp
 #include "interpolate.h"
 #include "table.h"
 
 #include "osc_waves.h"
+#include "osc_polyblep.h"
 #include "slew.h"
 
 //----------------
@@ -43,31 +45,31 @@ static inline fract32 freq_to_phase(fix16 freq) {
 static inline void osc_calc_wm(osc* osc) {
   // FIXME: attempt better bandlimiting again
 #if 1 // ???
-  osc->shapeMod = abs_fr1x16(
-			     add_fr1x16(
-					osc->shape, 
-					mult_fr1x16(
-						    trunc_fr1x32(osc->wmIn), 
-						    osc->wmAmt
-						    ) 
-					)
-			     );
+  osc->shapeMod = abs_fr1x16(add_fr1x16(osc->shapeSlew.y,
+					mult_fr1x16(trunc_fr1x32(osc->wmIn), 
+						    osc->wmSlew.y)));
 #else
-  osc->shapeMod = osc->shape;
+  // shapeMod =shape + (wmIn*0.5+0.5) * wmAmt
+  osc->shapeMod = add_fr1x16(osc->wmIn >> 1, FR16_MAX >> 1);
+  osc->shapeMod = multr_fr1x16(osc->shapeMod, osc->wmSlew.y);
+  osc->shapeMod = add_fr1x16(osc->shapeMod, osc->shapeSlew.y);
+  if(osc->shapeMod < 0) {
+    osc->shapeMod = 0;
+  }
+  /* osc->shapeMod = FR16_MAX >> 3; */
+  /* osc->shapeMod = osc->shapeSlew.y; */
 #endif
 }
 
 // calculate phase incremnet
 static inline void osc_calc_inc( osc* osc) {
-  osc->incSlew.x = freq_to_phase( fix16_mul(osc->ratio, osc->hz) ); 
+  osc->incSlew.x = freq_to_phase( fix16_mul_fract(osc->ratio, osc->hz) ); 
 }
 
 // calculate phase
 static inline void osc_calc_pm(osc* osc) {
   // non-saturated add, allow overflow, zap sign
-  osc->phaseMod = (int)(osc->phase) + (int)(mult_fr1x32(trunc_fr1x32(osc->pmIn), osc->pmAmt));
-  osc->phaseMod &= 0x7fffffff;
-
+  osc->phaseMod = osc->phase + mult_fr1x32(trunc_fr1x32(osc->pmIn), osc->pmSlew.y);
 }
 
 // lookup 
@@ -78,10 +80,12 @@ static inline fract32 osc_lookup(osc* osc) {
   fract16 waveMulB = (osc->shapeMod & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
   fract16 waveMulA = sub_fr1x16(0x7fff, waveMulB); 
 
+  fract32 pMod_unsigned = ((u32)osc->phaseMod) >> 1;
+  
   //  signal index and interpolation weights for both wavetables
-  u32 signalIdxA = osc->phaseMod >> WAVE_IDX_SHIFT; 
+  u32 signalIdxA = pMod_unsigned >> WAVE_IDX_SHIFT; 
   u32 signalIdxB = (signalIdxA + 1) & WAVE_TAB_SIZE_1; // need the check here
-  fract16 signalMulB = (fract16)((osc->phaseMod & (WAVE_IDX_MASK)) >> (WAVE_IDX_MUL_SHIFT));
+  fract16 signalMulB = (fract16)((pMod_unsigned & (WAVE_IDX_MASK)) >> (WAVE_IDX_MUL_SHIFT));
   fract16 signalMulA = sub_fr1x16(0x7fff, signalMulB); 
   
 
@@ -137,17 +141,23 @@ static inline fract32 osc_lookup(osc* osc) {
   /* 				   ) ); */
 }
 
+// alternative method no lookup tables
+static inline fract32 osc_polyblep(osc* osc) {
+  //  signal index and interpolation weights for both waveshapes
+  fract16 mulB = osc->shapeMod;
+  fract16 mulA = sub_fr1x16(FR16_MAX, mulB);
+  fract16 sigA, sigB;
+  sigA = sine_polyblep(osc->phaseMod);
+  sigB = saw_polyblep(osc->phaseMod, osc->incSlew.y);
+  return add_fr1x32(mult_fr1x32(sigA, mulA),
+		    mult_fr1x32(sigB, mulB));
+}
+
 // advance phase
 static inline void osc_advance(osc* osc) {
-
-  // phase is normalized fract32 in [0, 1)
-  // use non-saturating add, allow overflow, and zap sign bit
-  osc->phase = ( ((int)osc->phase) + ((int)(osc->inc)) ) & 0x7fffffff;
-
-  /* osc->idx = fix16_add(osc->idx, osc->inc); */
-  /* while(osc->idx > WAVE_TAB_MAX16) {  */
-  /*   osc->idx = fix16_sub(osc->idx, WAVE_TAB_MAX16); */
-  /* } */
+  // phase is normalized fract32 in [-1, 1)
+  // use non-saturating add, allow overflow
+  osc->phase = osc->phase + osc->incSlew.y;
 }
 
 //----------------
@@ -160,8 +170,8 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   //  ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
 #ifdef OSC_SHAPE_LIMIT
-  /* incMin = fix16_mul(ips, OSC_HZ_MIN); */
-  /* incMax = fix16_mul(ips, OSC_HZ_MAX); */
+  /* incMin = fix16_mul_fract(ips, OSC_HZ_MIN); */
+  /* incMax = fix16_mul_fract(ips, OSC_HZ_MAX); */
   /* incRange = (u32)incMax - (u32)incMin; */
   /* shapeLimMul = 0x7fffffff / incRange; */
 #endif
@@ -170,15 +180,9 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   slew_init(osc->pmSlew, 0, 0, 0 );
   slew_init(osc->wmSlew, 0, 0, 0 );
 
-  osc->val = 0;
   osc->phase = 0;
   osc->ratio = FIX16_ONE;
   osc->hz = FIX16_ONE;
-  osc->shape = 0;
-  //  osc->shapeMod = 0;
-
-  osc->pmAmt = 0;
-  osc->wmAmt = 0;
 
 }
 
@@ -231,14 +235,12 @@ fract32 osc_next(osc* osc) {
   /// update param smoothers
   slew16_calc ( osc->pmSlew );
   slew16_calc ( osc->wmSlew );
-  slew16_calc ( osc->shapeSlew );
+  /* slew16_calc ( osc->shapeSlew ); */
+  osc->shapeSlew.y = osc->shapeSlew.x;
   slew32_calc ( osc->incSlew);
 
-  osc->inc = osc->incSlew.y;
-  osc->shape = osc->shapeSlew.y;
-
-  osc->pmAmt = osc->pmSlew.y;
-  osc->wmAmt = osc->wmSlew.y;
+  /* osc->inc = osc->incSlew.y; */
+  /* osc->shape = osc->shapeSlew.y; */
 
   /// FIXME:
   // shape mod doesn't sound awesome right now anyways
@@ -257,3 +259,4 @@ fract32 osc_next(osc* osc) {
   // lookup 
   return osc_lookup(osc);
 }
+u8 svf_mode[2] = {0, 0};

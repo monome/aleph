@@ -104,7 +104,9 @@ static inline fract32 freq_to_phase(fix16 freq) {
 }
 
 fract32 osc (fract32 phase);
+fract16 osc16 (fract32 phase);
 fract32 osc_triangle (fract32 phase);
+fract16 osc_triangle16 (fract32 phase);
 fract32 osc_square (fract32 phase);
 
 #define simple_slew(x, y, slew)					\

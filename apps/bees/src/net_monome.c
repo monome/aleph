@@ -62,11 +62,14 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
     //    if(monomeOpFocus != NULL ) {
     if((monomeOpFocus != NULL) && (monomeOpFocus != op_monome)) {
       /// stealing focus, inform the previous holder
-      monomeOpFocus->focus = 0;
+      *(monomeOpFocus->focus) = 0;
     }
     if(dev == eDeviceGrid) {
       print_dbg("\r\n setting grid_key handler");
       monome_grid_key_handler = op_monome->handler;
+      monomeLedBuffer = op_monome->opLedBuffer;
+      monome_set_quadrant_flag(0);
+      monome_set_quadrant_flag(1);
     } else if(dev == eDeviceArc) {
       print_dbg("\r\n setting ring_enc handler");
       monome_ring_enc_handler = op_monome->handler;
@@ -80,17 +83,26 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
       monome_ring_enc_handler = op_monome->handler;
     }
     monomeOpFocus = op_monome;
-    op_monome->focus = 1;
+    *(op_monome->focus) = 1;
   } else {
     if(dev == eDeviceGrid) {
       monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+      monomeLedBuffer = dummyLedBuffer;
     } else if(dev == eDeviceArc) {
       monome_ring_enc_handler = (monome_handler_t)&dummyHandler;
     } else {
       ;;
     }
     monomeOpFocus = NULL;
-    op_monome->focus = 0;
+    *(op_monome->focus) = 0;
+  }
+}
+
+void net_monome_init(op_monome_t *op_monome, void *op) {
+  op_monome->op = op;
+  int i;
+  for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
+    op_monome->opLedBuffer[i] = 0;
   }
 }
 

@@ -67,6 +67,10 @@ extern u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize);
 // search for named .dsc file and load into network param desc memory
 extern u8 files_load_desc(const char* name);
 
+// load in a \n-separated list of patchmatrix labels from a .lab file
+// (if present on sdcard)
+extern u8 files_load_labels(const char* name);
+
 // check for extension
 extern bool check_ext(char* str, const char* ext );
 

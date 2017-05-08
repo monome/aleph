@@ -8,10 +8,6 @@
 #ifndef _TIMERS_H_
 #define _TIMERS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "types.h"
 
 //------------------------------
@@ -42,15 +38,27 @@ typedef volatile struct _softTimer {
 void init_timers( void );
 // add a timer to the processing list
 // return 1 if set, 0 if not
-u8 timer_add( softTimer_t* timer, u32 ticks, timer_callback_t callback, void* valler);
+u8 timer_add( softTimer_t* timer, u32 ticks, timer_callback_t callback, void* caller);
 // find remove a timer from the processing list
 // return 1 if removed, 0 if not found
 u8 timer_remove( softTimer_t* timer );
 // process the timer list; call this on each tick.
 void process_timers( void );
 
-#ifdef __cplusplus
-}
-#endif
+// clear the list
+extern void timers_clear(void) ;
+void start_timers (void);
+void pause_timers (void);
+
+void timer_set(softTimer_t* timer, u32 ticks);
+void timer_reset(softTimer_t* timer);
+void timer_reset_set(softTimer_t* timer, u32 ticks);
+void timer_manual(softTimer_t* timer);
+
+u32 time_now(void);
+void time_clear(void);
+
+// clear the list
+extern void timers_clear(void) ;
 
 #endif // header guard

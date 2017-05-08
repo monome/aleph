@@ -52,10 +52,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamWave1:
-    osc_set_shape( &(voice[1].osc),  param_unit_to_fr16(v) );
+    voice[1].osc.shapeSlew.x = param_unit_to_fr16(v);
     break;
   case eParamWave0:
-    osc_set_shape( &(voice[0].osc),  param_unit_to_fr16(v) );
+    voice[0].osc.shapeSlew.x = param_unit_to_fr16(v);
     break;
 
   case eParamPm10:
@@ -126,10 +126,10 @@ void module_set_param(u32 idx, ParamValue v) {
   /*   break; */
 
   case eParam_mode0: 
-    filter_svf_set_mode(  &(voice[0].svf), v >> 16 );
+    svf_mode[0] = v >> 16 ;
     break;
   case eParam_mode1:
-    filter_svf_set_mode(  &(voice[1].svf), v >> 16 );
+    svf_mode[1] = v >> 16 ;
     break;
 
 

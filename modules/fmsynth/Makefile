@@ -17,6 +17,7 @@ module_obj = fmsynth.o \
 	$(audio)/osc_polyblep.o \
 	$(audio)/fm_voice.o \
 	$(bfin)/libfixmath/fix16.o \
+	$(bfin)/libfixmath/fix16_fract.o
 
 
 all: $(prefix)$(module_name).ldr
@@ -72,6 +73,7 @@ sim_sourcefiles = fmsynth.c \
 	$(audio)/osc_polyblep.c \
 	$(audio)/fm_voice.c \
 	$(bfin)/libfixmath/fix16.c \
+	$(bfin)/libfixmath/fix16_fract.c \
 	params.c \
 	../../utils/bfin_sim/main.c \
 	../../utils/bfin_sim/src/cv.c \

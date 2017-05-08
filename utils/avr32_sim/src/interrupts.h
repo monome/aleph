@@ -5,10 +5,6 @@
 extern "C" {
 #endif
 
-// global count of uptime, and overflow flag.
-volatile u64 tcTicks;
-volatile u8 tcOverflow;
-
 extern void register_interrupts(void);
 
 #ifdef __cplusplus

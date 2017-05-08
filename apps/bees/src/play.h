@@ -24,6 +24,8 @@
 extern void play_init(void); 
 // process input node
 extern void play_input(u16 idx);
+// process output node
+extern void play_output(op_t* op, u16 opOutIdx, io_t bang_value);
 // enable rendering (play modal page was selected) 
 extern void play_enable_render(void);
 

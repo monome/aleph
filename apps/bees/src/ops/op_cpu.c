@@ -56,8 +56,8 @@ static void op_cpu_in_trig(op_cpu_t* op, const io_t v) {
   io_t controlCycles;
   audioCycles = (io_t)bfin_get_audio_cpu();
   controlCycles = (io_t)bfin_get_control_cpu();
-  net_activate(op->outs[0], audioCycles, op);
-  net_activate(op->outs[1], controlCycles, op);
+  net_activate(op, 0, audioCycles);
+  net_activate(op, 1, controlCycles);
 }
 
 

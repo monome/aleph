@@ -46,8 +46,6 @@ typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
 // class structure
 typedef struct _osc {
-  // output valuec
-  fract32 val;
   // wavetable data (pointer to table of tables)
   wavtab_t tab;
   // frequency in hz
@@ -55,22 +53,12 @@ typedef struct _osc {
   // tuning ratio
   fix16 ratio;
 
-  // base phase, normalized fract32 in [0, 1)
+  // base phase, normalized fract32 in [-1, 1)
   fract32 phase;
   // modulated phase
   fract32 phaseMod;
 
   // fixed-point index increment
-  fix16 inc;
-  // bandlimiting coefficient [0-1]
-  //  fract16 bandLim;
-  // phase modulation amount [0-1)
-  fract16 pmAmt;
-  // shape modulation amount [0-1)
-  fract16 wmAmt;
-
-  // normalized waveshape
-  fract16 shape;
   // modulated waveshape
   fract16 shapeMod;
 
@@ -117,5 +105,5 @@ extern void osc_wm_in(osc* osc, fract32 wm);
 
 // compute next value
 extern fract32 osc_next( osc* osc);
-
+extern u8 svf_mode[2];
 #endif

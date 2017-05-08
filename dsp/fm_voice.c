@@ -1,6 +1,7 @@
 #include "fm_voice.h"
 #include "fract_math.h"
 #include "fix.h"
+#include "libfixmath/fix16_fract.h"
 
 void fm_voice_init (fm_voice *v, u8 nOps) {
   v->nOps = nOps;
@@ -36,9 +37,9 @@ void fm_voice_release (fm_voice *v) {
 void fm_voice_next (fm_voice *v) {
   int i;
   fract32 nextOpOutputs[FM_OPS_MAX];
-  fract32 baseFreq = fix16_mul(v->noteHz, v->noteTune);
+  fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
   for(i=0; i < v->nOps; i++) {
-    fract32 opMod = fix16_mul(baseFreq, v->opTune[i]);
+    fract32 opMod = fix16_mul_fract(baseFreq, v->opTune[i]);
     opMod = add_fr1x32(opMod,
     		       mult_fr1x32x32(v->opOutputs[v->opMod1Source[i]],
     				      v->opMod1Gain[i]));
