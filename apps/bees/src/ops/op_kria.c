@@ -7,6 +7,15 @@
 #include "op_kria.h"
 #include "timers.h"
 
+
+// this op hogs a lot of space in program memory. print_dbg doesn't
+// fit in a build with op_kria
+#ifndef BEEKEEP
+#if RELEASEBUILD==1
+#else
+#define DISABLE_KRIA
+#endif
+#endif
 //-------------------------------------------------
 //----- static variables
 
@@ -274,6 +283,8 @@ void op_kria_deinit(void* op) {
 
 //--- network input functions
 static void op_kria_in_focus(op_kria_t* op, const io_t v) {
+  // this monster op uses up a *lot* of program memory...
+#ifndef DISABLE_KRIA
   if((v) > 0) {
     op->focus = OP_ONE;
   } else {
@@ -281,12 +292,14 @@ static void op_kria_in_focus(op_kria_t* op, const io_t v) {
   }
 
   net_monome_set_focus( &(op->monome), op->focus > 0);
+#endif
 }
 
 
 // t = track
 // param = mode_idx (enum modes)
 bool kria_next_step(op_kria_t *kria, uint8_t t, uint8_t param) {
+#ifndef DISABLE_KRIA
   pos_mul[t][param]++; // pos_mul is current sub-clock position?
 
   if(pos_mul[t][param] >= kria->k.kp[t][p].tmul[param]) { // tmul is mode's clock divisor
@@ -301,11 +314,14 @@ bool kria_next_step(op_kria_t *kria, uint8_t t, uint8_t param) {
     return 1;
   }
   else
+#endif
     return 0;
 }
 
 // t = track
 static void op_kria_track_tick (op_kria_t *kria, u8 t) {
+#ifndef DISABLE_KRIA
+
   if(p_next != p) {
     p = p_next;
     phase_reset0(kria);
@@ -349,17 +365,23 @@ static void op_kria_track_tick (op_kria_t *kria, u8 t) {
       tr[t] = 0;
     }
   }
+#endif
 }
 
 static void op_kria_in_octave(op_kria_t* op, const io_t v) {
+#ifndef DISABLE_KRIA
   op->octave = v;
+#endif
 }
 
 static void op_kria_in_tuning(op_kria_t* op, const io_t v) {
+#ifndef DISABLE_KRIA
   op->tuning = v;
+#endif
 }
 
 static void op_kria_in_clock(op_kria_t* op, const io_t v) {
+#ifndef DISABLE_KRIA
   op->clk = 0;
   op_kria_track_tick(op, 0);
   op_kria_track_tick(op, 1);
@@ -381,19 +403,23 @@ static void op_kria_in_clock(op_kria_t* op, const io_t v) {
 
   // FIXME not optimal - but for now total redraw on every clock
   dirty = 1;
+#endif
 }
 
 
 // poll event handler
 static void op_kria_poll_handler(void* op) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op;
   if(dirty) {
     kria_refresh(&kria->monome);
   }
   dirty = 0;
+#endif
 }
 
 static void handle_bottom_row_key(op_kria_t *kria, u8 x, u8 z) {
+#ifndef DISABLE_KRIA
   if(z) {
     if(x == 3) {
       mode = mTr;
@@ -448,9 +474,11 @@ static void handle_bottom_row_key(op_kria_t *kria, u8 x, u8 z) {
       key_alt = 1;
     }
   }
+#endif
 }
 
 static void mode_mTr_handle_key(op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   if(mod_mode == modNone) {
     if(z) {
       if(y==0)
@@ -516,9 +544,11 @@ static void mode_mTr_handle_key(op_kria_t *kria, u8 x, u8 y, u8 z) {
       }
     }
   }
+#endif
 }
 
 static void mode_mDur_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   if(z) {
     if(mod_mode != modTime) {
       if(y==0)
@@ -545,9 +575,11 @@ static void mode_mDur_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     }
   }
   else if(mod_mode == modLoop) loop_count--;
+#endif
 }
 
 static void mode_mNote_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   if(z) {
     if(mod_mode != modTime) {
       if(mod_mode == modNone)
@@ -570,9 +602,11 @@ static void mode_mNote_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     }
   }
   else if(mod_mode == modLoop) loop_count--;
+#endif
 }
 
 static void mode_mScale_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   if(z) {
     if(mod_mode != modTime) {
       if(mod_mode == modNone)
@@ -603,8 +637,10 @@ static void mode_mScale_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     monomeFrameDirty++;
   }
   else if(mod_mode == modLoop) loop_count--;
+#endif
 }
 static void mode_mTrans_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   if(z) {
     if(mod_mode != modTime) {
       if(y == 0) {
@@ -631,9 +667,11 @@ static void mode_mTrans_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     }
   }
   else if(mod_mode == modLoop) loop_count--;
+#endif
 }
 
 static void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   u8 i1;
   if(z) {
     if(x==0) {
@@ -685,9 +723,11 @@ static void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     }
   }
   else if(mod_mode == modLoop) loop_count--;
+#endif
 }
 
 static void mode_mPattern_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
+#ifndef DISABLE_KRIA
   u8 i1;
   if(z && y==0) {
     if(key_alt) {
@@ -720,10 +760,12 @@ static void mode_mPattern_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
       p_next = x;
     }
   }
+#endif
 }
 
 // process monome key input
 static void op_kria_handler(op_monome_t* op_monome, u32 data) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 x, y, z;
   monome_grid_key_parse_event_data(data, &x, &y, &z);
@@ -756,9 +798,11 @@ static void op_kria_handler(op_monome_t* op_monome, u32 data) {
   }
   // FIXME not optimal - but for now simply total redraw on every press
   dirty = 1;
+#endif
 }
 
 static void adjust_loop_start(op_kria_t *kria, u8 x, u8 m) {
+#ifndef DISABLE_KRIA
   s8 temp;
 
   temp = pos[ch][m] - kria->k.kp[ch][p].lstart[m] + x;
@@ -776,9 +820,11 @@ static void adjust_loop_start(op_kria_t *kria, u8 x, u8 m) {
     kria->k.kp[ch][p].lend[m] = temp;
     kria->k.kp[ch][p].lswap[m] = 0;
   }
+#endif
 }
 
 static void adjust_loop_end(op_kria_t *kria, u8 x, u8 m) {
+#ifndef DISABLE_KRIA
   s8 temp;
 
   kria->k.kp[ch][p].lend[m] = x;
@@ -801,18 +847,22 @@ static void adjust_loop_end(op_kria_t *kria, u8 x, u8 m) {
     if(temp < kria->k.kp[ch][p].lstart[m] || temp > kria->k.kp[ch][p].lend[m])
       pos[ch][m] = kria->k.kp[ch][p].lstart[m];
   }
+#endif
 }
 
 static void calc_scale(op_kria_t *kria, u8 c) {
+#ifndef DISABLE_KRIA
   u8 i1;
   cur_scale[c][0] = scales[kria->k.pscale[sc[c]]][0];
 
   for(i1=1;i1<7;i1++) {
     cur_scale[c][i1] = cur_scale[c][i1-1] + scales[kria->k.pscale[sc[c]]][i1];
   }
+#endif
 }
 
 static void bottom_strip_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   u8 i1;
   op_monome->opLedBuffer[112+(ch==0)] = L0;
   op_monome->opLedBuffer[112+ch] = L2;
@@ -830,9 +880,11 @@ static void bottom_strip_redraw (op_monome_t *op_monome) {
 
   if(key_alt) op_monome->opLedBuffer[127] = L2;
   else op_monome->opLedBuffer[127] = 0;
+#endif
 }
 
 static void mode_mTr_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1, i2;
   if(mod_mode != modTime) {
@@ -928,9 +980,11 @@ static void mode_mTr_redraw (op_monome_t *op_monome) {
     op_monome->opLedBuffer[pos[ch][tOct]+64] = L0;
     op_monome->opLedBuffer[kria->k.kp[ch][p].tmul[tOct] - 1 + 64] = L2;
   }
+#endif
 }
 
 static void mode_mDur_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1, i2;
   if(mod_mode != modTime) {
@@ -968,9 +1022,11 @@ static void mode_mDur_redraw (op_monome_t *op_monome) {
 
     op_monome->opLedBuffer[kria->k.kp[ch][p].tmul[tDur] - 1] = L2;
   }
+#endif
 }
 
 static void mode_mNote_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1;
   if(mod_mode != modTime) {
@@ -999,9 +1055,11 @@ static void mode_mNote_redraw (op_monome_t *op_monome) {
 
     op_monome->opLedBuffer[kria->k.kp[ch][p].tmul[tNote] - 1] = L2;
   }
+#endif
 }
 
 static void mode_mScale_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1, i2;
   if(mod_mode != modTime) {
@@ -1039,9 +1097,11 @@ static void mode_mScale_redraw (op_monome_t *op_monome) {
 
     op_monome->opLedBuffer[kria->k.kp[ch][p].tmul[tScale] - 1] = L2;
   }
+#endif
 }
 
 static void mode_mTrans_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1;
   if(mod_mode != modTime) {
@@ -1077,9 +1137,11 @@ static void mode_mTrans_redraw (op_monome_t *op_monome) {
 
     op_monome->opLedBuffer[kria->k.kp[ch][p].tmul[tTrans] - 1] = L2;
   }
+#endif
 }
 
 static void mode_mScaleEdit_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   op_kria_t *kria = (op_kria_t *) op_monome->op;
   u8 i1;
   op_monome->opLedBuffer[112] = L1;
@@ -1110,9 +1172,11 @@ static void mode_mScaleEdit_redraw (op_monome_t *op_monome) {
     i1 = kria->k.kp[1][p].note[pos[1][tNote]];
     op_monome->opLedBuffer[scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
   }
+#endif
 }
 
 static void mode_mPattern_redraw (op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   u8 i1;
   op_monome->opLedBuffer[112] = L1;
   op_monome->opLedBuffer[113] = L1;
@@ -1124,9 +1188,11 @@ static void mode_mPattern_redraw (op_monome_t *op_monome) {
   if(p_next != p)
     op_monome->opLedBuffer[p_next] = L1;
   op_monome->opLedBuffer[p] = L2;
+#endif
 }
 
 static void kria_refresh(op_monome_t *op_monome) {
+#ifndef DISABLE_KRIA
   bottom_strip_redraw(op_monome);
 
   if(mode == mTr) {
@@ -1153,6 +1219,7 @@ static void kria_refresh(op_monome_t *op_monome) {
 
   monome_set_quadrant_flag(0);
   monome_set_quadrant_flag(1);
+#endif
 }
 
 // pickle / unpickle
