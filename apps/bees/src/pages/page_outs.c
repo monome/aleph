@@ -569,23 +569,40 @@ void handle_key_3(s32 val) {
 }
 
 // encoder handlers
-void handle_enc_3(s32 val) {   
+void handle_enc_3(s32 val) {
   // edit selection / target
   if(*pageSelect != -1) {
-    if(val > 0) {
-      if(altMode) {
-	select_edit(7);
-      } else {
-	select_edit(1);
-      }
-    } else {
     if(altMode) {
-      select_edit(-7);
-    } else {
-      select_edit(-1);
+      if(tmpTarget >= net->numIns || tmpTarget < 0) {
+	// don't explode if tmpTarget is insane (including the gross
+	// param representation)
+	select_edit(val > 0 ? 7 : -7);
+	return;
+      }
+      else {
+	// alt: warp to next op input
+	s16 current_opIdx = net->ins[tmpTarget].opIdx;
+	s16 target_opIdx = current_opIdx + (val > 0 ? 1 : -1);
+	if(target_opIdx < 0 || target_opIdx >= net_num_ops()) {
+	  // if can't zoom to next op, zoom 7 ins up/down
+	  select_edit(val > 0 ? 7 : -7);
+	} else {
+	  s16 scroll_opIdx = current_opIdx;
+	  int offset = 0;
+	  int scroll_opInIdx = 0;
+	  while(scroll_opIdx == current_opIdx || scroll_opInIdx != 0) {
+	    offset += (val > 0 ? 1 : -1);
+	    scroll_opIdx = net->ins[tmpTarget+offset].opIdx;
+	    scroll_opInIdx = net->ins[tmpTarget+offset].opInIdx;
+	  }
+	  select_edit(offset);
+	}
+      }
+    }
+    else {
+      select_edit(val > 0 ? 1 : -1);
     }
   }
-  } 
 }
 
 void handle_enc_2(s32 val) {
