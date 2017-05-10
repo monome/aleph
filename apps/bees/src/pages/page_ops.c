@@ -274,12 +274,22 @@ void handle_key_3(s32 val) {
 void handle_enc_3(s32 val) {
   // select new operator type
   if(val > 0) {
-    newOpType++;
+    if(altMode) {
+      newOpType += 8;
+    }
+    else {
+      newOpType++;
+    }
     if (newOpType >= NUM_USER_OP_TYPES) {
       newOpType = 0;
     }
   } else {
-    newOpType--;
+    if(altMode) {
+      newOpType -= 8;
+    }
+    else {
+      newOpType--;
+    }
     if (newOpType >= NUM_USER_OP_TYPES) {
       newOpType = NUM_USER_OP_TYPES - 1;
     }
