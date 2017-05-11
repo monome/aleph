@@ -303,10 +303,6 @@ void module_init(void) {
     /*   pLinesData->audioBuffer[i][j] = 0x00000000;  */
     /* } */
   }
-  lines[0].tapRd[0].inc = 156;
-  lines[0].tapRd[1].inc = 156;
-  lines[1].tapRd[0].inc = 357;
-  lines[1].tapRd[1].inc = 357;
 
 
   // dac
@@ -412,6 +408,12 @@ void module_init(void) {
   param_setup(  eParam_cvVal1, PARAM_CV_VAL_DEFAULT );
   param_setup(  eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
   param_setup(  eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
+
+  param_setup(eParam_readSpeed0, 300 << 8);
+  param_setup(eParam_readSpeed1, 195 << 8);
+  param_setup(eParam_writeSpeed0, 230 << 8);
+  param_setup(eParam_writeSpeed1, 135 << 8);
+
 
 }
 

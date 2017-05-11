@@ -335,6 +335,19 @@ void module_set_param(u32 idx, ParamValue v) {
     //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
 
+  case eParam_readSpeed0 :
+    delayFade24_8_set_readSpeed(&(lines[0]), v >> 8);
+    break;
+  case eParam_writeSpeed0 :
+    delayFade24_8_set_writeSpeed(&(lines[0]), v >> 8);
+    break;
+  case eParam_readSpeed1 :
+    delayFade24_8_set_readSpeed(&(lines[1]), v >> 8);
+    break;
+  case eParam_writeSpeed1 :
+    delayFade24_8_set_writeSpeed(&(lines[1]), v >> 8);
+    break;
+
   default:
     break;
   }

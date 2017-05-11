@@ -2,7 +2,29 @@
 #include <string.h>
 #include "module.h"
 #include "param_common.h"
-#include "params.h" 
+#include "params.h"
+
+#define TIME_SUBSAMPLE eParamTypeFix
+#define TIME_SUBSAMPLE_MIN 0x00000000
+#define TIME_SUBSAMPLE_MAX FR32_MAX
+#define TIME_SUBSAMPLE_RADIX 8
+
+#define SPEED_TYPE TIME_SUBSAMPLE
+/* #define SPEED_MIN (- TIME_SUBSAMPLE_MAX) */
+#define SPEED_MIN 0
+#define SPEED_MAX TIME_SUBSAMPLE_MAX
+#define SPEED_RADIX TIME_SUBSAMPLE_RADIX
+
+void param_desc_aux (ParamDesc* desc,int param_idx,
+		     char* desc_string, ParamType type,
+		     s32 min, s32 max, u8 radix) {
+  strcpy(desc[param_idx].label,
+	 desc_string);
+  desc[param_idx].type = type;
+  desc[param_idx].min = min;
+  desc[param_idx].max = max;
+  desc[param_idx].radix = radix;
+}
 
 void fill_param_desc(ParamDesc* desc) {
   strcpy(desc[eParam_delay0].label, "delay0");
@@ -594,6 +616,18 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParamFade1].max = PARAM_FADE_MAX;
   desc[eParamFade1].radix = PARAM_FADE_RADIX;
 
+  param_desc_aux (desc, eParam_readSpeed0, "readSpeed0",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux (desc, eParam_readSpeed1, "readSpeed1",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux (desc, eParam_writeSpeed0, "writeSpeed0",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux (desc, eParam_writeSpeed1, "writeSpeed1",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
 }
 
 // EOF

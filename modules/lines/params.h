@@ -170,6 +170,8 @@ enum params {
   eParam_pre1,		       
   eParam_write1,	       
   eParam_delay1,	   
+  eParam_readSpeed1,
+  eParam_writeSpeed1,
 
   // line 0
   eParam_freq0,		
@@ -188,6 +190,8 @@ enum params {
   eParam_pre0,		       
   eParam_write0,	       
   eParam_delay0,	   
+  eParam_readSpeed0,
+  eParam_writeSpeed0,
 
   eParamNumParams
 };  
