@@ -8,7 +8,7 @@ delay line object interface
 #ifndef _ALEPH_LINES_DELAYLINE_H_
 #define _ALEPH_LINES_DELAYLINE_H_
 
-#include "buffer.h"
+#include "buffer16.h"
 #include "fade.h"
 #include "types.h"
 
@@ -16,13 +16,13 @@ delay line object interface
 // double-tapped delay line
 typedef struct _delayFadeN {
   //-- audio buffer class
-  audioBuffer buffer;
+  audioBuffer16 buffer;
   //-- read and write taps (non-interpolated)
-  bufferTapN tapRd[2];
-  bufferTapN tapWr[2];
+  buffer16TapN tapRd[2];
+  buffer16TapN tapWr[2];
   // level of existing data to mix with new data
   // negative == 1
-  fract32 preLevel;
+  fract16 preLevel;
   // flag to synchronize read tap with write tap
   u8 sync;
   // flag to toggle writing of new data
@@ -31,8 +31,8 @@ typedef struct _delayFadeN {
   u8 runRd;
   u8 runWr;
   // crossfade parameters [0-1]
-  fract32 fadeRd;
-  fract32 fadeWr;
+  fract16 fadeRd;
+  fract16 fadeWr;
   
   /* // interpolaters */
   /* filter_1p_lo lpRdPan; */
@@ -44,7 +44,7 @@ typedef struct _delayFadeN {
 } delayFadeN;
 
 // initialize with pointer to audio buffer data
-extern void delayFadeN_init(delayFadeN* dl, volatile fract32* bufData, u32 frames);
+extern void delayFadeN_init(delayFadeN* dl, volatile fract16* bufData, u32 frames);
 // get next value given input
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in);
 // set loop endpoint in seconds / samples
