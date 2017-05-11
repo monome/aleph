@@ -9,7 +9,7 @@ static u8 check_fade_rd(u8 id) {
     // not fading right now, so pick different target and start crossfade
     newTarget =  oldTarget ^ 1;
     // copy all tap parameters to target
-    buffer_tapN_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
+    buffer16_tapN_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
     // start the fade
     filter_ramp_tog_in(&(lpFadeRd[id]), newTarget);
     fadeTargetRd[id] = newTarget;

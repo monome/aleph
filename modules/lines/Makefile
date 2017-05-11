@@ -8,7 +8,7 @@ version = $(maj).$(min).$(rev)
 ldr_name = $(module_name)-$(version).ldr
 
 module_obj = lines.o \
-	$(audio)/buffer.o \
+	$(audio)/buffer16.o \
 	$(audio)/conversion.o \
 	$(audio)/delayFadeN.o \
 	$(audio)/filter_1p.o \
@@ -66,7 +66,7 @@ deploy: $(module_name).ldr
 
 sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	lines.c \
-	$(audio)/buffer.c \
+	$(audio)/buffer16.c \
 	$(audio)/conversion.c \
 	$(audio)/delayFadeN.c \
 	$(audio)/filter_1p.c \

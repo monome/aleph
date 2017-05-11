@@ -54,7 +54,7 @@ typedef struct _linesData {
   ModuleData super;
   //  ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract16 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } linesData;
 
 //-------------------------
@@ -280,7 +280,7 @@ void module_init(void) {
     /* } */
 
     // need to zero everything to avoid horrible noise at boot...
-    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract32));
+    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract16));
     // however, it is causing crashes or hangs here, for some damn reason.
 
     // at least zero the end of the buffer
@@ -348,6 +348,16 @@ void module_init(void) {
   param_setup( 	eParam_adc3_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_adc3_dac3,		PARAM_AMP_12 );
 
+  param_setup(  eParam_adc0_del0, PARAM_AMP_6);
+  param_setup(  eParam_adc1_del0, PARAM_AMP_6);
+  param_setup(  eParam_adc2_del0, PARAM_AMP_6);
+  param_setup(  eParam_adc3_del0, PARAM_AMP_6);
+
+  param_setup(  eParam_adc0_del1, PARAM_AMP_6);
+  param_setup(  eParam_adc1_del1, PARAM_AMP_6);
+  param_setup(  eParam_adc2_del1, PARAM_AMP_6);
+  param_setup(  eParam_adc3_del1, PARAM_AMP_6);
+
 
   param_setup(  eParam_freq1,	PARAM_CUT_DEFAULT);
   param_setup(  eParam_rq1,	PARAM_RQ_DEFAULT);
@@ -413,7 +423,8 @@ void module_process_frame(void) {
     lines[i].fadeRd = filter_ramp_tog_next(&(lpFadeRd[i]));
 
     // process delay line
-    tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
+    tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);
+
     // process filters
     // check integrators for filter params
 

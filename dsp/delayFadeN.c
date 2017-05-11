@@ -192,11 +192,11 @@ extern void delayFadeN_set_run_write(delayFadeN* dl, u8 val) {
 // set read-head rate multiplier
 void delayFadeN_set_mul(delayFadeN* dl, u32 val, u8 id) {
   // different terms, dumb...
-  buffer_tapN_set_inc( &(dl->tapRd[id]), val );
+  buffer16_tapN_set_inc( &(dl->tapRd[id]), val );
 
 }
 
 // set read-head rate divider
 void delayFadeN_set_div(delayFadeN* dl, u32 val, u8 id) {
-  buffer_tapN_set_div( &(dl->tapRd[id]), val );
+  buffer16_tapN_set_div( &(dl->tapRd[id]), val );
 }
