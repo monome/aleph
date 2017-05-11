@@ -303,6 +303,11 @@ void module_init(void) {
     /*   pLinesData->audioBuffer[i][j] = 0x00000000;  */
     /* } */
   }
+  lines[0].tapRd[0].inc = 156;
+  lines[0].tapRd[1].inc = 156;
+  lines[1].tapRd[0].inc = 357;
+  lines[1].tapRd[1].inc = 357;
+
 
   // dac
   filter_1p_lo_init( &(cvSlew[0]), 0xf );
