@@ -9,7 +9,7 @@ static u8 check_fade_rd(u8 id) {
     // not fading right now, so pick different target and start crossfade
     newTarget =  oldTarget ^ 1;
     // copy all tap parameters to target
-    buffer16_tapN_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
+    buffer16Tap24_8_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
     // start the fade
     filter_ramp_tog_in(&(lpFadeRd[id]), newTarget);
     fadeTargetRd[id] = newTarget;
@@ -35,101 +35,74 @@ void module_set_param(u32 idx, ParamValue v) {
     // delay line params
   case eParam_delay0 :
     if( check_fade_rd(0) ) {
-      delayFadeN_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
+      delayFade24_8_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
     }
     break;
   case eParam_delay1 :
     if(check_fade_rd(1)) {
-      delayFadeN_set_delay_sec(&(lines[1]), v,  fadeTargetRd[1]);
+      delayFade24_8_set_delay_sec(&(lines[1]), v,  fadeTargetRd[1]);
     }
     break;
   case eParam_loop0 :
-    delayFadeN_set_loop_sec(&(lines[0]), v, 0);
-    delayFadeN_set_loop_sec(&(lines[0]), v, 1);
+    delayFade24_8_set_loop_sec(&(lines[0]), v, 0);
+    delayFade24_8_set_loop_sec(&(lines[0]), v, 1);
     break;
   case eParam_loop1 :
-    delayFadeN_set_loop_sec(&(lines[1]), v , 0);
-    delayFadeN_set_loop_sec(&(lines[1]), v , 1);
+    delayFade24_8_set_loop_sec(&(lines[1]), v , 0);
+    delayFade24_8_set_loop_sec(&(lines[1]), v , 1);
     break;
   case eParam_pos_write0 :
     // check_fade_wr(0);
-    delayFadeN_set_pos_write_sec(&(lines[0]), v,  fadeTargetWr[0]);
+    delayFade24_8_set_pos_write_sec(&(lines[0]), v,  fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
     // check_fade_wr(1);
-    delayFadeN_set_pos_write_sec(&(lines[1]), v,  fadeTargetWr[1] );
+    delayFade24_8_set_pos_write_sec(&(lines[1]), v,  fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
     if (check_fade_rd(0) ) {
-      delayFadeN_set_pos_read_sec(&(lines[0]), v,  fadeTargetRd[0]);
+      delayFade24_8_set_pos_read_sec(&(lines[0]), v,  fadeTargetRd[0]);
     }
     break;
   case eParam_pos_read1 :
     if( check_fade_rd(1) ) {
-      delayFadeN_set_pos_read_sec(&(lines[1]), v,  fadeTargetRd[1]);
+      delayFade24_8_set_pos_read_sec(&(lines[1]), v,  fadeTargetRd[1]);
     }
     break;
   case eParam_run_write0 :
-    delayFadeN_set_run_write(&(lines[0]), v);
+    delayFade24_8_set_run_write(&(lines[0]), v);
     break;
   case eParam_run_write1 :
-    delayFadeN_set_run_write(&(lines[1]), v);
+    delayFade24_8_set_run_write(&(lines[1]), v);
     break;
   case eParam_run_read0 :
-    delayFadeN_set_run_read(&(lines[0]), v);
+    delayFade24_8_set_run_read(&(lines[0]), v);
     break;
   case eParam_run_read1 :
-    delayFadeN_set_run_read(&(lines[1]), v);
-    break;
-  case eParam_rMul0 :
-    //    if( 
-    check_fade_rd(0);
-    delayFadeN_set_mul(&(lines[0]), v >> 16,  fadeTargetRd[0]);
-    //    }
-    break;
-  case eParam_rDiv0 :
-    //    if (
-    check_fade_rd(0) ;
-    //	) {
-    delayFadeN_set_div(&(lines[0]), v >> 16,  fadeTargetRd[0]);
-    //    }
-    break;
-  case eParam_rMul1 :
-    //    if (
-    check_fade_rd(1) ;
-    //) {
-    delayFadeN_set_mul(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
-    //    }
-    break;
-  case eParam_rDiv1 :
-    //    if (
-    check_fade_rd(1) ;
-	  //) {
-    delayFadeN_set_div(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
-	//    }
+    delayFade24_8_set_run_read(&(lines[1]), v);
     break;
   case eParam_write0 :
     /// FIXME: need write level...
-    delayFadeN_set_write(&(lines[0]), v > 0);
+    delayFade24_8_set_write(&(lines[0]), v > 0);
     break;
   case eParam_write1 :
     /// FIXME: need write level...gs
-    delayFadeN_set_write(&(lines[1]), v > 0);
+    delayFade24_8_set_write(&(lines[1]), v > 0);
     break;
   case eParam_pre0 :
     if(v == FR32_MAX) {
       // negative == full
-      delayFadeN_set_pre(&(lines[0]), -1);
+      delayFade24_8_set_pre(&(lines[0]), -1);
     } else {
-      delayFadeN_set_pre(&(lines[0]), trunc_fr1x32(v));
+      delayFade24_8_set_pre(&(lines[0]), trunc_fr1x32(v));
     }
     break;
   case eParam_pre1 :
     if(v == FR32_MAX) {
       // negative == full
-      delayFadeN_set_pre(&(lines[1]), -1);
+      delayFade24_8_set_pre(&(lines[1]), -1);
     } else {
-      delayFadeN_set_pre(&(lines[1]), trunc_fr1x32(v));
+      delayFade24_8_set_pre(&(lines[1]), trunc_fr1x32(v));
     }
     break;
     // filter params

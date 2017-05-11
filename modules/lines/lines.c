@@ -27,7 +27,7 @@
 #include "filter_1p.h"
 #include "filter_ramp.h"
 
-#include "delayFadeN.h"
+#include "delayFade24_8.h"
 #include "module.h"
 ////test
 #include "noise.h"
@@ -69,7 +69,7 @@ ModuleData* gModuleData;
 linesData* pLinesData;
 
 // delay lines (each has buffer descriptor and read/write taps)
-delayFadeN lines[NLINES];
+delayFade24_8 lines[NLINES];
 
 // state variable filters
 filter_svf svf[NLINES];
@@ -280,7 +280,7 @@ void module_init(void) {
   gModuleData->numParams = eParamNumParams;
 
   for(i=0; i<NLINES; i++) {
-    delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
+    delayFade24_8_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
 
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
@@ -315,9 +315,9 @@ void module_init(void) {
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
 
-  param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
-  param_setup( 	eParam_rMul0,		0x10000 );
-  param_setup( 	eParam_rDiv0,		0x10000 );
+  param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX / 60 );
+  /* param_setup( 	eParam_rMul0,		0x10000 ); */
+  /* param_setup( 	eParam_rDiv0,		0x10000 ); */
   param_setup( 	eParam_write0,		FRACT32_MAX );
   param_setup( 	eParam_pre0,		0 );
   param_setup( 	eParam_pos_write0,		0 );
@@ -328,9 +328,9 @@ void module_init(void) {
   param_setup( 	eParam_run_read0, 1 );
   param_setup( 	eParam_run_write0, 1 );
 
-  param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX );
-  param_setup( 	eParam_rMul1,		0x10000 );
-  param_setup( 	eParam_rDiv1,		0x10000 );
+  param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX / 60 );
+  /* param_setup( 	eParam_rMul1,		0x10000 ); */
+  /* param_setup( 	eParam_rDiv1,		0x10000 ); */
   param_setup( 	eParam_write1,		FRACT32_MAX );
   param_setup( 	eParam_pre1,		0 );
   param_setup( 	eParam_pos_write1,		0 );
@@ -438,7 +438,7 @@ void module_process_frame(void) {
     lines[i].fadeRd = trunc_fr1x32(filter_ramp_tog_next(&(lpFadeRd[i])));
 
     // process delay line
-    tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);
+    tmpDel = delayFade24_8_next( &(lines[i]), in_del[i]);
 
     // process filters
     // check integrators for filter params

@@ -10,7 +10,7 @@ ldr_name = $(module_name)-$(version).ldr
 module_obj = lines.o \
 	$(audio)/buffer16.o \
 	$(audio)/conversion.o \
-	$(audio)/delayFadeN.o \
+	$(audio)/delayFade24_8.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \
@@ -68,7 +68,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	lines.c \
 	$(audio)/buffer16.c \
 	$(audio)/conversion.c \
-	$(audio)/delayFadeN.c \
+	$(audio)/delayFade24_8.c \
 	$(audio)/filter_1p.c \
 	$(audio)/filter_ramp.c \
 	$(audio)/filter_svf.c \

@@ -148,6 +148,10 @@ void buffer16Tap24_8_next(buffer16Tap24_8* tap){
   tap->idx = (tap->inc + tap->idx + tap->loop) % tap->loop;
 }
 
+void buffer16Tap24_8_set_inc(buffer16Tap24_8 *tap, u32 inc) {
+  tap->inc = inc;
+}
+
 fract16 buffer16Tap24_8_read(buffer16Tap24_8* tap){
   u32 samp1_index = tap->idx;
   u32 samp2_index = (tap->idx + 256 + tap->loop) % tap->loop;
@@ -189,6 +193,18 @@ void buffer16Tap24_8_syncN(buffer16Tap24_8* tap, buffer16TapN* target, s32 offse
     tap->idx = ( (256 * target->idx - offset_subsamples ) + tap->loop ) % tap->loop;
 }
 
+void buffer16Tap24_8_sync(buffer16Tap24_8* tap, buffer16Tap24_8* target, s32 offset_subsamples) {
+    tap->idx = ( (target->idx - offset_subsamples ) + tap->loop ) % tap->loop;
+}
+
 void buffer16Tap24_8_set_pos(buffer16Tap24_8* tap, s32 idx) {
     tap->idx = idx;
+}
+
+void buffer16Tap24_8_copy( buffer16Tap24_8* src, buffer16Tap24_8* dst ) {
+  dst->idx_last = src->idx_last;
+  dst->samp_last = src->samp_last;
+  dst->idx = src->idx;
+  dst->inc = src->inc;
+  dst->loop = src->loop;
 }

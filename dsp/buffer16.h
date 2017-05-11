@@ -187,6 +187,9 @@ extern void buffer16Tap24_8_init(buffer16Tap24_8* tap, audioBuffer16* buf);
 // increment the index in a tap
 extern void buffer16Tap24_8_next(buffer16Tap24_8* tap);
 
+// set speed
+extern void buffer16Tap24_8_set_inc(buffer16Tap24_8 *tap, u32 inc);
+
 // interpolating write
 extern void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 val);
 
@@ -207,6 +210,7 @@ extern void buffer16Tap24_8_set_loop(buffer16Tap24_8* tap, s32 loop);
 
 // synchronize 24.8 interp tap with an non-interpolated tap at a given offset in subsamples.
 extern void buffer16Tap24_8_syncN(buffer16Tap24_8* tap, buffer16TapN* target, s32 offset);
+extern void buffer16Tap24_8_sync(buffer16Tap24_8* tap, buffer16Tap24_8* target, s32 offset_subsamples);
 
 // set 24.8 interp tap position directly in subsamples
 extern void buffer16Tap24_8_set_pos(buffer16Tap24_8* tap, s32 idx);
@@ -221,4 +225,5 @@ extern void buffer16_xfadeN_set_pos(buffer16XfadeN* fade, u32 samps);
 // get next value
 extern void buffer16_xfadeN_next(buffer16XfadeN* fade);
 
+extern void buffer16Tap24_8_copy( buffer16Tap24_8* src, buffer16Tap24_8* dst );
 #endif // h guard

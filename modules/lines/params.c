@@ -17,20 +17,6 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_loop0].max = PARAM_SECONDS_MAX; 
   desc[eParam_loop0].radix = PARAM_SECONDS_RADIX;
 
-  // rate multiplier
-  strcpy(desc[eParam_rMul0].label, "rMul0");
-  desc[eParam_rMul0].type = eParamTypeFix; 
-  desc[eParam_rMul0].min = 0x00010000; 
-  desc[eParam_rMul0].max = 0x00080000; 
-  desc[eParam_rMul0].radix = 32;
-
-  // rate divider 
-  strcpy(desc[eParam_rDiv0].label, "rDiv0");
-  desc[eParam_rDiv0].type = eParamTypeFix; 
-  desc[eParam_rDiv0].min = 0x00010000; 
-  desc[eParam_rDiv0].max = 0x00080000; 
-  desc[eParam_rDiv0].radix = 32;
-
   strcpy(desc[eParam_write0].label, "write0");
   desc[eParam_write0].type = eParamTypeAmp; 
   desc[eParam_write0].min = 0x00000000; 
@@ -78,20 +64,6 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_loop1].min = 0x00000000; 
   desc[eParam_loop1].max = PARAM_SECONDS_MAX; 
   desc[eParam_loop1].radix = PARAM_SECONDS_RADIX;
-
-  /// FIXME
-  //// ????
-  strcpy(desc[eParam_rMul1].label, "rMul1");
-  desc[eParam_rMul1].type = eParamTypeFix; 
-  desc[eParam_rMul1].min = 0x00010000; 
-  desc[eParam_rMul1].max = 0x00080000; 
-  desc[eParam_rMul1].radix = 32; 
-
-  strcpy(desc[eParam_rDiv1].label, "rDiv1");
-  desc[eParam_rDiv1].type = eParamTypeFix; 
-  desc[eParam_rDiv1].min = 0x00010000; 
-  desc[eParam_rDiv1].max = 0x00080000; 
-  desc[eParam_rDiv1].radix = 32; 
 
   strcpy(desc[eParam_write1].label, "write1");
   desc[eParam_write1].type = eParamTypeAmp; 
