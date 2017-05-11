@@ -46,7 +46,7 @@ extern void delayFadeN_init(delayFadeN* dl, volatile fract16* data, u32 frames) 
   
 }
 
-extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
+extern fract16 delayFadeN_next(delayFadeN* dl, fract16 in) {
   fract16 readVal;
   fract16 pan[2] = { 0, 0 };
   fract16 valWr[2] = { 0, 0 };
@@ -69,7 +69,7 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 
   /// FIXME: use single write head for now.
   /// need to make them toggle run/stop depending on fade level.
-  valWr[0] = in >> 16;
+  valWr[0] = in;
   
 
   // figure out how to write/add/mix
@@ -109,7 +109,7 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
     //    buffer_tapN_next( &(dl->tapWr[1]) );
   }
   
-  return readVal << 16;
+  return readVal;
 }
 
 // set loop endpoint in seconds
@@ -145,7 +145,7 @@ extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp, u8 id) {
 }
 
 // set erase level
-extern void delayFadeN_set_pre(delayFadeN* dl, fract32 pre) {
+extern void delayFadeN_set_pre(delayFadeN* dl, fract16 pre) {
   dl->preLevel = pre;
 }
 

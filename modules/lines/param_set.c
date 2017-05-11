@@ -121,7 +121,7 @@ void module_set_param(u32 idx, ParamValue v) {
       // negative == full
       delayFadeN_set_pre(&(lines[0]), -1);
     } else {
-      delayFadeN_set_pre(&(lines[0]), v);
+      delayFadeN_set_pre(&(lines[0]), trunc_fr1x32(v));
     }
     break;
   case eParam_pre1 :
@@ -129,7 +129,7 @@ void module_set_param(u32 idx, ParamValue v) {
       // negative == full
       delayFadeN_set_pre(&(lines[1]), -1);
     } else {
-      delayFadeN_set_pre(&(lines[1]), v);
+      delayFadeN_set_pre(&(lines[1]), trunc_fr1x32(v));
     }
     break;
     // filter params
@@ -180,131 +180,131 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // filter balance
   case eParam_fwet0 :
-    mix_fwet[0] = v;
+    mix_fwet[0] = trunc_fr1x32(v);
     break;
 
   case eParam_fwet1 :
-    mix_fwet[1] = v;
+    mix_fwet[1] = trunc_fr1x32(v);
     break;
 
   case eParam_fdry0 :
-    mix_fdry[0] = v;
+    mix_fdry[0] = trunc_fr1x32(v);
     break;
 
   case eParam_fdry1 :
-    mix_fdry[1] = v;
+    mix_fdry[1] = trunc_fr1x32(v);
     break;
 
     /// mix points
   case eParam_adc0_del0 :
-    mix_adc_del[0][0] = v;
+    mix_adc_del[0][0] = trunc_fr1x32(v);
     break;
   case eParam_adc0_del1 :
-    mix_adc_del[0][1] = v;
+    mix_adc_del[0][1] = trunc_fr1x32(v);
     break;
   case eParam_adc1_del0 :
-    mix_adc_del[1][0] = v;
+    mix_adc_del[1][0] = trunc_fr1x32(v);
     break;
   case eParam_adc1_del1 :
-    mix_adc_del[1][1] = v;
+    mix_adc_del[1][1] = trunc_fr1x32(v);
     break;
   case eParam_adc2_del0 :
-    mix_adc_del[2][0] = v;
+    mix_adc_del[2][0] = trunc_fr1x32(v);
     break;
   case eParam_adc2_del1 :
-    mix_adc_del[2][1] = v;
+    mix_adc_del[2][1] = trunc_fr1x32(v);
     break;
   case eParam_adc3_del0 :
-    mix_adc_del[3][0] = v;
+    mix_adc_del[3][0] = trunc_fr1x32(v);
     break;
   case eParam_adc3_del1 :
-    mix_adc_del[3][1] = v;
+    mix_adc_del[3][1] = trunc_fr1x32(v);
     break;
   case eParam_del0_del0 :
-    mix_del_del[0][0] = v;
+    mix_del_del[0][0] = trunc_fr1x32(v);
     break;
   case eParam_del0_del1 :
-    mix_del_del[0][1] = v;
+    mix_del_del[0][1] = trunc_fr1x32(v);
     break;
   case eParam_del1_del0 :
-    mix_del_del[1][0] = v;
+    mix_del_del[1][0] = trunc_fr1x32(v);
     break;
   case eParam_del1_del1 :
-    mix_del_del[1][1] = v;
+    mix_del_del[1][1] = trunc_fr1x32(v);
     break;
     // dry :
   case eParam_adc0_dac0 :
-    mix_adc_dac[0][0] = v;
+    mix_adc_dac[0][0] = trunc_fr1x32(v);
     break;
   case eParam_adc0_dac1 :
-    mix_adc_dac[0][1] = v;
+    mix_adc_dac[0][1] = trunc_fr1x32(v);
     break;
   case eParam_adc0_dac2 :
-    mix_adc_dac[0][2] = v;
+    mix_adc_dac[0][2] = trunc_fr1x32(v);
     break;
   case eParam_adc0_dac3 :
-    mix_adc_dac[0][3] = v;
+    mix_adc_dac[0][3] = trunc_fr1x32(v);
     break;
   case eParam_adc1_dac0 :
-    mix_adc_dac[1][0] = v;
+    mix_adc_dac[1][0] = trunc_fr1x32(v);
     break;
   case eParam_adc1_dac1 :
-    mix_adc_dac[1][1] = v;
+    mix_adc_dac[1][1] = trunc_fr1x32(v);
     break;
   case eParam_adc1_dac2 :
-    mix_adc_dac[1][2] = v;
+    mix_adc_dac[1][2] = trunc_fr1x32(v);
     break;
   case eParam_adc1_dac3 :
-    mix_adc_dac[1][3] = v;
+    mix_adc_dac[1][3] = trunc_fr1x32(v);
     break;
   case eParam_adc2_dac0 :
-    mix_adc_dac[2][0] = v;
+    mix_adc_dac[2][0] = trunc_fr1x32(v);
     break;
   case eParam_adc2_dac1 :
-    mix_adc_dac[2][1] = v;
+    mix_adc_dac[2][1] = trunc_fr1x32(v);
     break;
   case eParam_adc2_dac2 :
-    mix_adc_dac[2][2] = v;
+    mix_adc_dac[2][2] = trunc_fr1x32(v);
     break;
   case eParam_adc2_dac3 :
-    mix_adc_dac[2][3] = v;
+    mix_adc_dac[2][3] = trunc_fr1x32(v);
     break;
   case eParam_adc3_dac0 :
-    mix_adc_dac[3][0] = v;
+    mix_adc_dac[3][0] = trunc_fr1x32(v);
     break;
   case eParam_adc3_dac1 :
-    mix_adc_dac[3][1] = v;
+    mix_adc_dac[3][1] = trunc_fr1x32(v);
     break;
   case eParam_adc3_dac2 :
-    mix_adc_dac[3][2] = v;
+    mix_adc_dac[3][2] = trunc_fr1x32(v);
     break;
   case eParam_adc3_dac3 :
-    mix_adc_dac[3][3] = v;
+    mix_adc_dac[3][3] = trunc_fr1x32(v);
     break;
     // wet :
   case eParam_del0_dac0 :
-    mix_del_dac[0][0] = v;
+    mix_del_dac[0][0] = trunc_fr1x32(v);
     break;
   case eParam_del0_dac1 :
-    mix_del_dac[0][1] = v;
+    mix_del_dac[0][1] = trunc_fr1x32(v);
     break;
   case eParam_del0_dac2 :
-    mix_del_dac[0][2] = v;
+    mix_del_dac[0][2] = trunc_fr1x32(v);
     break;
   case eParam_del0_dac3 :
-    mix_del_dac[0][3] = v;
+    mix_del_dac[0][3] = trunc_fr1x32(v);
     break;
   case eParam_del1_dac0 :
-    mix_del_dac[1][0] = v;
+    mix_del_dac[1][0] = trunc_fr1x32(v);
     break;
   case eParam_del1_dac1 :
-    mix_del_dac[1][1] = v;
+    mix_del_dac[1][1] = trunc_fr1x32(v);
     break;
   case eParam_del1_dac2 :
-    mix_del_dac[1][2] = v;
+    mix_del_dac[1][2] = trunc_fr1x32(v);
     break;
   case eParam_del1_dac3 :
-    mix_del_dac[1][3] = v;
+    mix_del_dac[1][3] = trunc_fr1x32(v);
     break;
 
     // param integrators

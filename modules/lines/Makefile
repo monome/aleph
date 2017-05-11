@@ -99,3 +99,6 @@ sim:
 	touch $(sim_outfile)
 	rm ./$(sim_outfile)
 	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
+
+tags:
+	find . ../../dsp ../../common -name "*.[ch]" | etags -
