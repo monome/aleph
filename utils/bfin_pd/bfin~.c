@@ -100,6 +100,15 @@ void bfin_tilde_handle_message(t_bfin_tilde *x, t_symbol *s, int argc, t_atom *a
   if(s == gensym("param") && argc >= 2){
     /* printf("setting param: %d, %d\n", (int)atom_getfloat(&argv[0]), (int)atom_getfloat(&argv[1])); */
     int paramIdx = (int)atom_getfloat(&argv[0]);
+    if(paramIdx >= eParamNumParams) {
+      paramIdx = eParamNumParams-1;
+      post("param out of range");
+    }
+    if(paramIdx < 0) {
+      paramIdx = 0;
+      post("param out of range");
+    }
+
     io_t ioVal = (io_t)atom_getfloat(&argv[1]);
     ParamScaler tmp = {.desc = &(desc[paramIdx])};
     tmp.inMin = scaler_get_in(&tmp, desc[paramIdx].min);
@@ -120,7 +129,26 @@ void bfin_tilde_handle_message(t_bfin_tilde *x, t_symbol *s, int argc, t_atom *a
     post(mess);
   }
   if(s == gensym("describe")) {
-    for(i=0; i < eParamNumParams; i++) {
+    if (argc == 0) {
+      for(i=0; i < eParamNumParams; i++) {
+	ParamScaler tmp = {.desc = &(desc[i])};
+	tmp.inMin = scaler_get_in(&tmp, desc[i].min);
+	tmp.inMax = scaler_get_in(&tmp, desc[i].max);
+	char mess[256];
+	sprintf(mess, "param %d: %s  (%d -> %d)",
+		i, desc[i].label,
+		tmp.inMin, tmp.inMax);
+	post(mess);
+      }
+    }
+    else {
+      i = (io_t)atom_getfloat(&argv[0]);
+      if(i >= eParamNumParams) {
+	i = eParamNumParams - 1;
+      }
+      if(i < 0) {
+	i = 0;
+      }
       ParamScaler tmp = {.desc = &(desc[i])};
       tmp.inMin = scaler_get_in(&tmp, desc[i].min);
       tmp.inMax = scaler_get_in(&tmp, desc[i].max);
