@@ -1,0 +1,6 @@
+#N canvas 0 29 1918 1169 10;
+#X obj 286 261 bfin~ 0 0 0;
+#X obj 278 164 adc~ 1 2 3 4;
+#X obj 314 446 dac~ 1 2 3 4;
+#X msg 195 188 list;
+#X connect 3 0 0 0;
