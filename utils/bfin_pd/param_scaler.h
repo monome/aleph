@@ -38,7 +38,9 @@
 #include "scalers/scaler_short.h"
 #include "scalers/scaler_svf_fc.h"
 
+#ifndef NULL
 #define NULL 0
+#endif
 
 //----------------------
 //---- defines

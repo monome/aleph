@@ -10,8 +10,8 @@ static const u32 tabSize = 1024;
 // shift from io_t size to index
 static const u8 inRshift = 5;
 
-static const s32* tabVal;
-static const s32* tabRep;
+static const s32 tabVal[1024];
+static const s32 tabRep[1024];
 
 static u8 initFlag = 0;
 
@@ -55,8 +55,8 @@ void scaler_amp_init(void* scaler) {
     initFlag = 1;
 
     // assign
-    tabVal = scaler_get_nv_data(eParamTypeAmp);
-    tabRep = scaler_get_nv_rep(eParamTypeAmp);
+    /* tabVal = scaler_get_nv_data(eParamTypeAmp); */
+    /* tabRep = scaler_get_nv_rep(eParamTypeAmp); */
 
   }
 

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "m_pd.h"
 #include "module.h"
 #include "fract2float_conv.h"
@@ -118,9 +119,16 @@ void bfin_tilde_handle_message(t_bfin_tilde *x, t_symbol *s, int argc, t_atom *a
     strcat(mess, paramString);
     post(mess);
   }
-  if(s == gensym("list")) {
+  if(s == gensym("describe")) {
     for(i=0; i < eParamNumParams; i++) {
-      printf("param %d: %s\n", i, desc[i].label);
+      ParamScaler tmp = {.desc = &(desc[i])};
+      tmp.inMin = scaler_get_in(&tmp, desc[i].min);
+      tmp.inMax = scaler_get_in(&tmp, desc[i].max);
+      char mess[256];
+      sprintf(mess, "param %d: %s  (%d -> %d)",
+	      i, desc[i].label,
+	      tmp.inMin, tmp.inMax);
+      post(mess);
     }
   }
 }
