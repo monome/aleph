@@ -32,18 +32,6 @@ bees_scaler_src = op_math.c \
 	scalers/scaler_note.c \
 
 
-module_src = ../../modules/fmsynth/fmsynth.c \
-	../../modules/fmsynth/params.c \
-	../../dsp/filter_1p.c \
-	../../dsp/filter_svf.c \
-	../../dsp/ricks_tricks.c \
-	../../dsp/biquad.c \
-	../../dsp/env_adsr.c \
-	../../dsp/osc_polyblep.c \
-	../../dsp/fm_voice.c \
-
-module_inc = ../../modules/fmsynth
-
 inc += $(module_inc)
 
 
