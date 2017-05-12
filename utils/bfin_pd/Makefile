@@ -17,6 +17,21 @@ bfin_emu_src += \
 	../../utils/bfin_sim/fract_math.c \
 	../../utils/bfin_sim/src/fix16.c
 
+bees_scaler_src = op_math.c \
+	param_scaler.c \
+	fix.c \
+	scalers/scaler_amp.c \
+	scalers/scaler_integrator.c \
+	scalers/scaler_short.c \
+	scalers/scaler_bool.c \
+	scalers/scaler_integrator_short.c \
+	scalers/scaler_svf_fc.c \
+	scalers/scaler_fix.c \
+	scalers/scaler_label.c \
+	scalers/scaler_fract.c \
+	scalers/scaler_note.c \
+
+
 module_src = ../../modules/fmsynth/fmsynth.c \
 	../../modules/fmsynth/params.c \
 	../../dsp/filter_1p.c \
@@ -35,9 +50,10 @@ inc += $(module_inc)
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -D ARCH_LINUX=1
 
-common.sources = $(bfin_emu_src) $(module_src)
+common.sources = $(bfin_emu_src) $(module_src) $(bees_scaler_src)
 
 #datafiles = myclass1-help.pd myclass2-help.pd README.txt LICENSE.txt
+PDINCLUDEDIR=/usr/local/include/pd
 
 include Makefile.pdlibbuilder
 
