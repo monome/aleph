@@ -5,6 +5,7 @@
 #include "fix.h"
 #include "fract_math.h"
 #include "params.h"
+#include "param_scaler.h"
 
 static t_class *bfin_tilde_class;
 
@@ -97,7 +98,25 @@ void bfin_tilde_handle_message(t_bfin_tilde *x, t_symbol *s, int argc, t_atom *a
 
   if(s == gensym("param") && argc >= 2){
     /* printf("setting param: %d, %d\n", (int)atom_getfloat(&argv[0]), (int)atom_getfloat(&argv[1])); */
-    module_set_param((int)atom_getfloat(&argv[0]), (int)atom_getfloat(&argv[1]));
+    int paramIdx = (int)atom_getfloat(&argv[0]);
+    io_t ioVal = (io_t)atom_getfloat(&argv[1]);
+    ParamScaler tmp = {.desc = &(desc[paramIdx])};
+    tmp.inMin = scaler_get_in(&tmp, desc[paramIdx].min);
+    tmp.inMax = scaler_get_in(&tmp, desc[paramIdx].max);
+    if (ioVal > tmp.inMax) {
+      ioVal = tmp.inMax;
+    }
+    else if (ioVal < desc[paramIdx].min) {
+      ioVal = tmp.inMin;
+    }
+    s32 bfin_val = scaler_get_value(&tmp, ioVal);
+    module_set_param(paramIdx, bfin_val);
+    char paramString[256] = {0};
+    scaler_get_str(paramString, &tmp, ioVal);
+    char mess[256];
+    strcpy(mess, desc[paramIdx].label);
+    strcat(mess, paramString);
+    post(mess);
   }
   if(s == gensym("list")) {
     for(i=0; i < eParamNumParams; i++) {
