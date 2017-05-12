@@ -181,6 +181,58 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
   tap->samp_last = samp;
 }
 
+void buffer16Tap24_8_mix(buffer16Tap24_8* tap, fract16 samp, fract16 preLevel) {
+  u32 writeIdx = (tap->idx_last + 256) % tap->loop;
+  fract16 inter_sample_mult = FR16_MAX / tap->inc;
+  fract16 inter_sample;
+  fract16 newSamp;
+  if(tap->inc > 0) {
+    for (inter_sample = 0; inter_sample < tap->inc; inter_sample += 256) {
+      newSamp =
+	pan_lin_mix16(tap->samp_last, samp, inter_sample * inter_sample_mult);
+      tap->buf->data[writeIdx >> 8] = pan_lin_mix16(tap->buf->data[writeIdx >> 8],
+						    newSamp, preLevel);
+      writeIdx = (writeIdx+256) % tap->loop;
+    }
+  }
+  else {
+    for (inter_sample = 0; inter_sample > tap->inc; inter_sample -= 256) {
+      newSamp =
+	pan_lin_mix16(tap->samp_last, samp, inter_sample * inter_sample_mult);
+      tap->buf->data[writeIdx >> 8] = pan_lin_mix16(tap->buf->data[writeIdx >> 8],
+						    newSamp, preLevel);
+      writeIdx = (writeIdx-256) % tap->loop;
+    }
+  }
+  tap->samp_last = samp;
+}
+
+void buffer16Tap24_8_add(buffer16Tap24_8* tap, fract16 samp) {
+  u32 writeIdx = (tap->idx_last + 256) % tap->loop;
+  fract16 inter_sample_mult = FR16_MAX / tap->inc;
+  fract16 inter_sample;
+  fract16 newSamp;
+  if(tap->inc > 0) {
+    for (inter_sample = 0; inter_sample < tap->inc; inter_sample += 256) {
+      newSamp =
+	pan_lin_mix16(tap->samp_last, samp, inter_sample * inter_sample_mult);
+      tap->buf->data[writeIdx >> 8] = add_fr1x16(tap->buf->data[writeIdx >> 8],
+						 newSamp);
+      writeIdx = (writeIdx+256) % tap->loop;
+    }
+  }
+  else {
+    for (inter_sample = 0; inter_sample > tap->inc; inter_sample -= 256) {
+      newSamp =
+	pan_lin_mix16(tap->samp_last, samp, inter_sample * inter_sample_mult);
+      tap->buf->data[writeIdx >> 8] = add_fr1x16(tap->buf->data[writeIdx >> 8],
+						 newSamp);
+      writeIdx = (writeIdx-256) % tap->loop;
+    }
+  }
+  tap->samp_last = samp;
+}
+
 void buffer16Tap24_8_set_rate(buffer16Tap24_8* tap, s32 inc) {
     tap->inc = inc;
 }

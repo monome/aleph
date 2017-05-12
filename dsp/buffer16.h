@@ -192,7 +192,10 @@ extern void buffer16Tap24_8_set_inc(buffer16Tap24_8 *tap, u32 inc);
 
 // interpolating write
 extern void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 val);
-
+// interpolating write mixing old signal
+void buffer16Tap24_8_mix(buffer16Tap24_8* tap, fract16 samp, fract16 preLevel);
+// interpoilating write adding old signal
+void buffer16Tap24_8_add(buffer16Tap24_8* tap, fract16 samp);
 // interpolated read
 extern fract16 buffer16Tap24_8_read(buffer16Tap24_8* tap);
 

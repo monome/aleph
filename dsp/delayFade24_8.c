@@ -53,7 +53,13 @@ extern fract16 delayFade24_8_next(delayFade24_8* dl, fract16 in) {
 			   );
 
   if(dl->write) {
-    buffer16Tap24_8_write(&(dl->tapWr[0]), in);
+    if(dl->preLevel == 0) {
+      buffer16Tap24_8_write(&(dl->tapWr[0]), in);
+    } else if (dl->preLevel < 0) {
+      buffer16Tap24_8_add(&(dl->tapWr[0]), in);
+    } else {
+      buffer16Tap24_8_mix(&(dl->tapWr[0]), in, dl->preLevel);
+    }
   }
 
   //DEBUG fix read/write head speeds
