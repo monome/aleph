@@ -15,7 +15,9 @@ bfin_emu_src += \
 	../../utils/bfin_sim/fract2float_conv.c \
 	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract_math.c \
-	../../utils/bfin_sim/src/fix16.c
+	../../utils/bfin_sim/src/fix16.c \
+	../../utils/bfin_sim/src/libfixmath/fix32.c \
+	../../utils/bfin_sim/src/libfixmath/fix16_sqrt.c
 
 bees_scaler_src = op_math.c \
 	param_scaler.c \
@@ -47,3 +49,6 @@ include Makefile.pdlibbuilder
 
 dbg:
 	echo $(inc)
+	echo $(common.sources)
+test:
+	cp bfin~.pd_linux ~/pd-externals/; pd test.pd
