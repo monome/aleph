@@ -163,36 +163,27 @@ fract16 buffer16Tap24_8_read(buffer16Tap24_8* tap){
 }
 
 void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
-  u32 writeIdx = tap->idx_last >> 8;
+  u32 writePos = tap->idx_last >> 8;
+  writePos++;
+  writePos %= tap->loop;
   fract16 inter_sample;
   if(tap->inc >= 256) {
-    u32 writePos = tap->idx_last >> 8;
-    writePos++;
-    writePos %= tap->loop;
     for (inter_sample = 0;
 	 inter_sample < tap->inc;
 	 inter_sample += 256) {
 
-      /* double pan = writePos + inter_sample - tap->idx_last; */
-      /* pan /= ((double) tap->inc); */
-      /* double panned = (1.0 - pan) * tap->samp_last + pan * samp; */
-
-      fract16 pan = (writePos << 8) + inter_sample - tap->idx_last;
+      fract16 pan = (writePos << 8) - tap->idx_last;
       pan *= FR16_MAX / tap->inc;
       fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
-      tap->buf->data[(writePos + (inter_sample>> 8))%tap->loop] = panned;
+      writePos++;
+      writePos = writePos % tap->loop;
+      tap->buf->data[writePos] = panned;
     }
   }
   else if(tap->inc > 0){
-    // DEBUG here's the floating point prototype code for above step
-    /* double pan = tap->idx & 0xff; */
-    /* pan /= (double) tap->inc; */
-    /* pan *= FR16_MAX; */
-    /* tap->buf->data[writeIdx] = pan_lin_mix16(samp, tap->samp_last, pan); */
-
     fract16 pan_fix = tap->idx & 0xff;
     pan_fix *= (FR16_MAX / tap->inc);
-    tap->buf->data[(writeIdx+1)%tap->loop] = pan_lin_mix16(samp, tap->samp_last, pan_fix);
+    tap->buf->data[writePos] = pan_lin_mix16(samp, tap->samp_last, pan_fix);
   }
   tap->samp_last = samp;
 }
