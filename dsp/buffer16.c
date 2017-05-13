@@ -247,11 +247,169 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
 }
 
 void buffer16Tap24_8_add(buffer16Tap24_8* tap, fract16 samp) {
-  buffer16Tap24_8_write(tap, samp);
+  u32 writeIdx;
+  fract16 *writePtr;
+  fract16 inter_sample;
+  u32 buffSize = sizeof(fract16) * (u32)tap->loop;
+  if (tap->inc > 0) {
+    writeIdx = (tap->idx_last >> 8);
+    writePtr = tap->buf->data + writeIdx;
+    if (tap->inc >= 256) {
+      // fast interpolating write
+      for (inter_sample = 0;
+	   inter_sample < tap->inc - (tap->idx &0xff);
+	   inter_sample += 256) {
+
+	writeIdx++;
+	fract16 pan = (writeIdx << 8) - tap->idx_last;
+	pan *= FR16_MAX / tap->inc;
+	fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
+	writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = samp; */
+      }
+    }
+    else {
+      // slow interpolating write
+      if (((tap->idx) >> 8) != (tap->idx_last >> 8)) {
+	fract16 pan = tap->idx & 0xff;
+	pan *= (FR16_MAX / tap->inc);
+	writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+	fract16 panned = pan_lin_mix16(samp, tap->samp_last, pan);
+	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = samp; */
+      }
+    }
+  }
+  else if (tap->inc < 0) {
+    writeIdx = (tap->idx_last >> 8);
+    writePtr = tap->buf->data + writeIdx;
+
+    // DEBUG sanity check
+    /* *writePtr = samp; */
+
+    if (tap->inc <= -256) {
+      // fast interpolating write
+      for (inter_sample = 1;
+	   inter_sample > tap->inc + 256 - (tap->idx &0xff);
+	   inter_sample -= 256) {
+
+	fract16 pan = (writeIdx << 8) - tap->idx_last;
+	pan *= FR16_MAX/tap->inc;
+	fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
+	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = pan; */
+	/* *writePtr = samp; */
+	writeIdx--;
+	writePtr = __builtin_bfin_circptr((void *)writePtr, -sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+      }
+    }
+    else {
+      // slow interpolating backward write
+      if (((tap->idx) >> 8) != (tap->idx_last >> 8)) {
+	fract16 pan = 256 - (tap->idx & 0xff);
+	pan *= (FR16_MAX / (-tap->inc));
+	fract16 panned = pan_lin_mix16(samp, tap->samp_last, pan);
+	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = samp; */
+      }
+    }
+  }
+  tap->samp_last = samp;
 }
 
 void buffer16Tap24_8_mix(buffer16Tap24_8* tap, fract16 samp, fract16 preLevel) {
-  buffer16Tap24_8_write(tap, samp);
+  u32 writeIdx;
+  fract16 *writePtr;
+  fract16 inter_sample;
+  u32 buffSize = sizeof(fract16) * (u32)tap->loop;
+  if (tap->inc > 0) {
+    writeIdx = (tap->idx_last >> 8);
+    writePtr = tap->buf->data + writeIdx;
+    if (tap->inc >= 256) {
+      // fast interpolating write
+      for (inter_sample = 0;
+	   inter_sample < tap->inc - (tap->idx &0xff);
+	   inter_sample += 256) {
+
+	writeIdx++;
+	fract16 pan = (writeIdx << 8) - tap->idx_last;
+	pan *= FR16_MAX / tap->inc;
+	fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
+	writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+	*writePtr = multr_fr1x16(*writePtr, preLevel);
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = samp; */
+      }
+    }
+    else {
+      // slow interpolating write
+      if (((tap->idx) >> 8) != (tap->idx_last >> 8)) {
+	fract16 pan = tap->idx & 0xff;
+	pan *= (FR16_MAX / tap->inc);
+	writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+	fract16 panned = pan_lin_mix16(samp, tap->samp_last, pan);
+	*writePtr = multr_fr1x16(*writePtr, preLevel);
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = samp; */
+      }
+    }
+  }
+  else if (tap->inc < 0) {
+    writeIdx = (tap->idx_last >> 8);
+    writePtr = tap->buf->data + writeIdx;
+
+    // DEBUG sanity check
+    /* *writePtr = samp; */
+
+    if (tap->inc <= -256) {
+      // fast interpolating write
+      for (inter_sample = 1;
+	   inter_sample > tap->inc + 256 - (tap->idx &0xff);
+	   inter_sample -= 256) {
+
+	fract16 pan = (writeIdx << 8) - tap->idx_last;
+	pan *= FR16_MAX/tap->inc;
+	fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
+	*writePtr = multr_fr1x16(*writePtr, preLevel);
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = pan; */
+	/* *writePtr = samp; */
+	writeIdx--;
+	writePtr = __builtin_bfin_circptr((void *)writePtr, -sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+      }
+    }
+    else {
+      // slow interpolating backward write
+      if (((tap->idx) >> 8) != (tap->idx_last >> 8)) {
+	fract16 pan = 256 - (tap->idx & 0xff);
+	pan *= (FR16_MAX / (-tap->inc));
+	fract16 panned = pan_lin_mix16(samp, tap->samp_last, pan);
+	*writePtr = multr_fr1x16(*writePtr, preLevel);
+	*writePtr = add_fr1x16(*writePtr, panned);
+	/* *writePtr = panned; */
+	/* *writePtr = samp; */
+      }
+    }
+  }
+  tap->samp_last = samp;
 }
 
 void buffer16Tap24_8_set_rate(buffer16Tap24_8* tap, s32 inc) {
