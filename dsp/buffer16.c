@@ -166,26 +166,21 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
   u32 writeIdx = tap->idx_last >> 8;
   fract16 inter_sample;
   if(tap->inc >= 256) {
-    // interpolating write
+    u32 writePos = tap->idx_last & 0xFFFFFF00;
+    writePos += 256;
+    writePos %= (tap->loop << 8);
     for (inter_sample = 0;
 	 inter_sample < tap->inc;
 	 inter_sample += 256) {
 
-      fract16 pan_fix = inter_sample;
-      pan_fix += 255 - ((tap->inc+tap->idx) & 0xff);
-      pan_fix *= (FR16_MAX / tap->inc);
-      tap->buf->data[writeIdx] = pan_lin_mix16(tap->samp_last, samp, pan_fix);
+      /* double pan = writePos + inter_sample - tap->idx_last; */
+      /* pan /= ((double) tap->inc); */
+      /* double panned = (1.0 - pan) * tap->samp_last + pan * samp; */
 
-      // DEBUG here's the floating point prototype code for above step
-      /* double pan = inter_sample; */
-      /* pan += 255 - ((tap->inc+tap->idx) & 0xff); */
-      /* pan /= (double) tap->inc; */
-      /* pan *= FR16_MAX; */
-      /* tap->buf->data[writeIdx] = pan_lin_mix16(tap->samp_last, samp, pan); */
-
-      // DEBUG here's the non-interpolating version for extra sanity check
-      /* tap->buf->data[writeIdx] = samp; */
-      writeIdx = (writeIdx+1) % tap->loop;
+      fract16 pan = writePos + inter_sample - tap->idx_last;
+      pan *= FR16_MAX / tap->inc;
+      fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
+      tap->buf->data[((writePos + inter_sample) >> 8)%tap->loop] = panned;
     }
   }
   else if(tap->inc > 0){
@@ -197,26 +192,7 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
 
     fract16 pan_fix = tap->idx & 0xff;
     pan_fix *= (FR16_MAX / tap->inc);
-    tap->buf->data[writeIdx] = pan_lin_mix16(samp, tap->samp_last, pan_fix);
-  }
-  else if(tap->inc <= 256) {
-    // interpolating write
-    for (inter_sample = 0;
-	 inter_sample > tap->inc;
-	 inter_sample -= 256) {
-
-      fract16 pan_fix = inter_sample;
-      pan_fix += 255 - ((tap->inc+tap->idx) & 0xff);
-      pan_fix *= (FR16_MAX / (-tap->inc));
-      tap->buf->data[writeIdx] = pan_lin_mix16(tap->samp_last, samp, pan_fix);
-
-      writeIdx = (writeIdx-1 + tap->loop) % tap->loop;
-    }
-  }
-  else if(tap->inc < 0){
-    fract16 pan_fix = tap->idx & 0xff;
-    pan_fix *= (FR16_MAX / (-tap->inc));
-    tap->buf->data[writeIdx] = pan_lin_mix16(samp, tap->samp_last, pan_fix);
+    tap->buf->data[(writeIdx+1)%tap->loop] = pan_lin_mix16(samp, tap->samp_last, pan_fix);
   }
   tap->samp_last = samp;
 }
