@@ -612,10 +612,10 @@ void fill_param_desc(ParamDesc* desc) {
 		  eParamTypeFix, -(0x80000), 0x80000,
 		  8);
   param_desc_aux (desc, eParam_writeSpeed0, "writeSpeed0",
-		  eParamTypeFix, -(0x20000), 0x20000,
+		  eParamTypeFix, 0, 0x20000,
 		  8);
   param_desc_aux (desc, eParam_writeSpeed1, "writeSpeed1",
-		  eParamTypeFix, -(0x20000), 0x20000,
+		  eParamTypeFix, 0, 0x20000,
 		  8);
 }
 
