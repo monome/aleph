@@ -186,6 +186,7 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
 	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
 	/* *writePtr = add_fr1x16(*writePtr, panned); */
 	*writePtr = panned;
+	/* *writePtr = samp; */
       }
     }
     else {
@@ -199,6 +200,7 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
 	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
 	/* *writePtr = add_fr1x16(*writePtr, panned); */
 	*writePtr = panned;
+	/* *writePtr = samp; */
       }
     }
   }
@@ -214,8 +216,7 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
     else {
       // slow interpolating backward write
 
-      // FIXME add a condition to write just before head passes sample
-      if (1) {
+      if (((tap->idx) >> 8) != (tap->idx_last >> 8)) {
 	fract16 pan = 256 - (tap->idx & 0xff);
 	pan *= (FR16_MAX / (-tap->inc));
 	fract16 panned = pan_lin_mix16(samp, tap->samp_last, pan);
