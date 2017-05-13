@@ -153,141 +153,78 @@ void buffer16Tap24_8_set_inc(buffer16Tap24_8 *tap, u32 inc) {
 }
 
 fract16 buffer16Tap24_8_read(buffer16Tap24_8* tap){
-  u32 samp1_index = tap->idx >> 8;
-  u32 samp2_index = (samp1_index + 1) % tap->loop;
-  fract16 samp1 = tap->buf->data[samp1_index];
-  fract16 samp2 = tap->buf->data[samp2_index];
+  fract16 *samp1 = tap->buf->data + (tap->idx >> 8);
+  fract16 *samp2 = samp1;
+  u32 buffSize = sizeof(fract16) * (u32)tap->loop;
+  samp2 = __builtin_bfin_circptr((void *)samp2, sizeof(fract16),
+				 (void *)tap->buf->data, buffSize);
   fract16 inter_sample = (FR16_MAX >> 8);
   inter_sample *= (tap->idx & 0xff);
-  return pan_lin_mix16(samp1, samp2, inter_sample);
+  return pan_lin_mix16(*samp1, *samp2, inter_sample);
 }
 
 void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
-  u32 writePos = tap->idx_last >> 8;
-  writePos++;
-  writePos %= tap->loop;
+  u32 writeIdx = (tap->idx_last >> 8);
+  fract16 *writePtr = tap->buf->data + writeIdx;
   fract16 inter_sample;
+  u32 buffSize = sizeof(fract16) * (u32)tap->loop;
   if(tap->inc >= 256) {
     for (inter_sample = 0;
 	 inter_sample < tap->inc;
 	 inter_sample += 256) {
 
-      fract16 pan = (writePos << 8) - tap->idx_last;
+      writeIdx++;
+      fract16 pan = (writeIdx << 8) - tap->idx_last;
       pan *= FR16_MAX / tap->inc;
       fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
-      writePos++;
-      writePos = writePos % tap->loop;
-      tap->buf->data[writePos] = panned;
+      writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+					(void *)tap->buf->data, buffSize);
+      *writePtr = panned;
     }
   }
   else if(tap->inc > 0){
     fract16 pan_fix = tap->idx & 0xff;
     pan_fix *= (FR16_MAX / tap->inc);
-    tap->buf->data[writePos] = pan_lin_mix16(samp, tap->samp_last, pan_fix);
+    writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+				      (void *)tap->buf->data, buffSize);
+    *writePtr = pan_lin_mix16(samp, tap->samp_last, pan_fix);
   }
+  // reverse interpolated writes are broken
+  /* else if (tap->inc <= -256) { */
+  /*   for (inter_sample = 0; */
+  /* 	 inter_sample > tap->inc; */
+  /* 	 inter_sample -= 256) { */
+
+  /*     writeIdx++; */
+  /*     fract16 pan = (writeIdx << 8) - tap->idx_last; */
+  /*     pan *= FR16_MAX / -(tap->inc); */
+  /*     fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan); */
+  /*     // Not sure if this works 'backwards' */
+  /*     /\* writePtr = __builtin_bfin_circptr((void *)writePtr, -sizeof(fract16), *\/ */
+  /*     /\* 					(void *)tap->buf->data, buffSize); *\/ */
+  /*     writePtr--; */
+  /*     if(writePtr < tap->buf->data) { */
+  /* 	writePtr += tap->loop; */
+  /*     } */
+  /*     *writePtr = panned; */
+  /*   } */
+  /* } */
+  /* else if (tap->inc < 0) { */
+  /*   fract16 pan_fix = tap->idx & 0xff; */
+  /*   pan_fix *= (FR16_MAX / -(tap->inc)); */
+  /*   writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16), */
+  /* 				      (void *)tap->buf->data, buffSize); */
+  /*   *writePtr = pan_lin_mix16(samp, tap->samp_last, pan_fix); */
+  /* } */
   tap->samp_last = samp;
 }
 
 void buffer16Tap24_8_add(buffer16Tap24_8* tap, fract16 samp) {
-  u32 writeIdx = tap->idx_last >> 8;
-  fract16 inter_sample;
-  if(tap->inc >= 256) {
-    // interpolating write
-    for (inter_sample = 0;
-	 inter_sample < tap->inc;
-	 inter_sample += 256) {
-
-      fract16 pan_fix = inter_sample;
-      pan_fix += 255 - ((tap->inc+tap->idx) & 0xff);
-      pan_fix *= (FR16_MAX / tap->inc);
-      tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					    pan_lin_mix16(tap->samp_last, samp, pan_fix));
-
-      writeIdx = (writeIdx+1) % tap->loop;
-    }
-  }
-  else if(tap->inc > 0){
-
-    fract16 pan_fix = tap->idx & 0xff;
-    pan_fix *= (FR16_MAX / tap->inc);
-    tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					  pan_lin_mix16(samp, tap->samp_last, pan_fix));
-  }
-  else if(tap->inc <= 256) {
-    // interpolating write
-    for (inter_sample = 0;
-	 inter_sample > tap->inc;
-	 inter_sample -= 256) {
-
-      fract16 pan_fix = inter_sample;
-      pan_fix += 255 - ((tap->inc+tap->idx) & 0xff);
-      pan_fix *= (FR16_MAX / (-tap->inc));
-      tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					    pan_lin_mix16(tap->samp_last, samp, pan_fix));
-
-      writeIdx = (writeIdx-1 + tap->loop) % tap->loop;
-    }
-  }
-  else if(tap->inc < 0){
-    fract16 pan_fix = tap->idx & 0xff;
-    pan_fix *= (FR16_MAX / (-tap->inc));
-    tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					  pan_lin_mix16(samp, tap->samp_last, pan_fix));
-  }
-  tap->samp_last = samp;
+  buffer16Tap24_8_write(tap, samp);
 }
 
 void buffer16Tap24_8_mix(buffer16Tap24_8* tap, fract16 samp, fract16 preLevel) {
-  u32 writeIdx = tap->idx_last >> 8;
-  fract16 inter_sample;
-  if(tap->inc >= 256) {
-    // interpolating write
-    for (inter_sample = 0;
-	 inter_sample < tap->inc;
-	 inter_sample += 256) {
-
-      fract16 pan_fix = inter_sample;
-      pan_fix += 255 - ((tap->inc+tap->idx) & 0xff);
-      pan_fix *= (FR16_MAX / tap->inc);
-      tap->buf->data[writeIdx] = multr_fr1x16(tap->buf->data[writeIdx], preLevel);
-      tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					    pan_lin_mix16(tap->samp_last, samp, pan_fix));
-
-      writeIdx = (writeIdx+1) % tap->loop;
-    }
-  }
-  else if(tap->inc > 0){
-
-    fract16 pan_fix = tap->idx & 0xff;
-    pan_fix *= (FR16_MAX / tap->inc);
-    tap->buf->data[writeIdx] = multr_fr1x16(tap->buf->data[writeIdx], preLevel);
-    tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					  pan_lin_mix16(samp, tap->samp_last, pan_fix));
-  }
-  else if(tap->inc <= 256) {
-    // interpolating write
-    for (inter_sample = 0;
-	 inter_sample > tap->inc;
-	 inter_sample -= 256) {
-
-      fract16 pan_fix = inter_sample;
-      pan_fix += 255 - ((tap->inc+tap->idx) & 0xff);
-      pan_fix *= (FR16_MAX / (-tap->inc));
-      tap->buf->data[writeIdx] = multr_fr1x16(tap->buf->data[writeIdx], preLevel);
-      tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					    pan_lin_mix16(tap->samp_last, samp, pan_fix));
-
-      writeIdx = (writeIdx-1 + tap->loop) % tap->loop;
-    }
-  }
-  else if(tap->inc < 0){
-    fract16 pan_fix = tap->idx & 0xff;
-    pan_fix *= (FR16_MAX / (-tap->inc));
-    tap->buf->data[writeIdx] = multr_fr1x16(tap->buf->data[writeIdx], preLevel);
-    tap->buf->data[writeIdx] = add_fr1x16(tap->buf->data[writeIdx],
-					  pan_lin_mix16(samp, tap->samp_last, pan_fix));
-  }
-  tap->samp_last = samp;
+  buffer16Tap24_8_write(tap, samp);
 }
 
 void buffer16Tap24_8_set_rate(buffer16Tap24_8* tap, s32 inc) {

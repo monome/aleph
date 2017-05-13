@@ -148,9 +148,10 @@ fract16 trunc_fr1x32(fract32 x) {
   return (fract16) (x >> 16);
 }
 
-void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength) {
-  int idx = ptr - buf;
+void* __builtin_bfin_circptr(void* ptr, long int wordLength, void* buf, long unsigned int bufLength) {
+  long int idx = ptr - buf;
   idx += wordLength;
+  idx += bufLength;
   idx = idx % bufLength;
   return buf + idx;
 }

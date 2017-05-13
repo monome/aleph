@@ -359,6 +359,6 @@ fract16 max_fr1x16 (fract16 _x, fract16 _y);
 /* Returns the maximum of the two input parameters. */
 fract16 min_fr1x16 (fract16 _x, fract16 _y);
 
-void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength);
+void* __builtin_bfin_circptr(void* ptr, long int wordLength, void* buf, long unsigned int bufLength);
 
 #endif /* _FRACT_MATH_H */
