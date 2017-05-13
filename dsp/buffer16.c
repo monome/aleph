@@ -212,6 +212,23 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
     /* *writePtr = samp; */
 
     if (tap->inc <= -256) {
+      // fast interpolating write
+      for (inter_sample = 1;
+	   inter_sample > tap->inc + 256 - (tap->idx &0xff);
+	   inter_sample -= 256) {
+
+	fract16 pan = (writeIdx << 8) - tap->idx_last;
+	pan *= FR16_MAX/tap->inc;
+	fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
+	/* *writePtr = multr_fr1x16(*writePtr, preLevel); */
+	/* *writePtr = add_fr1x16(*writePtr, panned); */
+	*writePtr = panned;
+	/* *writePtr = pan; */
+	/* *writePtr = samp; */
+	writeIdx--;
+	writePtr = __builtin_bfin_circptr((void *)writePtr, -sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+      }
     }
     else {
       // slow interpolating backward write
