@@ -74,7 +74,7 @@ sim_inc = -I ../../dsp \
 
 sim_outfile = tape_jack
 
-sim_flags = -ljack -llo -D ARCH_LINUX=1
+sim_flags = -lm -ljack -llo -D ARCH_LINUX=1
 
 sim:
 	touch $(sim_outfile)

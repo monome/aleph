@@ -24,6 +24,7 @@
 #include "filter_1p.h"
 #include "module.h"
 #include "buffer16.h"
+#include "pan.h"
 
 /// custom
 #include "params.h"
@@ -92,12 +93,64 @@ void module_init(void) {
   buffer16Tap24_8_init(&wr, &tape);
   buffer16_tapN_init(&wrN, &tape);
   buffer16Tap24_8_init(&rd, &tape);
-
-  buffer16Tap24_8_set_rate(&wr, 158);
-  buffer16Tap24_8_set_rate(&rd, 256);
-  buffer16Tap24_8_set_loop(&wr, 256 * 2 * 48000);
-  buffer16Tap24_8_set_loop(&rd, 256 * 2 * 48000);
+  fract16 writeSpeed = -74;
+  fract16 readSpeed = 256 ;
+  buffer16Tap24_8_set_rate(&wr, writeSpeed);
+  buffer16Tap24_8_set_rate(&rd, readSpeed);
+  buffer16Tap24_8_set_loop(&wr, 48000);
+  buffer16Tap24_8_set_loop(&rd, 48000);
   wrN.loop =  10 * 48000;
+#ifdef ARCH_LINUX
+  int i;
+  FILE *f;
+  double in;
+  f = fopen("pan_test.csv", "w");
+  if (f) {
+    for(i=0; i < FR16_MAX; i++) {
+      fprintf(f, "%d %d\n", i, pan_lin_mix16(0, FR16_MAX >> 2, i));
+    }
+    fclose (f);
+  }
+
+  // Test Readhead linear interpolation
+  for(i=0; i < 4800; i++) {
+    in = FR16_MAX * sin(2 * M_PI / 48.0 * i);
+    pDacsData->audioBuffer[i] = (fract16) in;
+  }
+  f = fopen("interp_test_read.csv", "w");
+  if(f) {
+    for(i=0; i < 4800; i++) {
+      in = FR16_MAX * sin(2 * M_PI / 48.0 * i);
+      buffer16Tap24_8_next(&rd);
+      fprintf(f, "%f %d %f %d\n", (float) i, (int) in, ((float) rd.idx) / 256.0, buffer16Tap24_8_read(&rd));
+    }
+    fclose(f);
+  }
+
+  // Test Writehead linear interpolation
+  // first zero the buffer (debug)
+  for(i=0; i < 4800; i++) {
+    pDacsData->audioBuffer[i] = 0;
+  }
+  f = fopen("interp_test_write.csv", "w");
+  if(f) {
+    double writePositions[4800];
+    fract16 writtenData[4800];
+    for(i=0; i < 4800; i++) {
+      writtenData[i] = FR16_MAX * sin(2 * M_PI / 48.0 * i);
+      buffer16Tap24_8_next(&wr);
+      writePositions[i] = ((float) wr.idx) / 256.0;
+      buffer16Tap24_8_write(&wr, writtenData[i]);
+    }
+    for(i=0; i < 4800; i++) {
+      fprintf(f, "%f %d %f %d\n",
+	      writePositions[i] - 1.0, writtenData[i],
+	      (float) i, pDacsData->audioBuffer[i]);
+    }
+    fclose(f);
+  }
+
+#endif
 }
 
 // de-init
