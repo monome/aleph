@@ -191,7 +191,7 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
     }
     else {
       // slow interpolating write
-      if (writeIdx == (tap->idx >> 8) - 1) {
+      if (((tap->idx) >> 8) != (tap->idx_last >> 8)) {
 	fract16 pan = tap->idx & 0xff;
 	pan *= (FR16_MAX / tap->inc);
 	writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),

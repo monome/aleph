@@ -93,7 +93,7 @@ void module_init(void) {
   buffer16Tap24_8_init(&wr, &tape);
   buffer16_tapN_init(&wrN, &tape);
   buffer16Tap24_8_init(&rd, &tape);
-  fract16 writeSpeed = -90;
+  fract16 writeSpeed = 90;
   fract16 readSpeed = 256 ;
   buffer16Tap24_8_set_rate(&wr, writeSpeed);
   buffer16Tap24_8_set_rate(&rd, readSpeed);
