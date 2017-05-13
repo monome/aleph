@@ -170,7 +170,7 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
   u32 buffSize = sizeof(fract16) * (u32)tap->loop;
   if(tap->inc >= 256) {
     for (inter_sample = 0;
-	 inter_sample < tap->inc;
+	 inter_sample < tap->inc - (tap->idx &0xff);
 	 inter_sample += 256) {
 
       writeIdx++;
@@ -179,43 +179,21 @@ void buffer16Tap24_8_write(buffer16Tap24_8* tap, fract16 samp) {
       fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan);
       writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
 					(void *)tap->buf->data, buffSize);
+      /* *writePtr = add_fr1x16(panned, *writePtr); */
       *writePtr = panned;
     }
   }
-  else if(tap->inc > 0){
-    fract16 pan_fix = tap->idx & 0xff;
-    pan_fix *= (FR16_MAX / tap->inc);
-    writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
-				      (void *)tap->buf->data, buffSize);
-    *writePtr = pan_lin_mix16(samp, tap->samp_last, pan_fix);
+  else if(tap->inc > 0) {
+    if (writeIdx == (tap->idx >> 8) - 1) {
+      fract16 pan = tap->idx & 0xff;
+      pan *= (FR16_MAX / tap->inc);
+      writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16),
+					(void *)tap->buf->data, buffSize);
+      fract16 panned = pan_lin_mix16(samp, tap->samp_last, pan);
+      /* *writePtr = add_fr1x16(panned, *writePtr); */
+      *writePtr = panned;
+    }
   }
-  // reverse interpolated writes are broken
-  /* else if (tap->inc <= -256) { */
-  /*   for (inter_sample = 0; */
-  /* 	 inter_sample > tap->inc; */
-  /* 	 inter_sample -= 256) { */
-
-  /*     writeIdx++; */
-  /*     fract16 pan = (writeIdx << 8) - tap->idx_last; */
-  /*     pan *= FR16_MAX / -(tap->inc); */
-  /*     fract16 panned = pan_lin_mix16(tap->samp_last, samp, pan); */
-  /*     // Not sure if this works 'backwards' */
-  /*     /\* writePtr = __builtin_bfin_circptr((void *)writePtr, -sizeof(fract16), *\/ */
-  /*     /\* 					(void *)tap->buf->data, buffSize); *\/ */
-  /*     writePtr--; */
-  /*     if(writePtr < tap->buf->data) { */
-  /* 	writePtr += tap->loop; */
-  /*     } */
-  /*     *writePtr = panned; */
-  /*   } */
-  /* } */
-  /* else if (tap->inc < 0) { */
-  /*   fract16 pan_fix = tap->idx & 0xff; */
-  /*   pan_fix *= (FR16_MAX / -(tap->inc)); */
-  /*   writePtr = __builtin_bfin_circptr((void *)writePtr, sizeof(fract16), */
-  /* 				      (void *)tap->buf->data, buffSize); */
-  /*   *writePtr = pan_lin_mix16(samp, tap->samp_last, pan_fix); */
-  /* } */
   tap->samp_last = samp;
 }
 
