@@ -93,13 +93,13 @@ void module_init(void) {
   buffer16Tap24_8_init(&wr, &tape);
   buffer16_tapN_init(&wrN, &tape);
   buffer16Tap24_8_init(&rd, &tape);
-  fract16 writeSpeed = 90;
+  fract16 writeSpeed = -90;
   fract16 readSpeed = 256 ;
   buffer16Tap24_8_set_rate(&wr, writeSpeed);
   buffer16Tap24_8_set_rate(&rd, readSpeed);
-  buffer16Tap24_8_set_loop(&wr, 48000);
-  buffer16Tap24_8_set_loop(&rd, 48000);
-  wrN.loop =  10 * 48000;
+  buffer16Tap24_8_set_loop(&wr, 10 * 4800);
+  buffer16Tap24_8_set_loop(&rd, 10 * 4800);
+  wrN.loop =  10 * 4800;
 #ifdef ARCH_LINUX
   int i;
   FILE *f;
@@ -134,15 +134,19 @@ void module_init(void) {
   }
   f = fopen("interp_test_write.csv", "w");
   if(f) {
-    double writePositions[4800];
-    fract16 writtenData[4800];
+    double writePositions[48000];
+    fract16 writtenData[48000];
     for(i=0; i < 4800; i++) {
       writtenData[i] = FR16_MAX * sin(2 * M_PI / 48.0 * i);
       buffer16Tap24_8_next(&wr);
       writePositions[i] = ((float) wr.idx) / 256.0;
       buffer16Tap24_8_write(&wr, writtenData[i]);
     }
-    for(i=0; i < 4800; i++) {
+    for(i=4800; i < 48000; i++) {
+      writtenData[i] = 0;
+      writePositions[i] = ((float) wr.idx) / 256.0;
+    }
+    for(i=0; i < 48000; i++) {
       fprintf(f, "%f %d %f %d\n",
 	      writePositions[i], writtenData[i],
 	      (float) i, pDacsData->audioBuffer[i]);
