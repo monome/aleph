@@ -346,6 +346,10 @@ void module_init(void) {
   param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );
   param_setup( 	eParam_del1_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_del1_dac3,		PARAM_AMP_6 );
+  param_setup( 	eParam_del0_dac0,		PARAM_AMP_6 );
+  param_setup( 	eParam_del0_dac1,		PARAM_AMP_12 );
+  param_setup( 	eParam_del0_dac2,		PARAM_AMP_6 );
+  param_setup( 	eParam_del0_dac3,		PARAM_AMP_12 );
 
   param_setup( 	eParam_adc0_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac1,		PARAM_AMP_12 );

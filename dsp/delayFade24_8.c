@@ -28,10 +28,10 @@ extern void delayFade24_8_init(delayFade24_8* dl, volatile fract16* data, u32 fr
   dl->tapRd[0].idx = 0;
   dl->tapRd[1].idx = 0;
 
-  dl->tapWr[0].loop = frames * 256;
-  dl->tapWr[1].loop = frames * 256;
-  dl->tapRd[0].loop = frames * 256;
-  dl->tapRd[1].loop = frames * 256;
+  dl->tapWr[0].loop = frames;
+  dl->tapWr[1].loop = frames;
+  dl->tapRd[0].loop = frames;
+  dl->tapRd[1].loop = frames;
 
   dl->preLevel = 0;
   dl->write = 1;
@@ -53,13 +53,7 @@ extern fract16 delayFade24_8_next(delayFade24_8* dl, fract16 in) {
 			   );
 
   if(dl->write) {
-    if(dl->preLevel == 0) {
-      buffer16Tap24_8_write(&(dl->tapWr[0]), in);
-    } else if (dl->preLevel < 0) {
-      buffer16Tap24_8_add(&(dl->tapWr[0]), in);
-    } else {
       buffer16Tap24_8_mix(&(dl->tapWr[0]), in, dl->preLevel);
-    }
   }
 
   //DEBUG fix read/write head speeds
@@ -84,14 +78,14 @@ extern fract16 delayFade24_8_next(delayFade24_8* dl, fract16 in) {
 // set loop endpoint in seconds
 extern void delayFade24_8_set_loop_sec(delayFade24_8* dl, fix16 sec, u8 id) {
   u32 samps = sec_to_frames_trunc(sec);
-  buffer16Tap24_8_set_loop(&(dl->tapRd[id]), (samps - 1) << 8);
-  buffer16Tap24_8_set_loop(&(dl->tapWr[id]), (samps - 1) << 8);
+  buffer16Tap24_8_set_loop(&(dl->tapRd[id]), (samps - 1));
+  buffer16Tap24_8_set_loop(&(dl->tapWr[id]), (samps - 1));
 }
 
 // set loop endpoint in samples
 extern void delayFade24_8_set_loop_samp(delayFade24_8* dl, u32 samps, u8 id) {
-  dl->tapRd[id].loop = (samps - 1) << 8;
-  dl->tapWr[id].loop = (samps - 1) << 8;
+  dl->tapRd[id].loop = (samps - 1);
+  dl->tapWr[id].loop = (samps - 1);
 }
 
 // set delayFade24_8 in seconds

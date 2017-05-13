@@ -90,20 +90,10 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFade24_8_set_write(&(lines[1]), v > 0);
     break;
   case eParam_pre0 :
-    if(v == FR32_MAX) {
-      // negative == full
-      delayFade24_8_set_pre(&(lines[0]), -1);
-    } else {
-      delayFade24_8_set_pre(&(lines[0]), trunc_fr1x32(v));
-    }
+    delayFade24_8_set_pre(&(lines[0]), trunc_fr1x32(v));
     break;
   case eParam_pre1 :
-    if(v == FR32_MAX) {
-      // negative == full
-      delayFade24_8_set_pre(&(lines[1]), -1);
-    } else {
-      delayFade24_8_set_pre(&(lines[1]), trunc_fr1x32(v));
-    }
+    delayFade24_8_set_pre(&(lines[1]), trunc_fr1x32(v));
     break;
     // filter params
   case eParam_freq0 :
