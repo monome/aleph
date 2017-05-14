@@ -151,13 +151,27 @@ void buffer16Tap24_8_next(buffer16Tap24_8* tap){
 void buffer16Tap24_8_set_inc(buffer16Tap24_8 *tap, u32 inc) {
   tap->inc = inc;
 }
+//FIXME stop using ricks_tricks
+#include "ricks_tricks.h"
+fract16 buffer16Tap24_8_read_bspline(buffer16Tap24_8* tap) {
+  u32 buffSize = sizeof(fract16) * (u32)tap->loop;
+  fract16 *samp1 = tap->buf->data + (tap->idx >> 8);
+  fract16 *samp2 = __builtin_bfin_circptr((void *)samp1, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+  fract16 *samp3 = __builtin_bfin_circptr((void *)samp2, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+  fract16 *samp0 = __builtin_bfin_circptr((void *)samp1, -sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
+  fract16 inter_sample = (FR16_MAX >> 8);
+  inter_sample *= (tap->idx & 0xff);
+  return interp_bspline_fract16(inter_sample, *samp0, *samp1, *samp2, *samp3);
+}
 
 fract16 buffer16Tap24_8_read(buffer16Tap24_8* tap){
-  fract16 *samp1 = tap->buf->data + (tap->idx >> 8);
-  fract16 *samp2 = samp1;
   u32 buffSize = sizeof(fract16) * (u32)tap->loop;
-  samp2 = __builtin_bfin_circptr((void *)samp2, sizeof(fract16),
-				 (void *)tap->buf->data, buffSize);
+  fract16 *samp1 = tap->buf->data + (tap->idx >> 8);
+  fract16 *samp2 = __builtin_bfin_circptr((void *)samp1, sizeof(fract16),
+					  (void *)tap->buf->data, buffSize);
   fract16 inter_sample = (FR16_MAX >> 8);
   inter_sample *= (tap->idx & 0xff);
   return pan_lin_mix16(*samp1, *samp2, inter_sample);
