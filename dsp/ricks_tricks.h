@@ -169,6 +169,29 @@ fract32 s32_halfWave_env (fract32 pos) ;
 float interp_bspline_float (float x, float _y, float y, float y_, float y__);
 
 static const fract32 FR32_1_OVER_3 = FR32_MAX / 3;
+static const fract32 FR16_1_OVER_3 = FR16_MAX / 3;
+
+static inline fract16 interp_bspline_fract16 (fract16 x, fract16 _y, fract16 y, fract16 y_, fract16 y__) {
+  fract16 ym1py1 = add_fr1x16(shl_fr1x16(_y, -5),
+			      shl_fr1x16(y_, -5));
+  fract16 c0 = multr_fr1x16(add_fr1x16(ym1py1,
+				       shl_fr1x16(y, -3)),
+			    FR16_1_OVER_3);
+  fract16 c1 = shl_fr1x16(sub_fr1x16(y_,_y),
+			  -5);
+  fract16 c2 = sub_fr1x16(ym1py1,
+			  shl_fr1x16(y, -4));
+  fract16 c3 = add_fr1x16(shl_fr1x16(y-y_,-5),
+			  multr_fr1x16(shl_fr1x16(y__-_y,-5),
+				       FR16_1_OVER_3));
+  return
+    shl_fr1x16(add_fr1x16 (c0,
+			   multr_fr1x16(x,
+					add_fr1x16(c1,
+						   multr_fr1x16((multr_fr1x16(c3,x) + c2),
+								x)))),
+	       4);
+}
 
 static inline fract32 interp_bspline_fract32 (fract32 x, fract32 _y, fract32 y, fract32 y_, fract32 y__) {
   fract32 ym1py1 = add_fr1x32(shl_fr1x32(_y, -5),
