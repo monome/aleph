@@ -47,8 +47,8 @@ extern void delayFade24_8_init(delayFade24_8* dl, volatile fract16* data, u32 fr
 extern fract16 delayFade24_8_next(delayFade24_8* dl, fract16 in) {
   fract16 readVal;
 
-  readVal = pan_lin_mix16( buffer16Tap24_8_read( &(dl->tapRd[0]) ) ,
-			   buffer16Tap24_8_read( &(dl->tapRd[1]) ) ,
+  readVal = pan_lin_mix16( buffer16Tap24_8_read_bspline( &(dl->tapRd[0]) ) ,
+			   buffer16Tap24_8_read_bspline( &(dl->tapRd[1]) ) ,
 			   dl->fadeRd
 			   );
 
