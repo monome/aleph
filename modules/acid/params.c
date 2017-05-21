@@ -142,6 +142,7 @@ static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
 }
 
 
+#include "ricks_tricks.h"
 /// setup default values
 void params_default(void) {
   int i, j;
@@ -149,20 +150,20 @@ void params_default(void) {
     for( i=0; i<PARAM_VOICE_NPARAMS; ++i) {
       const int o = j * PARAM_VOICE_NPARAMS;
 
-      param_setup(o + eParamTrig0, 1);
+      param_setup(o + eParamTrig0, 0);
 
       param_setup(o + eParamPreGain0, PARAM_AMP_6);
       param_setup(o + eParamPostGain0, PARAM_AMP_6);
-      param_setup(o + eParamAmpAtkSlew0, PARAM_SLEW_1MS);
-      param_setup(o + eParamAmpDecSlew0, PARAM_SLEW_100MS);
-      param_setup(o + eParamAmpRelSlew0, PARAM_SLEW_1S);
+      param_setup(o + eParamAmpAtkSlew0, SLEW_1MS);
+      param_setup(o + eParamAmpDecSlew0, SLEW_100MS);
+      param_setup(o + eParamAmpRelSlew0, SLEW_1S);
       param_setup(o + eParamAmpSusDur0, 4800);
       param_setup( o + eParamFreqOff0, PARAM_CUT_DEFAULT >> 2);
       param_setup( o + eParamFreqOn0, PARAM_CUT_DEFAULT ); 
       param_setup( o + eParamFreqSus0, PARAM_CUT_DEFAULT >> 1); 
-      param_setup( o + eParamFreqAtkSlew0, PARAM_SLEW_1MS );
-      param_setup( o + eParamFreqDecSlew0, PARAM_SLEW_100MS );
-      param_setup( o + eParamFreqRelSlew0, PARAM_SLEW_1S );
+      param_setup( o + eParamFreqAtkSlew0, SLEW_1MS );
+      param_setup( o + eParamFreqDecSlew0, SLEW_100MS );
+      param_setup( o + eParamFreqRelSlew0, SLEW_1S );
       param_setup( o + eParamFreqSusDur0, 2400 );
 
       param_setup( o + eParamRq0, PARAM_RQ_DEFAULT );

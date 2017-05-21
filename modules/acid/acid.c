@@ -110,7 +110,12 @@ void module_process_frame(void) {
 
   // acid output is mono :)
   // calculate frameVal
-  calc_frame();
+  /* calc_frame(); */
+
+  // DEBUG - figure out why calc_frame is bust, then remove this
+  out[0] = drumsyn_voice_next(voices[0]);
+  out[3] = out[2] = out[1] = out[0];
+  return;
 
   sum01 = add_fr1x32(sum01, frameVal);
   sum23 = add_fr1x32(sum23, frameVal);

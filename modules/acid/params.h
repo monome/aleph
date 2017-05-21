@@ -5,7 +5,7 @@
 // svf cutoff
 #define PARAM_CUT_MIN     0
 #define PARAM_CUT_MAX     0x7fffffff
-#define PARAM_CUT_DEFAULT 0x43D0A8EC // ~8k
+#define PARAM_CUT_DEFAULT 0x43D0A8EC >> 5 // ~8k
 #define PARAM_CUT_RADIX 1 // doesn't matter
 
 // slew
@@ -31,7 +31,7 @@
 // rq
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x0000ffff
-#define PARAM_RQ_DEFAULT 0x0000FFF0
+#define PARAM_RQ_DEFAULT 0x0000ffff >> 5
 #define PARAM_RQ_RADIX 2
 
 // amp
