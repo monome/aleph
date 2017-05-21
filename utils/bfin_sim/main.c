@@ -83,6 +83,7 @@ int main (int argc, char *argv[]) {
   module_init();
 
   //fire up osc server for module
+  printf("bang osc port 7770 @ /param with two ints to test module\n");
   lo_server_thread st = lo_server_thread_new("7770", error);
   lo_server_thread_add_method(st, NULL, NULL, generic_handler, NULL);
   lo_server_thread_add_method(st, "/param", "ii", foo_handler, NULL);
