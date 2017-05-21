@@ -12,12 +12,8 @@
 #include "filter_2p.h"
 #include "module.h"
 
-#ifdef ARCH_BFIN
 #include "fract_math.h"
 #include <fract2float_conv.h>
-#else
-#include "fract32_emu.h"
-#endif
 
 // class-wide temp variable, compute at init
 // inverse of samplerate * 2pi
@@ -84,7 +80,7 @@ fract32 filter_2p_lo_next(filter_2p_lo* f) {
 void filter_2p_hi_init(filter_2p_hi* f) {
   f->y = 0;
   f->x = 0;
-  rho = (1.0 / (double)SAMPLERATE) * M_TWOPI;
+  rho = (1.0 / (double)SAMPLERATE) * M_2_PI;
   filter_2p_hi_calc_coeffs(10.f, 1.4142135623730951f, &(f->a), &(f->b), &(f->g));
 }
 
