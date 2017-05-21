@@ -55,16 +55,13 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
     rq = env_exp_next(&(voice->envRq));
     filter_svf_set_rq(f, rq);
   }
+  fract32 n = shr_fr1x32(acid_noise_next(&voice->noise), 2);
 
   if(voice->svfPre) {
-    return shr_fr1x32(mult_fr1x32x32(amp,
-				     filter_svf_next(f,
-						     acid_noise_next(&voice->noise))),
+    return shr_fr1x32(mult_fr1x32x32(amp, filter_svf_next(f, n)),
 		      1);
   } else {
-    return shr_fr1x32(filter_svf_next(f,
-				      mult_fr1x32x32(amp,
-						     acid_noise_next(&voice->noise))),
+    return shr_fr1x32(filter_svf_next(f, mult_fr1x32x32(amp,n)),
 		      1);
   }
 }
