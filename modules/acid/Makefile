@@ -10,6 +10,7 @@ ldr_name = $(module_name)-$(version).ldr
 
 module_obj = acid.o \
 	noise_acid.o \
+	dsyn_voice.o \
 	params.o \
 	$(audio)/conversion.o \
 	$(audio_dir)/env_exp.o \
@@ -66,6 +67,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	acid.c \
 	noise_acid.c \
 	params.c \
+	dsyn_voice.c \
 	$(audio)/conversion.c \
 	$(audio_dir)/env_exp.c \
 	$(audio_dir)/filter_1p.c \
