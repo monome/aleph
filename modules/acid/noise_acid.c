@@ -18,7 +18,6 @@ static fract32 x[DRUMSYN_NVOICES];
 static const u8 b[3] =  { 13, 17, 5 };
 static const u32 m = 1597334677;
 
-
 // rsfhift for "flat" component
 static const u8 fs = 2;
 
@@ -40,9 +39,7 @@ extern void acid_noise_reset(int voice) {
   x[voice] = s[voice];
 }
 
-
 extern fract32 acid_noise_next(int voice) {
-#if 1
   u32 y = (u32) (x[voice]);
 
   y ^= (y >> b[0]);
@@ -54,36 +51,4 @@ extern fract32 acid_noise_next(int voice) {
   x[voice] = (fract32)y;
 
   return shr_fr1x32((fract32)(x[voice]), 2);
-
-#else
-  fract32 z = (x[voice]);
-  u32 y ;
-
-  z ^= (z >> b[0]);
-  z ^= (z << b[1]);
-  z ^= (z >> b[2]);
-  z *= m;
-
-  y = (u32)z;
-
-  y ^= (y >> b[0]);
-  y ^= (y << b[1]);
-  y ^= (y >> b[2]);
-  y *= m;
-
-  
-  x[voice] = add_fr1x32(
-			shr_fr1x32( (fract32)y, fs),
-			shr_fr1x32( add_fr1x32(x[voice],
-					       shr_fr1x32(z, gs)
-					       ),
-				    2
-				    )
-			
-			);
-
-
-
-  return shr_fr1x32((fract32)(x[voice]), 2);
-#endif
 }

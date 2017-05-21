@@ -44,12 +44,6 @@ ModuleData * gModuleData; // module data
 
 //-----------------------
 //------ static variables
-#if ARCH_LINUX
-static FILE* dbgFile;
-u8 dbgFlag = 0;
-u32 dbgCount = 0;
-#endif
-
 drumsynVoice* voices[DRUMSYN_NVOICES];
 
 // pointer to local module data, initialize at top of SDRAM
@@ -181,9 +175,6 @@ void module_init(void) {
 
 void module_deinit(void) {
   drumsyn_voice_deinit(voices[0]);
-#if ARCH_LINUX 
-  fclose(dbgFile);
-#endif
 }
 
 
