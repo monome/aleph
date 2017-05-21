@@ -58,17 +58,13 @@ static fract32 frameVal;
 
 // frame calculation
 static void calc_frame(void) {
-  fract32 dum;
-  frameVal = shr_fr1x32(drumsyn_voice_next(voices[0]), 1);
-
-  dum = drumsyn_voice_next(voices[1]);
-  frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
-
-  dum = drumsyn_voice_next(voices[2]);
-  frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
-
-  dum = drumsyn_voice_next(voices[3]);
-  frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
+  fract32 dum = 0;
+  fract32 frameVal = 0;
+  int i;
+  for(i=0; i<DRUMSYN_NVOICES; i++) {
+    dum = drumsyn_voice_next(voices[i]);
+    frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
+  }
 }
 
 //----------------------
@@ -112,7 +108,7 @@ void module_process_frame(void) {
   fract32 sum01 = add_fr1x32(in[0], in[1]);
   fract32 sum23 = add_fr1x32(in[2], in[3]);
 
-  // acid output is mono :(  
+  // acid output is mono :)
   // calculate frameVal
   calc_frame();
 

@@ -13,7 +13,7 @@ module_obj = acid.o \
 	dsyn_voice.o \
 	params.o \
 	$(audio)/conversion.o \
-	$(audio_dir)/env_exp.o \
+	$(audio_dir)/env_trig.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_2p.o \
 	$(audio_dir)/filter_svf.o \
@@ -69,7 +69,8 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	params.c \
 	dsyn_voice.c \
 	$(audio)/conversion.c \
-	$(audio_dir)/env_exp.c \
+	$(audio_dir)/env_trig.c \
+	$(audio_dir)/env_adsr.c \
 	$(audio_dir)/filter_1p.c \
 	$(audio_dir)/filter_2p.c \
 	$(audio_dir)/filter_svf.c \

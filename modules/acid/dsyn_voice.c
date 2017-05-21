@@ -9,13 +9,9 @@ void drumsyn_voice_init(drumsynVoice* voice) {
   // noise
   acid_noise_init(&voice->noise);
 		   
-  // hipass
-  filter_2p_hi_init(&(voice->hipass));
-
   // envelopes
-  env_exp_init(&(voice->envAmp));
-  env_exp_init(&(voice->envFreq));
-  env_exp_init(&(voice->envRq));
+  env_trig_adsr_init(&(voice->envAmp));
+  env_trig_adsr_init(&(voice->envFreq));
 
   // SVF
   filter_svf_init(&(voice->svf));
@@ -24,44 +20,44 @@ void drumsyn_voice_init(drumsynVoice* voice) {
   filter_svf_set_coeff(&(voice->svf), FR32_MAX >> 2);
   filter_svf_set_rq(&(voice->svf), FR32_MAX >> 3);
 
-  env_exp_set_off( &(voice->envAmp) , 0 );
-  env_exp_set_on(  &(voice->envAmp) , FR32_MAX >> 2 );
-  
-  env_exp_set_off(  &(voice->envFreq) , 0xffff );
-  env_exp_set_on(  &(voice->envFreq) , 0x1fffffff );
+  voice->freqOff = 0xffff;
+  voice->freqOn = 0x1fffffff;
 
-  env_exp_set_off(  &(voice->envRq) , 0x1fffffff );
-  env_exp_set_on(  &(voice->envRq) , 0x1fffffff );
+  voice->noiseGain = FR32_MAX >> 1;
+  voice->postGain = FR32_MAX >> 1;
 
-  voice->freqEnv = 1;
-  voice->rqEnv = 1;
   voice->svfPre = 1;
 
 }
+
+void drumsyn_voice_bang(drumsynVoice* vp) {
+  env_trig_adsr_bang(&(vp->envAmp));
+  env_trig_adsr_bang(&(vp->envFreq));
+}
+
 
 // next value of voice
 fract32 drumsyn_voice_next(drumsynVoice* voice) {
   filter_svf* f = &(voice->svf);
   fract32 amp, freq, rq;
 
-  amp = env_exp_next(&(voice->envAmp));
+  amp = env_trig_adsr_next(&(voice->envAmp));
 
   if(voice->freqEnv > 0) {
-    freq = env_exp_next(&(voice->envFreq));
+    freq = env_trig_adsr_next(&(voice->envFreq));
+    freq = mult_fr1x32x32(freq, sub_fr1x32(voice->freqOn, voice->freqOff));
+    freq = add_fr1x32(freq, voice->freqOn);
     filter_svf_set_coeff(f, freq);
   }
 
-  if(voice->rqEnv > 0) {
-    rq = env_exp_next(&(voice->envRq));
-    filter_svf_set_rq(f, rq);
-  }
-  fract32 n = shr_fr1x32(acid_noise_next(&voice->noise), 2);
+  fract32 n = mult_fr1x32x32(acid_noise_next(&voice->noise),
+			     voice->noiseGain);
 
   if(voice->svfPre) {
-    return shr_fr1x32(mult_fr1x32x32(amp, filter_svf_next(f, n)),
-		      1);
+    return mult_fr1x32x32(voice->postGain,
+			  mult_fr1x32x32(amp, filter_svf_next(f, n)));
   } else {
-    return shr_fr1x32(filter_svf_next(f, mult_fr1x32x32(amp,n)),
-		      1);
+    return mult_fr1x32x32(voice->postGain,
+			  filter_svf_next(f, mult_fr1x32x32(amp,n)));
   }
 }

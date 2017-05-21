@@ -5,7 +5,7 @@
 /// testing
 // #define DRUMSYN_NOENV 1
 
-#define DRUMSYN_NVOICES 4
+#define DRUMSYN_NVOICES 1
 
 extern drumsynVoice* voices[DRUMSYN_NVOICES];
 
