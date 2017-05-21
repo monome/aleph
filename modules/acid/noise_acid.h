@@ -3,8 +3,7 @@
 
 #include "types.h"
 
-extern void acid_noise_init(void);
-extern void acid_noise_reset(int voice);
-extern fract32 acid_noise_next(int voice);
+extern void acid_noise_init(fract32 *x);
+extern fract32 acid_noise_next(fract32 *x);
 
 #endif

@@ -54,22 +54,16 @@ static fract32 frameVal;
 //-----------------------------
 //----- static functions
 
-static void drumsyn_voice_init(drumsynVoice* voice, int i);
-static fract32 drumsyn_voice_next(drumsynVoice* voice, int i);
-static fract32 noise_next(drumsynVoice* voice, int i);
-
-// get next noise-generator value
-fract32 noise_next(drumsynVoice* voice, int i) {
-  return acid_noise_next(i);
-}
+static void drumsyn_voice_init(drumsynVoice* voice);
+static fract32 drumsyn_voice_next(drumsynVoice* voice);
 
 // initialize voice
-void drumsyn_voice_init(drumsynVoice* voice, int i) {
+void drumsyn_voice_init(drumsynVoice* voice) {
   // svf
   filter_svf_init(&(voice->svf));
 
   // noise
-  acid_noise_reset(i);
+  acid_noise_init(&voice->noise);
 		   
   // hipass
   filter_2p_hi_init(&(voice->hipass));
@@ -106,7 +100,7 @@ void drumsyn_voice_deinit(drumsynVoice* voice) {
 }
 
 // next value of voice
-fract32 drumsyn_voice_next(drumsynVoice* voice, int i) {
+fract32 drumsyn_voice_next(drumsynVoice* voice) {
   filter_svf* f = &(voice->svf);
   fract32 amp, freq, rq;
 
@@ -123,28 +117,26 @@ fract32 drumsyn_voice_next(drumsynVoice* voice, int i) {
   }
 
   if(voice->svfPre) {
-    return shr_fr1x32(mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice, i) )) , 1);
+    return shr_fr1x32(mult_fr1x32x32( amp, filter_svf_next(f, acid_noise_next(&voice->noise) )) , 1);
     //    return mult_fr1x32x32( amp, filter_svf_next(f, shr_fr1x32(noise_next(voice, i), 1) ) );
   } else {
-    return shr_fr1x32(filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice, i) )) , 1);
+    return shr_fr1x32(filter_svf_next(f, mult_fr1x32x32( amp, acid_noise_next(&voice->noise) )) , 1);
     //    return filter_svf_next(f, mult_fr1x32x32( amp, shl_fr1x32(noise_next(voice, i), 1) ) );
   }
 }
 
-
-
 // frame calculation
 static void calc_frame(void) {
   fract32 dum;
-  frameVal = shr_fr1x32(drumsyn_voice_next(voices[0], 0), 1);
+  frameVal = shr_fr1x32(drumsyn_voice_next(voices[0]), 1);
 
-  dum = drumsyn_voice_next(voices[1], 1);
+  dum = drumsyn_voice_next(voices[1]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 
-  dum = drumsyn_voice_next(voices[2], 2);
+  dum = drumsyn_voice_next(voices[2]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 
-  dum = drumsyn_voice_next(voices[3], 3);
+  dum = drumsyn_voice_next(voices[3]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 }
 
@@ -165,7 +157,7 @@ void module_init(void) {
 
   for(i=0; i<DRUMSYN_NVOICES; i++) {
     voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
-    drumsyn_voice_init(voices[i], i);
+    drumsyn_voice_init(voices[i]);
   }
 
   // setup params with default values

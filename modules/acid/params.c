@@ -19,23 +19,23 @@ static void set_param_gate(drumsynVoice* vp, int i, s32 val) {
   if(val > 0) { 
     // re-seed noise generator to known value so "notes" are consistent
     //    lcprng_reset(&(vp->rngH), 0xDEADFACE);
-    acid_noise_reset(i);
-    env_exp_set_gate( &(vp->envAmp)	, 0xff );
-    env_exp_set_gate( &(vp->envFreq)	, 0xff );
-    env_exp_set_gate( &(vp->envRq)	, 0xff );
+    acid_noise_init(&vp->noise);
+    env_exp_set_gate( &(vp->envAmp), 0xff );
+    env_exp_set_gate( &(vp->envFreq), 0xff );
+    env_exp_set_gate( &(vp->envRq), 0xff );
   } else {
-    env_exp_set_gate( &(vp->envAmp)	, 0 );
-    env_exp_set_gate( &(vp->envFreq)	, 0 );
-    env_exp_set_gate( &(vp->envRq)	, 0 );
+    env_exp_set_gate( &(vp->envAmp), 0 );
+    env_exp_set_gate( &(vp->envFreq), 0 );
+    env_exp_set_gate( &(vp->envRq), 0 );
   }
 
 }
 
 static void set_param_trig(drumsynVoice* vp, s32 val) {
   u8 b = (val > 0);
-  env_exp_set_trig( &(vp->envAmp)	, b );
-  env_exp_set_trig( &(vp->envFreq)	, b );
-  env_exp_set_trig( &(vp->envRq)	, b );
+  env_exp_set_trig( &(vp->envAmp), b );
+  env_exp_set_trig( &(vp->envFreq), b );
+  env_exp_set_trig( &(vp->envRq), b );
 }
 
 static void set_param_svfpre(drumsynVoice* vp, s32 val) {
@@ -221,28 +221,28 @@ void params_default(void) {
       param_setup(o + eParamAmpDecSlew0, PARAM_SLEW_100MS);
       param_setup(o + eParamAmpRelSlew0, PARAM_SLEW_1S);
       param_setup(o + eParamAmpSusDur0, 4800);
-      param_setup( o + eParamFreqOff0, 	PARAM_CUT_DEFAULT >> 2);
-      param_setup( o + eParamFreqOn0, 	PARAM_CUT_DEFAULT ); 
-      param_setup( o + eParamFreqSus0, 	PARAM_CUT_DEFAULT >> 1); 
-      param_setup( o + eParamFreqAtkSlew0, 	PARAM_SLEW_1MS );
-      param_setup( o + eParamFreqDecSlew0, 	PARAM_SLEW_100MS );
-      param_setup( o + eParamFreqRelSlew0, 	PARAM_SLEW_1S );
-      param_setup( o + eParamFreqSusDur0, 	2400 );
+      param_setup( o + eParamFreqOff0, PARAM_CUT_DEFAULT >> 2);
+      param_setup( o + eParamFreqOn0, PARAM_CUT_DEFAULT ); 
+      param_setup( o + eParamFreqSus0, PARAM_CUT_DEFAULT >> 1); 
+      param_setup( o + eParamFreqAtkSlew0, PARAM_SLEW_1MS );
+      param_setup( o + eParamFreqDecSlew0, PARAM_SLEW_100MS );
+      param_setup( o + eParamFreqRelSlew0, PARAM_SLEW_1S );
+      param_setup( o + eParamFreqSusDur0, 2400 );
 
-      param_setup( o + eParamRqOff0, 	PARAM_RQ_DEFAULT );
-      param_setup( o + eParamRqOn0, 	PARAM_RQ_DEFAULT );
-      param_setup( o + eParamRqSus0, 	PARAM_RQ_DEFAULT );
-      param_setup( o + eParamRqAtkSlew0, 	PARAM_SLEW_1MS );
-      param_setup( o + eParamRqDecSlew0, 	PARAM_SLEW_100MS );
-      param_setup( o + eParamRqRelSlew0, 	PARAM_SLEW_1S );
-      param_setup( o + eParamRqSusDur0, 	1200 );
-      param_setup( o + eParamLow0, 	PARAM_AMP_0 );
-      param_setup( o + eParamHigh0, 	0 );
-      param_setup( o + eParamBand0, 	0 );
-      param_setup( o + eParamNotch0, 	0 );
-      param_setup( o + eParamSvfPre0, 	1 );
-      param_setup( o + eParamFreqEnv0, 	1 );
-      param_setup( o + eParamRqEnv0, 	1 );
+      param_setup( o + eParamRqOff0, PARAM_RQ_DEFAULT );
+      param_setup( o + eParamRqOn0, PARAM_RQ_DEFAULT );
+      param_setup( o + eParamRqSus0, PARAM_RQ_DEFAULT );
+      param_setup( o + eParamRqAtkSlew0, PARAM_SLEW_1MS );
+      param_setup( o + eParamRqDecSlew0, PARAM_SLEW_100MS );
+      param_setup( o + eParamRqRelSlew0, PARAM_SLEW_1S );
+      param_setup( o + eParamRqSusDur0, 1200 );
+      param_setup( o + eParamLow0, PARAM_AMP_0 );
+      param_setup( o + eParamHigh0, 0 );
+      param_setup( o + eParamBand0, 0 );
+      param_setup( o + eParamNotch0, 0 );
+      param_setup( o + eParamSvfPre0, 1 );
+      param_setup( o + eParamFreqEnv0, 1 );
+      param_setup( o + eParamRqEnv0, 1 );
     }
   }
 }

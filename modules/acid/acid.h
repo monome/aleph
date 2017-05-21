@@ -14,9 +14,8 @@
 typedef struct _drumsynVoice {
   // filter
   filter_svf svf;
-  // noise generation
-  lcprng rngH;
-  lcprng rngL;
+
+  fract32 noise;
 
   // 2nd order highpass for noise
   filter_2p_hi hipass;

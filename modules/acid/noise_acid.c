@@ -2,11 +2,8 @@
 
    start with farily uniform distribution
    from XOR-shift method followed by 32b MLCG
-   (see numerical recipies, 3rd ed, p.355)
+   (see numerical recipes, 3rd ed, p.355)
 
-   mix some gaussian for low frequencies
-
-   finish with 2p highpass to remove sub-audible components
 */
 
 #include <fract_math.h>
@@ -14,41 +11,16 @@
 #include "acid.h"
 #include "noise_acid.h"
 
-static fract32 x[DRUMSYN_NVOICES];
-static const u8 b[3] =  { 13, 17, 5 };
-static const u32 m = 1597334677;
-
-// rsfhift for "flat" component
-static const u8 fs = 2;
-
-// rshift for "gaussian" component
-// this will scale frequency of LF components
-static const u8 gs = 3;
-
-// seed shouldn't matter much as long as its nonzero... (?)
-static const fract32 s[DRUMSYN_NVOICES] = {1, 2, 3, 4};
-
-extern void acid_noise_init(void) {
-  acid_noise_reset(0);
-  acid_noise_reset(1);
-  acid_noise_reset(2);
-  acid_noise_reset(3);
+extern void acid_noise_init(fract32 *x) {
+  *x = 1;
 }
 
-extern void acid_noise_reset(int voice) { 
-  x[voice] = s[voice];
-}
-
-extern fract32 acid_noise_next(int voice) {
-  u32 y = (u32) (x[voice]);
-
-  y ^= (y >> b[0]);
-  y ^= (y << b[1]);
-  y ^= (y >> b[2]);
-  y *= m;
-
-  
-  x[voice] = (fract32)y;
-
-  return shr_fr1x32((fract32)(x[voice]), 2);
+extern fract32 acid_noise_next(fract32 *x) {
+  u32 y = (u32) *x;
+  y ^= (y >> 13);
+  y ^= (y << 17);
+  y ^= (y >> 5);
+  y *= 1597334677;
+  *x = y;
+  return y;
 }
