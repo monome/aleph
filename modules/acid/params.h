@@ -42,37 +42,37 @@
 
 // number of parameters per voice
 // can use as offset hack from param 0
-#define PARAM_VOICE_NPARAMS 29
-#define PARAM_VOICE_NPARAMS_x2 58
-#define PARAM_VOICE_NPARAMS_x3 87
+#define PARAM_VOICE_NPARAMS 22
+#define PARAM_VOICE_NPARAMS_x2 44
+#define PARAM_VOICE_NPARAMS_x3 66
 
 enum Params {
   //  eParamVoice,
-  eParamTrig0,
-  eParamPreGain0,
-  eParamPostGain0,
+  eParamTrig0, // 0
+  eParamPreGain0, // 1
+  eParamPostGain0, // 2
 
-  eParamAmpAtkSlew0,
-  eParamAmpDecSlew0,
-  eParamAmpSus0,
-  eParamAmpRelSlew0,
-  eParamAmpSusDur0,
+  eParamAmpAtkSlew0, // 3
+  eParamAmpDecSlew0, // 4
+  eParamAmpSus0, // 5
+  eParamAmpRelSlew0, // 6
+  eParamAmpSusDur0, // 7
 
-  eParamFreqSus0,
-  eParamFreqAtkSlew0,
-  eParamFreqDecSlew0,
-  eParamFreqRelSlew0,
-  eParamFreqSusDur0,
-  eParamFreqOff0,
-  eParamFreqOn0,
+  eParamFreqSus0, // 8
+  eParamFreqAtkSlew0, // 9
+  eParamFreqDecSlew0, // 10
+  eParamFreqRelSlew0, // 11
+  eParamFreqSusDur0, // 12
+  eParamFreqOff0, // 13
+  eParamFreqOn0, // 14
 
-  eParamRq0,
-  eParamLow0,
-  eParamHigh0,
-  eParamBand0,
-  eParamNotch0,
-  eParamSvfPre0,
-  eParamFreqEnv0,
+  eParamRq0, // 15
+  eParamLow0, // 16
+  eParamHigh0, // 17
+  eParamBand0, // 18
+  eParamNotch0, // 19
+  eParamSvfPre0, // 20
+  eParamFreqEnv0, // 21
 
   eParamNumParams	//
 };

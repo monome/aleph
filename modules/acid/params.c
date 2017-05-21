@@ -145,7 +145,7 @@ static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
 /// setup default values
 void params_default(void) {
   int i, j;
-  for( j=0; j<4; ++j) {
+  for( j=0; j<DRUMSYN_NVOICES; ++j) {
     for( i=0; i<PARAM_VOICE_NPARAMS; ++i) {
       const int o = j * PARAM_VOICE_NPARAMS;
 
