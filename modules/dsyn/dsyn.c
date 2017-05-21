@@ -79,7 +79,7 @@ fract32 noise_next(drumsynVoice* voice, int i) {
 }
 
 // initialize voice
-void drumsyn_voice_init(drumsynVoice* mem, int i) {
+void drumsyn_voice_init(drumsynVoice* voice, int i) {
   // svf
   filter_svf_init(&(voice->svf));
 
