@@ -41,7 +41,7 @@ fract32 env_adsr_next(env_adsr *env) {
 
 
 
-void env_adsr_init_16(env_adsr_16 *env) {
+void env_adsr_16_init(env_adsr_16 *env) {
   env->envState=adsrRelease;
   env->envOut = 0;
   env->overshoot = FR16_MAX / 10;
@@ -51,15 +51,15 @@ void env_adsr_init_16(env_adsr_16 *env) {
   env->releaseTime = SLEW_1S_16;
 }
 
-void env_adsr_press_16 (env_adsr_16 *env) {
+void env_adsr_16_press (env_adsr_16 *env) {
   env->envState = adsrAttack;
 }
 
-void env_adsr_release_16 (env_adsr_16 *env) {
+void env_adsr_16_release (env_adsr_16 *env) {
   env->envState = adsrRelease;
 }
 
-fract16 env_adsr_next_16(env_adsr_16 *env) {
+fract16 env_adsr_16_next(env_adsr_16 *env) {
   switch(env->envState) {
   case adsrAttack :
     normalised_logSlew_16(&(env->envOut), FR16_MAX, env->attackTime);
