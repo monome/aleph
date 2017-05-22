@@ -40,12 +40,6 @@
 #define PARAM_AMP_12 (PARAM_AMP_0 >> 2)
 
 
-// number of parameters per voice
-// can use as offset hack from param 0
-#define PARAM_VOICE_NPARAMS 22
-#define PARAM_VOICE_NPARAMS_x2 44
-#define PARAM_VOICE_NPARAMS_x3 66
-
 enum dsynParams {
   //  dsynParamVoice,
   dsynParamTrig, // 0
@@ -58,9 +52,9 @@ enum dsynParams {
   dsynParamAmpRelSlew, // 6
   dsynParamAmpSusDur, // 7
 
-  dsynParamFreqSus, // 8
-  dsynParamFreqAtkSlew, // 9
-  dsynParamFreqDecSlew, // 10
+  dsynParamFreqAtkSlew, // 8
+  dsynParamFreqDecSlew, // 9
+  dsynParamFreqSus, // 10
   dsynParamFreqRelSlew, // 11
   dsynParamFreqSusDur, // 12
   dsynParamFreqOff, // 13

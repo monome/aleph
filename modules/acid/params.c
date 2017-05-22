@@ -40,7 +40,9 @@ static void module_set_monosynth_voice_param(u8 vid, u32 idx, ParamValue v);
 // set parameter by value
 void module_set_param(u32 idx, ParamValue v) {
   /// offset hack on parameter index
-  if(idx < PARAM_VOICE_NPARAMS) {
+
+  // FIXME - will not scale to multiple voices without using % and /
+  if(idx < DSYN_NPARAMS) {
     module_set_dsyn_voice_param(0, idx, v);
   }/*  else if (idx < 2 * PARAM_VOICE_NPARAMS) { */
   /*   module_set_voice_param(1, idx - PARAM_VOICE_NPARAMS, v); */
