@@ -146,7 +146,6 @@ static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v) {
 }
 
 
-#include "ricks_tricks.h"
 /// setup default values
 void params_default(void) {
   int i, j;
