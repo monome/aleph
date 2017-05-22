@@ -1,5 +1,5 @@
-#ifndef _ALEPH_DSP_DRUMSYN_H_
-#define _ALEPH_DSP_DRUMSYN_H_
+#ifndef _ALEPH_ACID_H_
+#define _ALEPH_ACID_H_
 
 #include "dsyn_voice.h"
 /// testing
