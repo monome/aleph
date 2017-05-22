@@ -11,12 +11,15 @@ ldr_name = $(module_name)-$(version).ldr
 module_obj = acid.o \
 	noise_acid.o \
 	dsyn_voice.o \
+	monosynth_voice.o \
 	params.o \
 	$(audio)/conversion.o \
 	$(audio_dir)/env_trig.o \
+	$(audio_dir)/env_adsr.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_2p.o \
 	$(audio_dir)/filter_svf.o \
+	$(audio_dir)/osc_polyblep.o \
 	$(audio)/ricks_tricks.o \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o \
@@ -68,12 +71,14 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	noise_acid.c \
 	params.c \
 	dsyn_voice.c \
+	monosynth_voice.c \
 	$(audio)/conversion.c \
 	$(audio_dir)/env_trig.c \
 	$(audio_dir)/env_adsr.c \
 	$(audio_dir)/filter_1p.c \
 	$(audio_dir)/filter_2p.c \
 	$(audio_dir)/filter_svf.c \
+	$(audio_dir)/osc_polyblep.c \
 	$(audio)/ricks_tricks.c \
 	../../utils/bfin_sim/fract2float_conv.c \
 	../../utils/bfin_sim/src/cv.c \

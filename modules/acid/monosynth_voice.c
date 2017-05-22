@@ -1,10 +1,10 @@
 #include "monosynth_voice.h"
+#include "osc_polyblep.h"
 
 extern void monosynthVoice_init(monosynthVoice* voice) {
   env_adsr_init(&voice->ampEnv);
   env_adsr_init(&voice->filterEnv);
   filter_svf_init(&voice->svf);
-  voice->phasor = 0;
   phasor_init (&voice->noteOsc);
   hpf_init(&voice->dcBlocker);
   voice->clipFlavour = 0;
@@ -26,24 +26,24 @@ extern fract32 monosynthVoice_next(monosynthVoice* voice) {
   fract32 freq = voice->noteOsc.freq;
   switch (voice->oscFlavour) {
   case 0 : // saw polyblep
-    note = voice->saw_polyblep(phase, freq);
+    note = saw_polyblep(phase, freq);
     break;
   case 1 : // square polyblep
-    note = voice->square_polyblep(phase, freq);
+    note = square_polyblep(phase, freq);
     break;
   case 2 : // triangle polyblep
-    note = voice->triangle_polyblep(phase, freq);
+    note = triangle_polyblep(phase);
     break;
   case 3 : // sine polyblep
-    note = voice->sine_polyblep(phase, freq);
+    note = sine_polyblep(phase);
     break;
   default :
-    note = voice->saw_polyblep(phase, freq);
+    note = saw_polyblep(phase, freq);
   }
   note = shl_fr1x32(note, 15);
   note = mult_fr1x32x32(note, env_adsr_next(&voice->ampEnv));
 
-  filter_svf_set_coeff(&voice->svf, adsr_next(&voice->filterEnv));
+  filter_svf_set_coeff(&voice->svf, env_adsr_next(&voice->filterEnv));
   
   switch (voice->clipFlavour) {
   case 0 : // asym clipping
@@ -60,6 +60,6 @@ extern fract32 monosynthVoice_next(monosynthVoice* voice) {
     break;
   }
   
-  return dc_block(voice->dcBlocker, note);
+  return dc_block(&voice->dcBlocker, note);
 
 }

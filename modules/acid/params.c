@@ -5,7 +5,8 @@
 #include "env_exp.h"
 #include "filter_1p.h"
 #include "module.h"
-#include "params.h" 
+#include "params.h"
+#include "libfixmath/fix16_fract.h"
 
 
 // initial param set
@@ -33,108 +34,111 @@ static void set_param_freqenv(drumsynVoice* vp, s32 val) {
   }
 }
 
-static void module_set_voice_param(u8 vid, u32 idx, ParamValue v);
+static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v);
+static void module_set_monosynth_voice_param(u8 vid, u32 idx, ParamValue v);
 
 // set parameter by value
 void module_set_param(u32 idx, ParamValue v) {
   /// offset hack on parameter index
   if(idx < PARAM_VOICE_NPARAMS) {
-    module_set_voice_param(0, idx, v);
-  } else if (idx < PARAM_VOICE_NPARAMS_x2) {
-    module_set_voice_param(1, idx - PARAM_VOICE_NPARAMS, v);
-  } else if (idx < PARAM_VOICE_NPARAMS_x3) {
-    module_set_voice_param(2, idx - PARAM_VOICE_NPARAMS_x2, v);
-  } else {
-    module_set_voice_param(3, idx - PARAM_VOICE_NPARAMS_x3, v);
-  } 
+    module_set_dsyn_voice_param(0, idx, v);
+  }/*  else if (idx < 2 * PARAM_VOICE_NPARAMS) { */
+  /*   module_set_voice_param(1, idx - PARAM_VOICE_NPARAMS, v); */
+  /* } else if (idx < 3 * PARAM_VOICE_NPARAMS) { */
+  /*   module_set_voice_param(2, idx - 2 * PARAM_VOICE_NPARAMS, v); */
+  /* } else if (idx < 4 * PARAM_VOICE_NPARAMS) { */
+  /*   module_set_voice_param(3, idx - 3 * PARAM_VOICE_NPARAMS, v); */
+  /* } */ else {
+    module_set_monosynth_voice_param(0, idx - DSYN_NPARAMS, v);
+  }
 }
 
 //
-static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
+static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v) {
   switch(idx) {
 
-  case eParamTrig0 : // trig bang
+  case dsynParamTrig : // trig bang
     drumsyn_voice_bang(voices[vid]);
     break;
     
-  case eParamPreGain0 : // fract32 amp
+  case dsynParamPreGain : // fract32 amp
     voices[vid]->noiseGain = v;    
     break;
 
-  case eParamPostGain0 : // fract32 amp
+  case dsynParamPostGain : // fract32 amp
     voices[vid]->postGain = v;    
     break;
 
-  case eParamAmpAtkSlew0 : // fract32 raw 1pole coefficient
+  case dsynParamAmpAtkSlew : // fract32 raw 1pole coefficient
     voices[vid]->envAmp.adsr.attackTime = v;
     break;
 
-  case eParamAmpSus0 : // fract32 amp
+  case dsynParamAmpSus : // fract32 amp
     voices[vid]->envAmp.adsr.sustainLevel = v;    
     break;
     
-  case eParamAmpDecSlew0 : // fract32 raw 1pole coefficient
+  case dsynParamAmpDecSlew : // fract32 raw 1pole coefficient
     voices[vid]->envAmp.adsr.decayTime = v;
     break;
 
-  case eParamAmpRelSlew0 :
+  case dsynParamAmpRelSlew :
     voices[vid]->envAmp.adsr.releaseTime = v;
     break;
 
-  case eParamAmpSusDur0 :
+  case dsynParamAmpSusDur :
     voices[vid]->envAmp.sustainTime = v;
     break;
 
 
-  case eParamFreqAtkSlew0 : // fract32 raw 1pole coefficient
+  case dsynParamFreqAtkSlew : // fract32 raw 1pole coefficient
     voices[vid]->envFreq.adsr.attackTime = v;
     break;
 
-  case eParamFreqSus0 : // fract32 freq
+  case dsynParamFreqSus : // fract32 freq
     voices[vid]->envFreq.adsr.sustainLevel = v;    
     break;
     
-  case eParamFreqDecSlew0 : // fract32 raw 1pole coefficient
+  case dsynParamFreqDecSlew : // fract32 raw 1pole coefficient
     voices[vid]->envFreq.adsr.decayTime = v;
     break;
 
-  case eParamFreqRelSlew0 :
+  case dsynParamFreqRelSlew :
     voices[vid]->envFreq.adsr.releaseTime = v;
     break;
 
-  case eParamFreqSusDur0 :
+  case dsynParamFreqSusDur :
     voices[vid]->envFreq.sustainTime = v;
     break;
 
-  case eParamFreqOff0 : // fract32 raw SVF corner coefficient
+  case dsynParamFreqOff : // fract32 raw SVF corner coefficient
     voices[vid]->freqOff = v;
     break;
-  case eParamFreqOn0: 
+  case dsynParamFreqOn: 
     voices[vid]->freqOn = v;
     break;
 
-  case eParamRq0 :	       
+  case dsynParamRq :	       
     filter_svf_set_rq( &(voices[vid]->svf), v);
     break;
-  case eParamLow0 :	       
+  case dsynParamLow :	       
     filter_svf_set_low( &(voices[vid]->svf), v);
     break;
-  case eParamHigh0 :	       
+  case dsynParamHigh :	       
     filter_svf_set_high( &(voices[vid]->svf), v);
     break;
-  case eParamBand0 :	       
+  case dsynParamBand :	       
     filter_svf_set_band( &(voices[vid]->svf), v);
     break;
-  case eParamNotch0 :	       
+  case dsynParamNotch :	       
     filter_svf_set_notch( &(voices[vid]->svf), v);
     break;
 
-  case eParamSvfPre0 :
+  case dsynParamSvfPre :
     set_param_svfpre(voices[vid], v);
     break;	
-  case eParamFreqEnv0 :
+  case dsynParamFreqEnv :
     set_param_freqenv(voices[vid], v);
-    break;	
+    break;
 
   default:
     break;
@@ -147,32 +151,73 @@ static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
 void params_default(void) {
   int i, j;
   for( j=0; j<DRUMSYN_NVOICES; ++j) {
-    for( i=0; i<PARAM_VOICE_NPARAMS; ++i) {
-      const int o = j * PARAM_VOICE_NPARAMS;
+    for( i=0; i<dsynNumParams; ++i) {
+      const int o = j * dsynNumParams;
 
-      param_setup(o + eParamTrig0, 0);
+      param_setup(o + dsynParamTrig, 0);
 
-      param_setup(o + eParamPreGain0, PARAM_AMP_6);
-      param_setup(o + eParamPostGain0, PARAM_AMP_6);
-      param_setup(o + eParamAmpAtkSlew0, SLEW_1MS);
-      param_setup(o + eParamAmpDecSlew0, SLEW_100MS);
-      param_setup(o + eParamAmpRelSlew0, SLEW_1S);
-      param_setup(o + eParamAmpSusDur0, 4800);
-      param_setup( o + eParamFreqOff0, PARAM_CUT_DEFAULT >> 2);
-      param_setup( o + eParamFreqOn0, PARAM_CUT_DEFAULT ); 
-      param_setup( o + eParamFreqSus0, PARAM_CUT_DEFAULT >> 1); 
-      param_setup( o + eParamFreqAtkSlew0, SLEW_1MS );
-      param_setup( o + eParamFreqDecSlew0, SLEW_100MS );
-      param_setup( o + eParamFreqRelSlew0, SLEW_1S );
-      param_setup( o + eParamFreqSusDur0, 2400 );
+      param_setup(o + dsynParamPreGain, PARAM_AMP_6);
+      param_setup(o + dsynParamPostGain, PARAM_AMP_6);
+      param_setup(o + dsynParamAmpAtkSlew, SLEW_1MS);
+      param_setup(o + dsynParamAmpDecSlew, SLEW_100MS);
+      param_setup(o + dsynParamAmpRelSlew, SLEW_1S);
+      param_setup(o + dsynParamAmpSusDur, 4800);
+      param_setup( o + dsynParamFreqOff, PARAM_CUT_DEFAULT >> 2);
+      param_setup( o + dsynParamFreqOn, PARAM_CUT_DEFAULT ); 
+      param_setup( o + dsynParamFreqSus, PARAM_CUT_DEFAULT >> 1); 
+      param_setup( o + dsynParamFreqAtkSlew, SLEW_1MS );
+      param_setup( o + dsynParamFreqDecSlew, SLEW_100MS );
+      param_setup( o + dsynParamFreqRelSlew, SLEW_1S );
+      param_setup( o + dsynParamFreqSusDur, 2400 );
 
-      param_setup( o + eParamRq0, PARAM_RQ_DEFAULT );
-      param_setup( o + eParamLow0, PARAM_AMP_0 );
-      param_setup( o + eParamHigh0, 0 );
-      param_setup( o + eParamBand0, 0 );
-      param_setup( o + eParamNotch0, 0 );
-      param_setup( o + eParamSvfPre0, 1 );
-      param_setup( o + eParamFreqEnv0, 1 );
+      param_setup( o + dsynParamRq, PARAM_RQ_DEFAULT );
+      param_setup( o + dsynParamLow, PARAM_AMP_0 );
+      param_setup( o + dsynParamHigh, 0 );
+      param_setup( o + dsynParamBand, 0 );
+      param_setup( o + dsynParamNotch, 0 );
+      param_setup( o + dsynParamSvfPre, 1 );
+      param_setup( o + dsynParamFreqEnv, 1 );
     }
+  }
+    for( j=0; j<MONOSYNTH_NVOICES; ++j) {
+    for( i=0; i<monosynthNumParams; ++i) {
+      const int o = j * dsynNumParams + DSYN_NPARAMS;
+
+      param_setup(o + monosynthParamNoteTrigger, 0);
+      param_setup(o + monosynthParamNoteHz, 440 << 16);
+      param_setup(o + monosynthParamNoteTune, FIX16_ONE);
+      param_setup(o + monosynthParamNoteLevel, FR32_MAX);
+    }
+  }
+}
+static void module_set_monosynth_voice_param(u8 vid, u32 idx, ParamValue v) {
+  switch(idx) {
+  case monosynthParamNoteTrigger :
+    if (v > 0) {
+      monosynthVoice_noteon(&mVoices[vid]);
+    }
+    else {
+      monosynthVoice_noteoff(&mVoices[vid]);
+    }
+    break;
+
+  case monosynthParamNoteHz :
+    mVoices[vid].noteHz = v;
+    mVoices[vid].noteOsc.freq = fix16_mul_fract(mVoices[vid].noteTune,
+						mVoices[vid].noteHz);
+    break;
+
+  case monosynthParamNoteTune :
+    mVoices[vid].noteTune = v;
+    mVoices[vid].noteOsc.freq = fix16_mul_fract(mVoices[vid].noteTune,
+						mVoices[vid].noteHz);
+    break;
+
+  case monosynthParamNoteLevel :
+    // FIXME add some mixing
+    break;
+
+  default :
+    break;
   }
 }

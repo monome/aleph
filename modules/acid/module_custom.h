@@ -39,6 +39,5 @@ enum {
 };
 
 
-#define NUM_PARAMS eParamNumParams
-
+#define eParamNumParams ACID_NPARAMS
 #endif // h guard

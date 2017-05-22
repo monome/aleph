@@ -46,37 +46,54 @@
 #define PARAM_VOICE_NPARAMS_x2 44
 #define PARAM_VOICE_NPARAMS_x3 66
 
-enum Params {
-  //  eParamVoice,
-  eParamTrig0, // 0
-  eParamPreGain0, // 1
-  eParamPostGain0, // 2
+enum dsynParams {
+  //  dsynParamVoice,
+  dsynParamTrig, // 0
+  dsynParamPreGain, // 1
+  dsynParamPostGain, // 2
 
-  eParamAmpAtkSlew0, // 3
-  eParamAmpDecSlew0, // 4
-  eParamAmpSus0, // 5
-  eParamAmpRelSlew0, // 6
-  eParamAmpSusDur0, // 7
+  dsynParamAmpAtkSlew, // 3
+  dsynParamAmpDecSlew, // 4
+  dsynParamAmpSus, // 5
+  dsynParamAmpRelSlew, // 6
+  dsynParamAmpSusDur, // 7
 
-  eParamFreqSus0, // 8
-  eParamFreqAtkSlew0, // 9
-  eParamFreqDecSlew0, // 10
-  eParamFreqRelSlew0, // 11
-  eParamFreqSusDur0, // 12
-  eParamFreqOff0, // 13
-  eParamFreqOn0, // 14
+  dsynParamFreqSus, // 8
+  dsynParamFreqAtkSlew, // 9
+  dsynParamFreqDecSlew, // 10
+  dsynParamFreqRelSlew, // 11
+  dsynParamFreqSusDur, // 12
+  dsynParamFreqOff, // 13
+  dsynParamFreqOn, // 14
 
-  eParamRq0, // 15
-  eParamLow0, // 16
-  eParamHigh0, // 17
-  eParamBand0, // 18
-  eParamNotch0, // 19
-  eParamSvfPre0, // 20
-  eParamFreqEnv0, // 21
+  dsynParamRq, // 15
+  dsynParamLow, // 16
+  dsynParamHigh, // 17
+  dsynParamBand, // 18
+  dsynParamNotch, // 19
+  dsynParamSvfPre, // 20
+  dsynParamFreqEnv, // 21
 
-  eParamNumParams	//
+  dsynNumParams	//
 };
 
+enum monosynthParams {
+  // monosynth voice params
+  monosynthParamNoteTrigger,
+  monosynthParamNoteHz,
+  monosynthParamNoteTune,
+  monosynthParamNoteLevel,
+  
+  monosynthNumParams
+};
+
+#define DRUMSYN_NVOICES 1
+#define MONOSYNTH_NVOICES 1
+
+#define DSYN_NPARAMS (DRUMSYN_NVOICES * dsynNumParams)
+#define MONOSYNTH_NPARAMS (MONOSYNTH_NVOICES * monosynthNumParams)
+
+#define ACID_NPARAMS (DSYN_NPARAMS + MONOSYNTH_NPARAMS)
 
 // set default values
 extern void params_default(void);

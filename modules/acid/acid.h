@@ -2,12 +2,14 @@
 #define _ALEPH_ACID_H_
 
 #include "dsyn_voice.h"
+#include "monosynth_voice.h"
+#include "params.h"
 /// testing
 // #define DRUMSYN_NOENV 1
 
-#define DRUMSYN_NVOICES 1
 
 extern drumsynVoice* voices[DRUMSYN_NVOICES];
+extern monosynthVoice mVoices[DRUMSYN_NVOICES];
 
 //////
 ///

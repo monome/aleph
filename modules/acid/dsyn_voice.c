@@ -38,7 +38,7 @@ void drumsyn_voice_bang(drumsynVoice* vp) {
 // next value of voice
 fract32 drumsyn_voice_next(drumsynVoice* voice) {
   filter_svf* f = &(voice->svf);
-  fract32 amp, freq, rq;
+  fract32 amp, freq;
 
   amp = env_trig_adsr_next(&(voice->envAmp));
 

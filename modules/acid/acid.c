@@ -23,7 +23,6 @@
 #include <fract2float_conv.h>
 
 #include "module.h"
-#include "module_custom.h"
 #include "params.h"
 #include "types.h"
 
@@ -37,7 +36,7 @@
 // so it can simply be loaded at the start of SDRAM.
 typedef struct _drumsData {
   ModuleData super;
-  ParamData mParamData[eParamNumParams];
+  ParamData mParamData[ACID_NPARAMS];
 } drumsynData;
 
 //-------------------------
@@ -47,6 +46,7 @@ ModuleData * gModuleData; // module data
 //-----------------------
 //------ static variables
 drumsynVoice* voices[DRUMSYN_NVOICES];
+monosynthVoice mVoices[MONOSYNTH_NVOICES];
 
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
@@ -80,7 +80,7 @@ void module_init(void) {
   strcpy(gModuleData->name, "acid");
 
   gModuleData->paramData = data->mParamData;
-  gModuleData->numParams = eParamNumParams;
+  gModuleData->numParams = ACID_NPARAMS;
 
   for(i=0; i<DRUMSYN_NVOICES; i++) {
     voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
@@ -99,7 +99,7 @@ void module_deinit(void) {
 
 // get number of parameters
 extern u32 module_get_num_params(void) {
-  return eParamNumParams;
+  return ACID_NPARAMS;
 }
 
 // frame callback
