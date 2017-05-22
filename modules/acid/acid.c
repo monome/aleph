@@ -87,6 +87,10 @@ void module_init(void) {
     drumsyn_voice_init(voices[i]);
   }
 
+  for(i=0; i < MONOSYNTH_NVOICES; i++) {
+    monosynthVoice_init(&mVoices[i]);
+  }
+
   // setup params with default values
   params_default();
 
@@ -114,6 +118,7 @@ void module_process_frame(void) {
 
   // DEBUG - figure out why calc_frame is bust, then remove this
   out[0] = drumsyn_voice_next(voices[0]);
+  out[0] = add_fr1x32(out[0], monosynthVoice_next(&mVoices[0]));
   out[3] = out[2] = out[1] = out[0];
   return;
 
