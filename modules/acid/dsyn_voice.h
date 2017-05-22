@@ -11,28 +11,22 @@ typedef struct _drumsynVoice {
   filter_svf svf;
 
   // noise
-  fract32 noise;
-  fract32 noiseGain;
+  u8 noiseReset; // flag to reset white noise on bang
+  fract32 noise; // state variable for noise generator
+  fract32 noiseGain; // noise gain into svf filter
 
-  env_trig_adsr envAmp;
+  env_trig_adsr envAmp; // amplitude envelope
   
-  env_trig_adsr envFreq;
-  fract32 freqOn;
-  fract32 freqOff;
+  env_trig_adsr envFreq; // freq envelope
+  fract32 freqOn; // frequency origin
+  fract32 freqOff; // frequency @ attack peak
 
-  // filter pre/post amplitude
+  // flag to filter pre/post amplitude
   u8 svfPre;
   
   // env->frequency flag
   // if false, use freqOn as value
   u8 freqEnv;
-
-  // env->rq flag
-  // if false, use freqOn as value
-  u8 rqEnv;
-
-  // gate!
-  u8 gate;
 
   // FIXME don't do this mixing inside DSP object
   fract32 postGain;

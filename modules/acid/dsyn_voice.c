@@ -23,14 +23,18 @@ void drumsyn_voice_init(drumsynVoice* voice) {
   voice->freqOff = 0xfffff;
   voice->freqOn = 0x1fffffff;
 
-  voice->noiseGain = FR32_MAX >> 1;
+  voice->noiseGain = FR32_MAX;
   voice->postGain = FR32_MAX >> 1;
+  voice->noiseReset = 1;
 
   voice->svfPre = 1;
 
 }
 
 void drumsyn_voice_bang(drumsynVoice* vp) {
+  if (vp->noiseReset) {
+    acid_noise_init(&vp->noise);
+  }
   env_trig_adsr_bang(&(vp->envAmp));
   env_trig_adsr_bang(&(vp->envFreq));
 }
