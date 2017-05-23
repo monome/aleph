@@ -55,12 +55,15 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 
   fract32 n = mult_fr1x32x32(acid_noise_next(&voice->noise),
 			     voice->noiseGain);
+
+  n = shl_fr1x32(n, 2);
   if(voice->svfPre) {
-    return mult_fr1x32x32(voice->postGain,
-			  mult_fr1x32x32(amp, filter_svf_next(f, n)));
+    n =  mult_fr1x32x32(voice->postGain,
+			mult_fr1x32x32(amp, filter_svf_next(f, n)));
   } else {
-    return mult_fr1x32x32(voice->postGain,
+    n = mult_fr1x32x32(voice->postGain,
 			  filter_svf_next(f, mult_fr1x32x32(amp,n)));
   }
+  return shl_fr1x32(n, 2);
 }
 
