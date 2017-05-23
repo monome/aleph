@@ -9,6 +9,8 @@ extern void monosynthVoice_init(monosynthVoice* voice) {
   hpf_init(&voice->dcBlocker);
   voice->clipFlavour = 0;
   voice->oscFlavour = 0;
+  voice->freqOff = 0xfffff;
+  voice->freqOn = 0x1fffffff;
 }
 extern void monosynthVoice_noteon(monosynthVoice* voice) {
   env_adsr_press(&voice->ampEnv);
@@ -43,7 +45,11 @@ extern fract32 monosynthVoice_next(monosynthVoice* voice) {
   note = shl_fr1x32(note, 15);
   note = mult_fr1x32x32(note, env_adsr_next(&voice->ampEnv));
 
-  filter_svf_set_coeff(&voice->svf, env_adsr_next(&voice->filterEnv));
+  fract32 filtFreq;
+  filtFreq = env_adsr_next(&(voice->filterEnv));
+  filtFreq = mult_fr1x32x32(filtFreq, sub_fr1x32(voice->freqOn, voice->freqOff));
+  filtFreq = add_fr1x32(filtFreq, voice->freqOff);
+  filter_svf_set_coeff(&voice->svf, filtFreq);
   
   switch (voice->clipFlavour) {
   case 0 : // asym clipping

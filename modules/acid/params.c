@@ -187,7 +187,24 @@ void params_default(void) {
       param_setup(o + monosynthParamNoteTrigger, 0);
       param_setup(o + monosynthParamNoteHz, 440 << 16);
       param_setup(o + monosynthParamNoteTune, FIX16_ONE);
+      param_setup( o + monosynthParamOscFlava, 0 );
+
+      param_setup(o + monosynthParamAmpAttack, SLEW_1MS);
+      param_setup(o + monosynthParamAmpDecay, SLEW_100MS);
+      param_setup(o + monosynthParamAmpSustain, PARAM_AMP_6);
+      param_setup(o + monosynthParamAmpRelease, SLEW_1S);
       param_setup(o + monosynthParamNoteLevel, FR32_MAX);
+
+      param_setup(o + monosynthParamFiltAttack, SLEW_1MS);
+      param_setup(o + monosynthParamFiltDecay, SLEW_100MS);
+      param_setup(o + monosynthParamFiltSustain, PARAM_AMP_6);
+      param_setup(o + monosynthParamFiltRelease, SLEW_1S);
+      param_setup( o + monosynthParamFreqOff, PARAM_CUT_DEFAULT >> 2);
+      param_setup( o + monosynthParamFreqOn, PARAM_CUT_DEFAULT );
+
+      param_setup( o + monosynthParamRq, PARAM_RQ_DEFAULT );
+      param_setup( o + monosynthParamDist, 4 );
+
     }
   }
 }
@@ -213,9 +230,52 @@ static void module_set_monosynth_voice_param(u8 vid, u32 idx, ParamValue v) {
     mVoices[vid].noteOsc.freq = fix16_mul_fract(mVoices[vid].noteTune,
 						mVoices[vid].noteHz);
     break;
+  case monosynthParamOscFlava :
+    mVoices[vid].oscFlavour = v;
+    break;
 
+  case monosynthParamAmpAttack : // fract32 raw 1pole coefficient
+    mVoices[vid].ampEnv.attackTime = FR32_MAX - v;
+    break;
+  case monosynthParamAmpDecay : // fract32 raw 1pole coefficient
+    mVoices[vid].ampEnv.decayTime = FR32_MAX - v;
+    break;
+  case monosynthParamAmpSustain : // fract32 freq
+    mVoices[vid].ampEnv.sustainLevel = v;
+    break;
+  case monosynthParamAmpRelease :
+    mVoices[vid].ampEnv.releaseTime = FR32_MAX - v;
+    break;
   case monosynthParamNoteLevel :
     // FIXME add some mixing
+    break;
+
+  case monosynthParamFiltAttack : // fract32 raw 1pole coefficient
+    mVoices[vid].filterEnv.attackTime = FR32_MAX - v;
+    break;
+  case monosynthParamFiltDecay : // fract32 raw 1pole coefficient
+    mVoices[vid].filterEnv.decayTime = FR32_MAX - v;
+    break;
+  case monosynthParamFiltSustain : // fract32 freq
+    mVoices[vid].filterEnv.sustainLevel = v;
+    break;
+  case monosynthParamFiltRelease :
+    mVoices[vid].filterEnv.releaseTime = FR32_MAX - v;
+    break;
+
+  case monosynthParamFreqOff : // fract32 raw SVF corner coefficient
+    mVoices[vid].freqOff = v;
+    break;
+  case monosynthParamFreqOn:
+    mVoices[vid].freqOn = v;
+    break;
+
+  case monosynthParamRq :
+    filter_svf_set_rq( &(mVoices[vid].svf), v << 14);
+    break;
+
+  case monosynthParamDist :
+    mVoices[vid].clipFlavour = v - 4;
     break;
 
   default :

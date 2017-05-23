@@ -81,13 +81,55 @@ static ParamDesc monosynthParamDescData[] = {
   { .label = "NoteTune", .type = eParamTypeFix,
     .min = RATIO_MIN, .max = RATIO_MAX, .radix = RATIO_RADIX
   },
+  { .label = "OscFlava", .type = eParamTypeLabel,
+    .min = 0, .max = 3, .radix = 1
+  },
+  { .label = "AmpAttack", .type = eParamTypeIntegrator,
+    .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
+  },
+  { .label = "AmpDecay", .type = eParamTypeIntegrator,
+    .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
+  },
+  { .label = "AmpSustain", 	.type = eParamTypeAmp, .min = 0, .max = PARAM_AMP_0, .radix = 1 },
+  { .label = "AmpRelease", .type = eParamTypeIntegrator,
+    .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
+  },
   { .label =  "Vol", .type = eParamTypeAmp, .min=0, .max = PARAM_AMP_0, .radix = 1 },
+
+  // cutoff env
+  { .label = "FiltAttack", .type = eParamTypeIntegrator,
+    .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
+  },
+  { .label = "FiltDecay", .type = eParamTypeIntegrator,
+    .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
+  },
+  { .label = "FiltSustain", .type =eParamTypeFix,
+    .min = 0, .max = FR32_MAX, .radix = 16
+  },
+  { .label = "FiltRelease", .type = eParamTypeIntegrator,
+    .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
+  },
+  { .label = "FreqOff", .type = eParamTypeSvfFreq,
+    .min = PARAM_CUT_MIN, .max = PARAM_CUT_MAX, .radix = PARAM_CUT_RADIX
+  },
+  { .label = "FreqOn", .type = eParamTypeSvfFreq,
+    .min = PARAM_CUT_MIN, .max = PARAM_CUT_MAX, .radix = PARAM_CUT_RADIX
+  },
+
+  // rq env
+  { .label = "Rq", .type = eParamTypeFix,
+    .min = PARAM_RQ_MIN, .max = PARAM_RQ_MAX, .radix = PARAM_RQ_RADIX
+  },
+  { .label = "FiltFlava", .type = eParamTypeLabel,
+    .min = 4, .max = 6, .radix = 0
+  },
+
 };
 
 
 void fill_param_desc(ParamDesc* desc) {
   u32 i, j, k;
-  const char * numstrs[] = { "d0", "d1", "d2", "d3" };
+  const char * numstrs[] = { "D0", "D1", "D2", "D3" };
   ParamDesc* descData;
 
   k = 0;
@@ -99,7 +141,7 @@ void fill_param_desc(ParamDesc* desc) {
       ++k;
     }
   }
-  const char * monoSuffix [] = {"m0", "m1"};
+  const char * monoSuffix [] = {"M0", "M1"};
   for(i=0; i<MONOSYNTH_NVOICES; i++) {
     for(j=0; j < monosynthNumParams; j++) { 
       descData = &(monosynthParamDescData[j]);

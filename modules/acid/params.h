@@ -76,7 +76,23 @@ enum monosynthParams {
   monosynthParamNoteTrigger,
   monosynthParamNoteHz,
   monosynthParamNoteTune,
+  monosynthParamOscFlava,
+
+  monosynthParamAmpAttack,
+  monosynthParamAmpDecay,
+  monosynthParamAmpSustain,
+  monosynthParamAmpRelease,
   monosynthParamNoteLevel,
+
+  monosynthParamFiltAttack,
+  monosynthParamFiltDecay,
+  monosynthParamFiltSustain,
+  monosynthParamFiltRelease,
+  monosynthParamFreqOff,
+  monosynthParamFreqOn,
+
+  monosynthParamRq,
+  monosynthParamDist,
   
   monosynthNumParams
 };

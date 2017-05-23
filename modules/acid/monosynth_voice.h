@@ -18,6 +18,9 @@ typedef struct _monosynth_voice {
   phasor noteOsc;
   u8 oscFlavour;
 
+  fract32 freqOn;
+  fract32 freqOff;
+
 } monosynthVoice;
 
 
