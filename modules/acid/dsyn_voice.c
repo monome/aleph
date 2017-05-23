@@ -49,7 +49,7 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   if(voice->freqEnv > 0) {
     freq = env_trig_adsr_next(&(voice->envFreq));
     freq = mult_fr1x32x32(freq, sub_fr1x32(voice->freqOn, voice->freqOff));
-    freq = add_fr1x32(freq, voice->freqOn);
+    freq = add_fr1x32(freq, voice->freqOff);
     filter_svf_set_coeff(f, freq);
   }
 

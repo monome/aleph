@@ -31,8 +31,8 @@ static ParamDesc voiceParamDescData[] = {
   { .label = "FreqDecay", .type = eParamTypeIntegrator,
     .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
   },
-  { .label = "FreqSustain", .type = eParamTypeSvfFreq,
-    .min = PARAM_CUT_MIN, .max = PARAM_CUT_MAX, .radix = PARAM_CUT_RADIX
+  { .label = "FreqSustain", .type =eParamTypeFix,
+    .min = 0, .max = FR32_MAX, .radix = 16
   },
   { .label = "FreqRelease", .type = eParamTypeIntegrator,
     .min = PARAM_SLEW_MIN, .max = PARAM_SLEW_MAX, .radix = PARAM_SLEW_RADIX
