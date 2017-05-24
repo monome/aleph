@@ -207,6 +207,7 @@ void params_default(void) {
       param_setup( o + monosynthParamFreqOn, PARAM_CUT_DEFAULT << 4);
 
       param_setup( o + monosynthParamRq, PARAM_RQ_DEFAULT );
+      param_setup( o + monosynthParamFiltType, 7 );
       param_setup( o + monosynthParamDist, 4 );
 
     }
@@ -279,9 +280,14 @@ static void module_set_monosynth_voice_param(u8 vid, u32 idx, ParamValue v) {
     filter_svf_set_rq( &(mVoices[vid].svf), v << 14);
     break;
 
+  case monosynthParamFiltType :
+    mVoices[vid].filtType = v - 7;
+    break;
+
   case monosynthParamDist :
     mVoices[vid].clipFlavour = v - 4;
     break;
+
 
   default :
     break;

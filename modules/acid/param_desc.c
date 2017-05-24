@@ -120,6 +120,9 @@ static ParamDesc monosynthParamDescData[] = {
   { .label = "Rq", .type = eParamTypeFix,
     .min = PARAM_RQ_MIN, .max = PARAM_RQ_MAX, .radix = PARAM_RQ_RADIX
   },
+  { .label = "FiltType", .type = eParamTypeLabel,
+    .min = 7, .max = 10, .radix = 0
+  },
   { .label = "FiltFlava", .type = eParamTypeLabel,
     .min = 4, .max = 6, .radix = 0
   },

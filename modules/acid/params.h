@@ -92,6 +92,7 @@ enum monosynthParams {
   monosynthParamFreqOn,
 
   monosynthParamRq,
+  monosynthParamFiltType,
   monosynthParamDist,
   
   monosynthNumParams

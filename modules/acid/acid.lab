@@ -2,6 +2,10 @@ saw
 square
 triangle
 sine
-creamy
-smoky
 crunchy
+smoky
+creamy
+highpass
+bandpass
+lowpass
+notch

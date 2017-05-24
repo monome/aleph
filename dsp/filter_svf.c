@@ -169,6 +169,11 @@ extern fract32 filter_svf_hpf_next( filter_svf* f, fract32 in) {
   return f->high;
 }
 
+extern fract32 filter_svf_notch_next( filter_svf* f, fract32 in) {
+  filter_svf_calc_frame(f, in);
+  return add_fr1x32(f->low, f->high);
+}
+
 extern fract32 filter_svf_softclip_lpf_next( filter_svf* f, fract32 in) {
   filter_svf_softclip_calc_frame(f, in);
   return f->low;
@@ -177,6 +182,11 @@ extern fract32 filter_svf_softclip_lpf_next( filter_svf* f, fract32 in) {
 extern fract32 filter_svf_softclip_bpf_next( filter_svf* f, fract32 in) {
   filter_svf_softclip_calc_frame(f, in);
   return f->band;
+}
+
+extern fract32 filter_svf_softclip_notch_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_calc_frame(f, in);
+  return add_fr1x32(f->low, f->high);
 }
 
 extern fract32 filter_svf_softclip_hpf_next( filter_svf* f, fract32 in) {
@@ -198,3 +208,15 @@ extern fract32 filter_svf_softclip_asym_hpf_next( filter_svf* f, fract32 in) {
   filter_svf_softclip_asym_calc_frame(f, in);
   return f->high;
 }
+
+extern fract32 filter_svf_softclip_asym_notch_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_asym_calc_frame(f, in);
+  return add_fr1x32(f->low, f->high);
+}
+
+const svf_func_t svf_funcs[3][4] =
+  {
+    {filter_svf_hpf_next, filter_svf_bpf_next, filter_svf_lpf_next, filter_svf_notch_next},
+    {filter_svf_softclip_hpf_next, filter_svf_softclip_bpf_next, filter_svf_softclip_lpf_next, filter_svf_softclip_notch_next},
+    {filter_svf_softclip_asym_hpf_next, filter_svf_softclip_asym_bpf_next, filter_svf_softclip_asym_lpf_next, filter_svf_softclip_asym_notch_next}
+  };

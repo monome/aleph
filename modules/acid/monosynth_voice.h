@@ -6,8 +6,10 @@
 
 typedef struct _monosynth_voice {
   env_adsr filterEnv;
-  u8 clipFlavour;
   filter_svf svf;
+
+  u8 filtType;
+  u8 clipFlavour;
   
   hpf dcBlocker;
 
