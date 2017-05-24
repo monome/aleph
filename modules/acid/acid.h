@@ -9,7 +9,10 @@
 
 
 extern drumsynVoice* voices[DRUMSYN_NVOICES];
-extern monosynthVoice mVoices[DRUMSYN_NVOICES];
+extern monosynthVoice mVoices[MONOSYNTH_NVOICES];
+
+extern fract32 dsynLevels[DRUMSYN_NVOICES];
+extern fract32 monosynthLevels[MONOSYNTH_NVOICES];
 
 //////
 ///

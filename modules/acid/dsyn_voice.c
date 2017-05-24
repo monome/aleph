@@ -24,7 +24,6 @@ void drumsyn_voice_init(drumsynVoice* voice) {
   voice->freqOn = 0x1fffffff;
 
   voice->noiseGain = FR32_MAX;
-  voice->postGain = FR32_MAX >> 1;
   voice->noiseReset = 1;
 
   voice->svfPre = 1;
@@ -58,12 +57,10 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 
   n = shl_fr1x32(n, 2);
   if(voice->svfPre) {
-    n =  mult_fr1x32x32(voice->postGain,
-			mult_fr1x32x32(amp, filter_svf_next(f, n)));
+    n = mult_fr1x32x32(amp, filter_svf_next(f, n));
   } else {
-    n = mult_fr1x32x32(voice->postGain,
-			  filter_svf_next(f, mult_fr1x32x32(amp,n)));
+    n = filter_svf_next(f, mult_fr1x32x32(amp,n));
   }
-  return shl_fr1x32(n, 2);
+  return n;
 }
 

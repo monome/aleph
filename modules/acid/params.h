@@ -31,7 +31,7 @@
 // rq
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x0000ffff
-#define PARAM_RQ_DEFAULT 0x0000ffff >> 5
+#define PARAM_RQ_DEFAULT 0x0000ffff >> 4
 #define PARAM_RQ_RADIX 2
 
 // amp
@@ -97,8 +97,8 @@ enum monosynthParams {
   monosynthNumParams
 };
 
-#define DRUMSYN_NVOICES 1
-#define MONOSYNTH_NVOICES 1
+#define DRUMSYN_NVOICES 4
+#define MONOSYNTH_NVOICES 2
 
 #define DSYN_NPARAMS (DRUMSYN_NVOICES * dsynNumParams)
 #define MONOSYNTH_NPARAMS (MONOSYNTH_NVOICES * monosynthNumParams)

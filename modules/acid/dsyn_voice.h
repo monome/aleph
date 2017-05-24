@@ -28,8 +28,6 @@ typedef struct _drumsynVoice {
   // if false, use freqOn as value
   u8 freqEnv;
 
-  // FIXME don't do this mixing inside DSP object
-  fract32 postGain;
 } drumsynVoice;
 
 extern void drumsyn_voice_init(drumsynVoice* voice);

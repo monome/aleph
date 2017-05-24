@@ -51,21 +51,9 @@ monosynthVoice mVoices[MONOSYNTH_NVOICES];
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
-static fract32 frameVal;
 
-//-----------------------------
-//----- static functions
-
-// frame calculation
-static void calc_frame(void) {
-  fract32 dum = 0;
-  fract32 frameVal = 0;
-  int i;
-  for(i=0; i<DRUMSYN_NVOICES; i++) {
-    dum = drumsyn_voice_next(voices[i]);
-    frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
-  }
-}
+fract32 dsynLevels[DRUMSYN_NVOICES];
+fract32 monosynthLevels[MONOSYNTH_NVOICES];
 
 //----------------------
 //----- external functions
@@ -85,10 +73,12 @@ void module_init(void) {
   for(i=0; i<DRUMSYN_NVOICES; i++) {
     voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
     drumsyn_voice_init(voices[i]);
+    dsynLevels[i] = 0;
   }
 
   for(i=0; i < MONOSYNTH_NVOICES; i++) {
     monosynthVoice_init(&mVoices[i]);
+    monosynthLevels[i] = 0;
   }
 
   // setup params with default values
@@ -111,19 +101,25 @@ void module_process_frame(void) {
   // sum input pairs to output pairs
   fract32 sum01 = add_fr1x32(in[0], in[1]);
   fract32 sum23 = add_fr1x32(in[2], in[3]);
+  fract32 synthOutput = 0;
+  fract32 synthBus = 0;
 
-  // acid output is mono :)
-  // calculate frameVal
-  /* calc_frame(); */
+  int i;
+  for(i=0; i < DRUMSYN_NVOICES; i++) {
+    synthOutput = drumsyn_voice_next(voices[i]);
+    synthOutput = mult_fr1x32x32(synthOutput, dsynLevels[i]);
+    synthOutput = shl_fr1x32(synthOutput, 2);
+    synthBus = add_fr1x32(synthBus, synthOutput);
+  }
+  for(i=0; i < MONOSYNTH_NVOICES; i++) {
+    synthOutput = monosynthVoice_next(&mVoices[i]);
+    synthOutput = mult_fr1x32x32(synthOutput, monosynthLevels[i]);
+    synthOutput = shl_fr1x32(synthOutput, 1);
+    synthBus = add_fr1x32(synthBus, synthOutput);
+  }
 
-  // DEBUG - figure out why calc_frame is bust, then remove this
-  out[0] = drumsyn_voice_next(voices[0]);
-  out[0] = add_fr1x32(out[0], monosynthVoice_next(&mVoices[0]));
-  out[3] = out[2] = out[1] = out[0];
-  return;
-
-  sum01 = add_fr1x32(sum01, frameVal);
-  sum23 = add_fr1x32(sum23, frameVal);
+  sum01 = add_fr1x32(sum01, synthBus);
+  sum23 = add_fr1x32(sum23, synthBus);
 
   out[0] = sum01;
   out[1] = sum01;
