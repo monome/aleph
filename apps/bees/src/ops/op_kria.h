@@ -46,6 +46,7 @@ typedef struct {
 typedef struct {
   kria_pattern kp[2][16];
   u8 pscale[7];
+  u8 scales[42][7];
 } kria_set;
 
 //--- white whale

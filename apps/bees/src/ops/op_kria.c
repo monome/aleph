@@ -83,7 +83,6 @@ u8 ch;
 u8 pos[2][NUM_PARAMS];
 u8 trans_edit;
 u8 pscale_edit;
-u8 scales[42][7];
 
 u8 key_alt, mod1, mod2;
 s8 loop_count;
@@ -252,9 +251,9 @@ void op_kria_init(void* mem) {
   }
 
   for(i1=0;i1<42;i1++) {
-    scales[i1][0] = 0;
+    op->k.scales[i1][0] = 0;
     for(i2=0;i2<6;i2++)
-      scales[i1][i2+1] = 1;
+      op->k.scales[i1][i2+1] = 1;
   }
 
 
@@ -679,8 +678,8 @@ static void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     }
     else if(y == 6 && x < 8) {
       for(i1=0;i1<6;i1++)
-	scales[kria->k.pscale[pscale_edit]][i1+1] = SCALE[(x-1)*7+i1];
-      scales[kria->k.pscale[pscale_edit]][0] = 0;
+	kria->k.scales[kria->k.pscale[pscale_edit]][i1+1] = SCALE[(x-1)*7+i1];
+      kria->k.scales[kria->k.pscale[pscale_edit]][0] = 0;
 
       if(sc[0] == pscale_edit)
 	calc_scale(kria, 0);
@@ -690,7 +689,7 @@ static void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
     else if(x > 0 && x < 8) {
       if(key_alt) {
 	for(i1=0;i1<7;i1++)
-	  scales[kria->k.pscale[x-1 + y*7]][i1] = scales[kria->k.pscale[pscale_edit]][i1];
+	  kria->k.scales[kria->k.pscale[x-1 + y*7]][i1] = kria->k.scales[kria->k.pscale[pscale_edit]][i1];
       }
 
       kria->k.pscale[pscale_edit] = x-1 + y*7;
@@ -705,16 +704,16 @@ static void mode_mScaleEdit_handle_key (op_kria_t *kria, u8 x, u8 y, u8 z) {
       if(key_alt) {
 	if(y!=0) {
 	  s8 diff, change;
-	  diff = (x-8) - scales[kria->k.pscale[pscale_edit]][6-y];
-	  change = scales[kria->k.pscale[pscale_edit]][6-y+1] - diff;
+	  diff = (x-8) - kria->k.scales[kria->k.pscale[pscale_edit]][6-y];
+	  change = kria->k.scales[kria->k.pscale[pscale_edit]][6-y+1] - diff;
 	  if(change<0) change = 0;
 	  if(change>7) change = 7;
-	  scales[kria->k.pscale[pscale_edit]][6-y+1] = change;
+	  kria->k.scales[kria->k.pscale[pscale_edit]][6-y+1] = change;
 	}
 
-	scales[kria->k.pscale[pscale_edit]][6-y] = x-8;
+	kria->k.scales[kria->k.pscale[pscale_edit]][6-y] = x-8;
       }
-      else scales[kria->k.pscale[pscale_edit]][6-y] = x-8;
+      else kria->k.scales[kria->k.pscale[pscale_edit]][6-y] = x-8;
 
       if(sc[0] == pscale_edit)
 	calc_scale(kria, 0);
@@ -853,10 +852,10 @@ static void adjust_loop_end(op_kria_t *kria, u8 x, u8 m) {
 static void calc_scale(op_kria_t *kria, u8 c) {
 #ifndef DISABLE_KRIA
   u8 i1;
-  cur_scale[c][0] = scales[kria->k.pscale[sc[c]]][0];
+  cur_scale[c][0] = kria->k.scales[kria->k.pscale[sc[c]]][0];
 
   for(i1=1;i1<7;i1++) {
-    cur_scale[c][i1] = cur_scale[c][i1-1] + scales[kria->k.pscale[sc[c]]][i1];
+    cur_scale[c][i1] = cur_scale[c][i1-1] + kria->k.scales[kria->k.pscale[sc[c]]][i1];
   }
 #endif
 }
@@ -1161,16 +1160,16 @@ static void mode_mScaleEdit_redraw (op_monome_t *op_monome) {
   op_monome->opLedBuffer[(kria->k.pscale[pscale_edit] / 7) * 16 + 1 + (kria->k.pscale[pscale_edit] % 7)] = L2;
 
   for(i1=0;i1<7;i1++)
-    op_monome->opLedBuffer[scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L1;
+    op_monome->opLedBuffer[kria->k.scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L1;
 
   if(sc[0] == pscale_edit && tr[0]) {
     i1 = kria->k.kp[0][p].note[pos[0][tNote]];
-    op_monome->opLedBuffer[scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
+    op_monome->opLedBuffer[kria->k.scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
   }
 
   if(sc[1] == pscale_edit && tr[1]) {
     i1 = kria->k.kp[1][p].note[pos[1][tNote]];
-    op_monome->opLedBuffer[scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
+    op_monome->opLedBuffer[kria->k.scales[kria->k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
   }
 #endif
 }
