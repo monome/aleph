@@ -15,8 +15,7 @@ module_obj = monosynth.o \
 	$(audio)/biquad.o \
 	$(audio)/env_adsr.o \
 	$(audio)/osc_polyblep.o \
-	$(bfin)/libfixmath/fix16.o \
-	$(bfin)/libfixmath/fix16_fract.o
+	$(bfin)/libfixmath/fix16.o
 
 
 all: $(prefix)$(module_name).ldr
@@ -71,7 +70,6 @@ sim_sourcefiles = monosynth.c \
 	$(audio)/env_adsr.c \
 	$(audio)/osc_polyblep.c \
 	$(bfin)/libfixmath/fix16.c \
-	$(bfin)/libfixmath/fix16_fract.c \
 	params.c \
 	../../utils/bfin_sim/main.c \
 	../../utils/bfin_sim/src/cv.c \
