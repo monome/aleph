@@ -836,7 +836,22 @@ s16 net_remove_op(const u32 opIdx) {
     }
   }
 
-  // FIXME: shift preset param data and connections to params,
+  for(i=0; i < net->numOuts; i++) {
+    for(j=0; j<NET_PRESETS_MAX; j++) {
+      if(preset_out_enabled(j, i)) {
+	s16 tar = presets[j].outs[i].target;
+	if(tar >= opFirstIn + opNumInputs) { // target above deleted op, reshuffle
+	  tar = tar - opNumInputs;
+	  presets[j].outs[i].target = tar;
+	}
+	else if (tar >= opFirstIn) { // targetting deleted op, forget
+	  presets[j].outs[i].enabled = 0;
+	}
+      }
+    } // preset loop
+  } // outs loop
+
+  // FIXME: shift preset param data
   // since they share an indexing list with inputs and we just changed it.
   for(i=0; i<NET_PRESETS_MAX; ++i) {
     // shift parameter nodes in preset data
