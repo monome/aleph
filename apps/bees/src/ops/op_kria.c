@@ -470,7 +470,7 @@ static void handle_bottom_row_key(op_kria_t *kria, u8 x, u8 z) {
       mod_mode = modNone;
     }
     if(x == 15) {
-      key_alt = 1;
+      key_alt = 0;
     }
   }
 #endif
