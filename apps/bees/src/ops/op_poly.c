@@ -139,7 +139,8 @@ static void op_poly_in_pitch(op_poly_t* poly, const io_t pitch) {
 static void op_poly_in_amp(op_poly_t* poly, const io_t amp) {
   poly_voice_t *v;
   // note press
-  if(amp != 0) {
+  if(amp > 0) {
+    poly->amp = amp;
     v = poly_alloc_voice(poly);
     if(v) {
       v->pitch = poly->pitch;
@@ -153,6 +154,7 @@ static void op_poly_in_amp(op_poly_t* poly, const io_t amp) {
   }
   // note release
   else {
+    poly->amp = 0;
     /* printf("note release: %d, %d\n", amp, poly->pitch); */
     v = poly_find_used_pitch(poly, poly->pitch);
     if(v) {
