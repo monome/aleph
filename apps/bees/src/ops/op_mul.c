@@ -68,7 +68,7 @@ static void op_mul_in_b(op_mul_t* mul, const io_t v) {
   mul->b = v;
   mul->val = op_mul(mul->a, mul->b);
   if(mul->btrig) {
-    net_activate(mul, 0, (float) v);
+    net_activate(mul, 0, mul->val);
   }
 }
 
