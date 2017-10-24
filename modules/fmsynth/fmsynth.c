@@ -240,7 +240,7 @@ void module_set_param(u32 idx, ParamValue v) {
     opPans[0] = v;
     break;
   case eParam_op2Vol :
-    opVols[2] = v;
+    opVols[1] = v;
     break;
   case eParam_op2Pan :
     opPans[1] = v;
