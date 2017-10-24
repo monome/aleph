@@ -84,22 +84,27 @@ static void op_enc_in_step(op_enc_t* enc, const io_t v) {
 // max
 static void op_enc_in_min(op_enc_t* enc, const io_t v) {
   /// fixme: for now, i am banning this kind of pathological shit:
-  if(v >= enc->max) { enc->min = enc->max - 1; }
-  else { enc->min = v; }
-  op_enc_perform(enc);
+  if(v >= enc->max) {
+    enc->min = enc->max - 1;
+  }
+  else {
+    enc->min = v;
+  }
 }
 
 // max
 static void op_enc_in_max(op_enc_t* enc, const io_t v) {
-  if(v <= enc->min) { enc->max = enc->min + 1; }
-  else { enc->max = v; }
-  op_enc_perform(enc);
+  if(v <= enc->min) {
+    enc->max = enc->min + 1;
+  }
+  else {
+    enc->max = v;
+  }
 }
 
 // wrap behavior
 static void op_enc_in_val(op_enc_t* enc, const io_t v) {
   enc->val32 = v;
-  op_enc_perform(enc);
 }
 
 // perform wrapping and output
