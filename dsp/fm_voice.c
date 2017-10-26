@@ -39,15 +39,15 @@ void fm_voice_next (fm_voice *v) {
   fract32 nextOpOutputs[FM_OPS_MAX];
   fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
   for(i=0; i < v->nOps; i++) {
-    fract32 opMod = fix16_mul_fract(baseFreq, v->opTune[i]);
-    opMod = add_fr1x32(opMod,
-    		       mult_fr1x32x32(v->opOutputs[v->opMod1Source[i]],
-    				      v->opMod1Gain[i]));
+    fract32 opFreq = fix16_mul_fract(baseFreq, v->opTune[i]);
+    fract32 opMod = mult_fr1x32x32(v->opOutputs[v->opMod1Source[i]],
+				   v->opMod1Gain[i]);
     opMod = add_fr1x32(opMod,
     		       mult_fr1x32x32(v->opOutputs[v->opMod2Source[i]],
     				      v->opMod2Gain[i]));
-    fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opMod);
-    nextOpOutputs[i] = mult_fr1x32x32(env_adsr_next(&(v->opEnv[i])), osc(opPhase));
+    fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opFreq);
+    nextOpOutputs[i] = mult_fr1x32x32(env_adsr_next(&(v->opEnv[i])),
+				      osc(opPhase + opMod));
   }
   for(i=0; i < v->nOps; i++) {
     v->opOutputs[i] = nextOpOutputs[i];
