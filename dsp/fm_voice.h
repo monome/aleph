@@ -20,6 +20,7 @@ typedef struct fm_voice {
   fract32 opMod1Gain[FM_OPS_MAX];
   u8 opMod2Source[FM_OPS_MAX];
   fract32 opMod2Gain[FM_OPS_MAX];
+  fract32 opModLast[FM_OPS_MAX];
   phasor opOsc[FM_OPS_MAX];
   env_adsr opEnv[FM_OPS_MAX];
   u8 opWaveshape[FM_OPS_MAX];
