@@ -27,6 +27,20 @@ void init_timers(void) {
   ;; // nothing to do
 }
 
+u8 timer_already_linked (softTimer_t* t);
+
+u8 timer_already_linked (softTimer_t* t) {
+  int i;
+  softTimer_t *this = head;
+  for(i=0; i < num; i++) {
+    if(this == t) {
+      return 1;
+    }
+    this = this->next;
+  }
+  return 0;
+}
+
 // set a periodic timer with a callback
 // return 1 if set, 0 if not
 u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
@@ -39,10 +53,10 @@ u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
   // print_dbg("\r\n timer_add, @ 0x");
   // print_dbg_hex((u32)t);
 
-  if(t->prev == NULL || t->next == NULL) {
+  if(!timer_already_linked(t)) {
     // print_dbg(" ; timer is unlinked ");
     // is list empty?
-    if( (head == NULL) || (tail == NULL)) {
+    if( (head == NULL) || (tail == NULL) || (num == 0)) {
       // print_dbg(" ; list was empty ");
       head = tail = t;
       t->next = t->prev = t;
@@ -125,6 +139,10 @@ u8 timer_remove( softTimer_t* t) {
     (t->prev)->next = t->next;
     t->next = t->prev = 0;
     --num;
+    if(num == 0) {
+      head = NULL;
+      tail = NULL;
+    }
   }
 
   // enable timer interrupts

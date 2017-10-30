@@ -59,7 +59,8 @@ extern u8 monomeFrameDirty;
 
 // a buffer big enough to hold all led data for 256 or arc4
 // each led gets a full byte
-extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
+extern u8 dummyLedBuffer[MONOME_MAX_LED_BYTES];
+extern u8 *monomeLedBuffer;
 
 //---- function types
 /*

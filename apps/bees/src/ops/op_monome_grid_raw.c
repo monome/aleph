@@ -50,7 +50,7 @@ void op_mgrid_raw_init(void* mem) {
 
   //--- monome
   op->monome.handler = (monome_handler_t)&op_mgrid_raw_handler;
-  op->monome.op = op;
+  net_monome_init(&op->monome, op);
 
   // superclass state
 
@@ -68,6 +68,7 @@ void op_mgrid_raw_init(void* mem) {
   op->super.outString = op_mgrid_raw_outstring;
 
   op->in_val[0] = &(op->focus);
+  op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->tog);  
   op->in_val[2] = &(op->mono);
   op->outs[0] = -1;
@@ -130,14 +131,14 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
   if(op->mono) {
     if(op->tog > 0) { // mono, toggle
       if(z > 0) {        // ignore lift
-	val = ( monomeLedBuffer[pos] == 0 );
-	monomeLedBuffer[pos] = val * 15;
+	val = ( op_monome->opLedBuffer[pos] == 0 );
+	op_monome->opLedBuffer[pos] = val * 15;
 	if(pos != op->lastPos) {
-	  monomeLedBuffer[op->lastPos] = 0;
+	  op_monome->opLedBuffer[op->lastPos] = 0;
 	}
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
+	net_activate(op, 0, op_from_int(x));
+	net_activate(op, 1, op_from_int(y));
+	net_activate(op, 2, op_from_int(val));
 	// refresh flag for current quadrant
 	monome_calc_quadrant_flag(x, y);
 	// refresh flag for previous quadrant
@@ -146,11 +147,11 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       }
     } else { // mono, momentary
       val = z;
-      monomeLedBuffer[pos] =  val * 15;
-      monomeLedBuffer[op->lastPos] = 0;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
+      op_monome->opLedBuffer[pos] =  val * 15;
+      op_monome->opLedBuffer[op->lastPos] = 0;
+      net_activate(op, 0, op_from_int(x));
+      net_activate(op, 1, op_from_int(y));
+      net_activate(op, 2, op_from_int(val));
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
       // refresh flag for previous quadrant
@@ -160,20 +161,20 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
   } else {
     if(op->tog > 0) { // poly, toggle
       if(z > 0) {      /// ignore lift
-	val = ( monomeLedBuffer[pos] == 0 );
-	monomeLedBuffer[pos] = val * 15;
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
+	val = ( op_monome->opLedBuffer[pos] == 0 );
+	op_monome->opLedBuffer[pos] = val * 15;
+	net_activate(op, 0, op_from_int(x));
+	net_activate(op, 1, op_from_int(y));
+	net_activate(op, 2, op_from_int(val));
 	// refresh flag for current quadrant
 	monome_calc_quadrant_flag(x, y);
       }
     } else {   // poly, momentary
       val = z;
-      monomeLedBuffer[pos] = val * 15;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
+      op_monome->opLedBuffer[pos] = val * 15;
+      net_activate(op, 0, op_from_int(x));
+      net_activate(op, 1, op_from_int(y));
+      net_activate(op, 2, op_from_int(val));
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
     }

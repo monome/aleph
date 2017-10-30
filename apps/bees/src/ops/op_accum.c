@@ -145,11 +145,11 @@ void op_accum_wrap_out(op_accum_t* accum) {
   }
 
   // output the value
-  net_activate(accum->outs[0], accum->val, accum);
+  net_activate(accum, 0, accum->val);
 
   // output the wrap amount
   if (dif != 0) {
-    net_activate(accum->outs[1], wrap, accum);  
+    net_activate(accum, 1, wrap);
   }
 }
 

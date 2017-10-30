@@ -18,7 +18,7 @@ static void op_life_in_focus(op_life_t* life, const io_t v);
 static void op_life_output(op_life_t* life);
 
 // life
-static void life_change(u8,u8);
+static void life_change(op_monome_t *op_monome, u8 x,u8 y);
 static void life_init(void);
 static u8 neighbors(u8,u8,u16);
 
@@ -59,7 +59,7 @@ void op_life_init(void* mem) {
 
   //--- monome
   life->monome.handler = (monome_handler_t)&op_life_handler;
-  life->monome.op = life;
+  net_monome_init(&life->monome, life);
 
   life->super.numInputs = 9;
   life->super.numOutputs = 3;
@@ -88,14 +88,12 @@ void op_life_init(void* mem) {
   life->in_val[6] = &(life->noise);
   life->in_val[7] = &(life->rules);
   life->in_val[8] = &(life->focus);
+  life->monome.focus = &(life->focus);
 
   life->next = 0;
   //??? FIXME
-#ifdef BEEKEEP
-#else
   life->xsize = monome_size_x();
   life->ysize = monome_size_y();
-#endif
 
   life->x = 0;
   life->y = 0;
@@ -131,7 +129,7 @@ static void op_life_in_focus(op_life_t* op, const io_t v) {
 static void op_life_in_next(op_life_t* life, const io_t v) {
   if(v!=0) {
     u8 i, x, y, count;
-    u8 *p = monomeLedBuffer;
+    u8 *p = life->monome.opLedBuffer;
 
     for(x=0;x<life->xsize;x++)
     {
@@ -191,7 +189,7 @@ static void op_life_in_x(op_life_t* life, const io_t v) {
   else if(v > life->xsize) life->x = life->xsize;
   else life->x = v;
 
-  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
+  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
 }
 
 static void op_life_in_y(op_life_t* life, const io_t v) {
@@ -199,11 +197,11 @@ static void op_life_in_y(op_life_t* life, const io_t v) {
   else if(v > life->ysize) life->y = life->ysize;
   else life->y = v;
 
-  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
+  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
 }
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
-  u8 *p = monomeLedBuffer;
+  u8 *p = life->monome.opLedBuffer;
   u8 i = life->x+(life->y<<4);
 
   if(v == 0) lifenow[i] = 0;
@@ -231,18 +229,18 @@ static void op_life_handler(op_monome_t* op_monome, u32 edata) {
 
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
 
-  if(z) life_change(x,y);
+  if(z) life_change(op_monome, x,y);
 }
 
 
 static void op_life_output(op_life_t* life) {
-  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
+  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
 
   life->lpop = life->pop;
   life->pop = 0;
   for(u16 i=0;i<256;i++) life->pop += lifenow[i];
-  net_activate(life->outs[1], life->pop, life);
-  net_activate(life->outs[2], (life->pop - life->lpop), life);
+  net_activate(life, 1, life->pop);
+  net_activate(life, 2, (life->pop - life->lpop));
 }
 
 
@@ -255,8 +253,8 @@ static void life_init(void) {
   }
 }
 
-static void life_change(u8 x,u8 y) {
-  u8 *p = monomeLedBuffer;
+static void life_change(op_monome_t *op_monome, u8 x,u8 y) {
+  u8 *p = op_monome->opLedBuffer;
   u8 i = x+(y<<4);
   lifenow[i] ^= 1;
   p[i]=lifenow[i] * 15;
