@@ -2,6 +2,7 @@
 #include "fract_math.h"
 #include "fix.h"
 #include "libfixmath/fix16_fract.h"
+#include "osc_polyblep.h"
 
 void fm_voice_init (fm_voice *v, u8 nOps) {
   v->nOps = nOps;
@@ -76,8 +77,27 @@ void fm_voice_next (fm_voice *v) {
       // phase increment each op with the oversample-compensated frequency,
       // calculate the op output for next oversampled frame
       fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opFreqs[i]);
+      opPhase += shl_fr1x32(opMod, 22);
+      fract16 oscSignal;
+      switch (v->opWaveshape[i]) {
+      case 0 :
+	oscSignal = sine_polyblep(opPhase);
+	break;
+      case 1 :
+	oscSignal = triangle_polyblep(opPhase);
+	break;
+      /* case 2 : */
+      /* 	oscSignal = square_polyblep(opPhase, shr_fr1x32(opFreqs[i], 2)); */
+      /* 	break; */
+      case 2 :
+	oscSignal = saw_polyblep(opPhase, shr_fr1x32(opFreqs[i], 2 + FM_OVERSAMPLE_BITS));
+	break;
+      default :
+	oscSignal = saw_polyblep(opPhase, shr_fr1x32(opFreqs[i], 2 + FM_OVERSAMPLE_BITS));
+	break;
+      }
       nextOpOutputs[i] = multr_fr1x16(envs[i],
-				      osc16(opPhase + shl_fr1x32(opMod, 22)));
+				      oscSignal);
     }
 
     for(i=0; i < v->nOps; i++) {

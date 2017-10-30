@@ -5,7 +5,7 @@
 #include "biquad.h"
 #include "libfixmath/fix16_fract.h"
 
-fix16 polyblep (fract32 p, fract32 dp) {
+static inline fix16 polyblep (fract32 p, fract32 dp) {
   fix16 dp_inv = FR32_MAX / shr_fr1x32(dp, 16);
 
   fix16 p_by_dp = fix16_mul_fract(dp_inv, shr_fr1x32(p, 15));
