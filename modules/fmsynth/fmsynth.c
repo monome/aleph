@@ -34,7 +34,7 @@
 /// custom
 #include "params.h"
 #define PAN_DEFAULT PAN_MAX/2
-#define FADER_DEFAULT PARAM_AMP_0
+#define FADER_DEFAULT PARAM_AMP_12
 
 // data structure of external memory
 typedef struct _fmsynthData {
@@ -136,43 +136,43 @@ void module_init(void) {
   param_setup(eParam_op1Mod2Source, 0);
   param_setup(eParam_op1Mod2Gain, 0);
   param_setup(eParam_op1Tune, FIX16_ONE);
-  param_setup(eParam_op1Attack, SLEW_1S);
-  param_setup(eParam_op1Decay, SLEW_1S);
-  param_setup(eParam_op1Sustain, PARAM_AMP_0 >> 2);
-  param_setup(eParam_op1Release, SLEW_1S);
+  param_setup(eParam_op1Attack, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op1Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op1Sustain, FR32_MAX);
+  param_setup(eParam_op1Release, shl_fr1x32(SLEW_1S_16, 16));
   param_setup(eParam_op1Waveshape, 0);
 
   param_setup(eParam_op2Mod1Source, 0);
-  param_setup(eParam_op2Mod1Gain,PARAM_AMP_0 >> 3);
+  param_setup(eParam_op2Mod1Gain, 0);
   param_setup(eParam_op2Mod2Source, 0);
   param_setup(eParam_op2Mod2Gain, 0);
   param_setup(eParam_op2Tune, FIX16_ONE);
-  param_setup(eParam_op2Attack, 0x00320000);
-  param_setup(eParam_op2Decay, 0x00320000);
-  param_setup(eParam_op2Sustain, PARAM_AMP_0);
-  param_setup(eParam_op2Release, 0x00320000);
+  param_setup(eParam_op2Attack, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op2Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op2Sustain, FR32_MAX);
+  param_setup(eParam_op2Release, shl_fr1x32(SLEW_1S_16, 16));
   param_setup(eParam_op2Waveshape, 0);
 
   param_setup(eParam_op3Mod1Source, 0);
-  param_setup(eParam_op3Mod1Gain,PARAM_AMP_0 >> 2);
+  param_setup(eParam_op3Mod1Gain, 0);
   param_setup(eParam_op3Mod2Source, 0);
-  param_setup(eParam_op3Mod2Gain, PARAM_AMP_0 >> 2);
+  param_setup(eParam_op3Mod2Gain, 0);
   param_setup(eParam_op3Tune, FIX16_ONE);
-  param_setup(eParam_op3Attack, 0x00320000);
-  param_setup(eParam_op3Decay, 0x00320000);
-  param_setup(eParam_op3Sustain, PARAM_AMP_0 >> 2);
-  param_setup(eParam_op3Release, 0x00320000);
+  param_setup(eParam_op3Attack, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op3Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op3Sustain, FR32_MAX);
+  param_setup(eParam_op3Release, shl_fr1x32(SLEW_1S_16, 16));
   param_setup(eParam_op3Waveshape, 0);
 
   param_setup(eParam_op4Mod1Source, 0);
-  param_setup(eParam_op4Mod1Gain,PARAM_AMP_0 >> 2);
+  param_setup(eParam_op4Mod1Gain, 0);
   param_setup(eParam_op4Mod2Source, 0);
-  param_setup(eParam_op4Mod2Gain, PARAM_AMP_0 >> 2);
+  param_setup(eParam_op4Mod2Gain, 0);
   param_setup(eParam_op4Tune, FIX16_ONE);
-  param_setup(eParam_op4Attack, 0x00320000);
-  param_setup(eParam_op4Decay, 0x00320000);
-  param_setup(eParam_op4Sustain, PARAM_AMP_0 >> 2);
-  param_setup(eParam_op4Release, 0x00320000);
+  param_setup(eParam_op4Attack, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op4Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op4Sustain, FR32_MAX);
+  param_setup(eParam_op4Release, shl_fr1x32(SLEW_1S_16, 16));
   param_setup(eParam_op4Waveshape, 0);
 
   param_setup (eParam_lfoSpeed, 0x00640000);
@@ -199,8 +199,11 @@ void module_process_frame(void) {
   fm_voice_next(&voice);
   int i;
   for(i=0; i<FM_VOICE_NOPS; i++) {
-    mix_panned_mono (voice.opOutputs[i], &(out[0]), &(out[1]), opPans[i], opVols[i]);
+    fract32 opOut = shl_fr1x32(voice.opOutputs[i], 16);
+    mix_panned_mono (opOut, &(out[0]), &(out[1]), opPans[i], opVols[i]);
+    /* mix_panned_mono_16 (voice.opOutputs[i], &(out[0]), &(out[1]), opPans[i], opVols[i]); */
   }
+  /* out[0] = shl_fr1x32(voice.opOutputs[0], 16); */
 }
 
 // parameter set function
@@ -279,28 +282,28 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opMod1Source[0] = v;
     break;
   case eParam_op1Mod1Gain :
-    voice.opMod1Gain[0] = v;
+    voice.opMod1Gain[0] = trunc_fr1x32(v);
     break;
   case eParam_op1Mod2Source :
     voice.opMod2Source[0] = v;
     break;
   case eParam_op1Mod2Gain :
-    voice.opMod2Gain[0] = v;
+    voice.opMod2Gain[0] = trunc_fr1x32(v);
     break;
   case eParam_op1Tune :
     voice.opTune[0] = v;
     break;
   case eParam_op1Attack :
-    voice.opEnv[0].attackTime = v;
+    voice.opEnv[0].attackTime = trunc_fr1x32(v);
     break;
   case eParam_op1Decay :
-    voice.opEnv[0].decayTime = v;
+    voice.opEnv[0].decayTime = trunc_fr1x32(v);
     break;
   case eParam_op1Sustain :
-   voice.opEnv[0].sustainLevel = v;
+    voice.opEnv[0].sustainLevel = trunc_fr1x32(v);
    break;
   case eParam_op1Release :
-    voice.opEnv[0].releaseTime = v;
+    voice.opEnv[0].releaseTime = trunc_fr1x32(v);
     break;
   case eParam_op1Waveshape :
     voice.opWaveshape[0] = v >> 16;
@@ -310,28 +313,28 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opMod1Source[1] = v;
     break;
   case eParam_op2Mod1Gain :
-    voice.opMod1Gain[1] = v;
+    voice.opMod1Gain[1] = trunc_fr1x32(v);
     break;
   case eParam_op2Mod2Source :
     voice.opMod2Source[1] = v;
     break;
   case eParam_op2Mod2Gain :
-    voice.opMod2Gain[1] = v;
+    voice.opMod2Gain[1] = trunc_fr1x32(v);
     break;
   case eParam_op2Tune :
     voice.opTune[1] = v;
     break;
   case eParam_op2Attack :
-    voice.opEnv[1].attackTime = v;
+    voice.opEnv[1].attackTime = trunc_fr1x32(v);
     break;
   case eParam_op2Decay :
-    voice.opEnv[1].decayTime = v;
+    voice.opEnv[1].decayTime = trunc_fr1x32(v);
     break;
   case eParam_op2Sustain :
-   voice.opEnv[1].sustainLevel = v;
+    voice.opEnv[1].sustainLevel = trunc_fr1x32(v);
    break;
   case eParam_op2Release :
-    voice.opEnv[1].releaseTime = v;
+    voice.opEnv[1].releaseTime = trunc_fr1x32(v);
     break;
   case eParam_op2Waveshape :
     voice.opWaveshape[1] = v >> 16;
@@ -341,28 +344,28 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opMod1Source[2] = v;
     break;
   case eParam_op3Mod1Gain :
-    voice.opMod1Gain[2] = v;
+    voice.opMod1Gain[2] = trunc_fr1x32(v);
     break;
   case eParam_op3Mod2Source :
     voice.opMod2Source[2] = v;
     break;
   case eParam_op3Mod2Gain :
-    voice.opMod2Gain[2] = v;
+    voice.opMod2Gain[2] = trunc_fr1x32(v);
     break;
   case eParam_op3Tune :
     voice.opTune[2] = v;
     break;
   case eParam_op3Attack :
-    voice.opEnv[2].attackTime = v;
+    voice.opEnv[2].attackTime = trunc_fr1x32(v);
     break;
   case eParam_op3Decay :
-    voice.opEnv[2].decayTime = v;
+    voice.opEnv[2].decayTime = trunc_fr1x32(v);
     break;
   case eParam_op3Sustain :
-   voice.opEnv[2].sustainLevel = v;
+    voice.opEnv[2].sustainLevel = trunc_fr1x32(v);
    break;
   case eParam_op3Release :
-    voice.opEnv[2].releaseTime = v;
+    voice.opEnv[2].releaseTime = trunc_fr1x32(v);
     break;
   case eParam_op3Waveshape :
     voice.opWaveshape[2] = v >> 16;
@@ -372,28 +375,28 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opMod1Source[3] = v;
     break;
   case eParam_op4Mod1Gain :
-    voice.opMod1Gain[3] = v;
+    voice.opMod1Gain[3] = trunc_fr1x32(v);
     break;
   case eParam_op4Mod2Source :
     voice.opMod2Source[3] = v;
     break;
   case eParam_op4Mod2Gain :
-    voice.opMod2Gain[3] = v;
+    voice.opMod2Gain[3] = trunc_fr1x32(v);
     break;
   case eParam_op4Tune :
     voice.opTune[3] = v;
     break;
   case eParam_op4Attack :
-    voice.opEnv[3].attackTime = v;
+    voice.opEnv[3].attackTime = trunc_fr1x32(v);
     break;
   case eParam_op4Decay :
-    voice.opEnv[3].decayTime = v;
+    voice.opEnv[3].decayTime = trunc_fr1x32(v);
     break;
   case eParam_op4Sustain :
-   voice.opEnv[3].sustainLevel = v;
+    voice.opEnv[3].sustainLevel = trunc_fr1x32(v);
    break;
   case eParam_op4Release :
-    voice.opEnv[3].releaseTime = v;
+    voice.opEnv[3].releaseTime = trunc_fr1x32(v);
     break;
   case eParam_op4Waveshape :
     voice.opWaveshape[3] = v >> 16;
