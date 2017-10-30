@@ -201,9 +201,7 @@ void module_process_frame(void) {
   for(i=0; i<FM_VOICE_NOPS; i++) {
     fract32 opOut = shl_fr1x32(voice.opOutputs[i], 16);
     mix_panned_mono (opOut, &(out[0]), &(out[1]), opPans[i], opVols[i]);
-    /* mix_panned_mono_16 (voice.opOutputs[i], &(out[0]), &(out[1]), opPans[i], opVols[i]); */
   }
-  /* out[0] = shl_fr1x32(voice.opOutputs[0], 16); */
 }
 
 // parameter set function

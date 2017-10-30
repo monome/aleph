@@ -25,6 +25,7 @@ typedef struct fm_voice {
   env_adsr_16 opEnv[FM_OPS_MAX];
   u8 opWaveshape[FM_OPS_MAX];
 
+  fract16 opOutputsInternal[FM_OPS_MAX];
   fract16 opOutputs[FM_OPS_MAX];
 } fm_voice;
 void fm_voice_init (fm_voice *v, u8 nOps);
