@@ -206,3 +206,9 @@ of course you can use a different location if you like.
 you probably also want to add the path to your .bashrc or whatever.
 
 you should now be able to run 'make' from aleph/modules/lines or any other module.
+
+On macOS, [a Docker image](https://hub.docker.com/r/pf0camino/cross-bfin-elf/) can be used to build using the bfin-elf toolchain. Launch a container with the checked out source repo mounted as a volume
+
+`docker run --rm -ti -v ~/src/aleph:/projects/aleph pf0camino/cross-bfin-elf "/bin/bash"`
+
+This starts a container with a shell and the aleph source mounted at /projects/aleph. The build instructions are the same as above from here.
