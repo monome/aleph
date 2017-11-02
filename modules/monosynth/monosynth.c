@@ -19,6 +19,7 @@
 #include "cv.h"
 #include "gpio.h"
 #include "fract_math.h"
+#include "libfixmath/fix16_fract.h"
 
 // audio
 #include "filter_1p.h"
@@ -249,11 +250,11 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_noteHz :
     noteHz = v;
-    noteOsc.freq = fix16_mul(noteTune, noteHz);
+    noteOsc.freq = fix16_mul_fract(noteTune, noteHz);
     break;
   case eParam_noteTune :
     noteTune = v;
-    noteOsc.freq = fix16_mul(noteTune, noteHz);
+    noteOsc.freq = fix16_mul_fract(noteTune, noteHz);
     break;
 
   default:

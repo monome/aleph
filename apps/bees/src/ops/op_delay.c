@@ -117,7 +117,7 @@ void op_delay_in_clear (op_delay_t* delay, const io_t v) {
 void op_delay_poll_handler(void* op) {
   op_delay_t* delay = (op_delay_t*)op;
   op_delay_unset_timer(delay);
-  net_activate(delay->outs[0], delay->val, &(delay->super));
+  net_activate(delay, 0, delay->val);
 }
 
 

@@ -104,7 +104,10 @@ static void render_line(s16 idx, u8 fg) {
     //    op_print(lineBuf, net_get_in_value(idx));
     /// FIXME: this is pretty dumb, 
     // params and inputs should just be on separate pages i guess
+    print_dbg("\r\ngetting param value string...");
     net_get_param_value_string(lineBuf, idx);
+    print_dbg("\r\ngot param value string: ");
+    print_dbg(lineBuf);
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
   }
@@ -380,6 +383,7 @@ void select_ins(void) {
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
+  render_reset_custom_region();
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "INPUTS", 0, 0, 0xf, 0x1);
   show_foot();
@@ -531,9 +535,29 @@ void handle_enc_1(s32 val) {
 
 void handle_enc_0(s32 val) {
   if(altMode) {
-    // alt: page selection			
-    select_scroll(val > 0 ? 7 : -7);
-    //    redraw_ins();
+    // don't explode if *pageSelect is insane (including the gross
+    // param representation)
+    if(*pageSelect >= net->numIns || *pageSelect < 0) {
+      select_scroll(val > 0 ? 7 : -7);
+      return;
+    }
+    // alt: warp to next op input
+    s16 current_opIdx = net->ins[*pageSelect].opIdx;
+    s16 target_opIdx = current_opIdx + (val > 0 ? 1 : -1);
+    if(target_opIdx < 0 || target_opIdx >= net_num_ops()) {
+      // if can't zoom to next op, zoom 7 ins up/down
+      select_scroll(val > 0 ? 7 : -7);
+    } else {
+      s16 scroll_opIdx = current_opIdx;
+      int offset = 0;
+      int scroll_opInIdx = 0;
+      while(scroll_opIdx == current_opIdx || scroll_opInIdx != 0) {
+	offset += (val > 0 ? 1 : -1);
+	scroll_opIdx = net->ins[*pageSelect+offset].opIdx;
+	scroll_opInIdx = net->ins[*pageSelect+offset].opInIdx;
+      }
+      select_scroll(offset);
+    }
   } else {
     // scroll selection
     select_scroll(val > 0 ? 1 : -1);

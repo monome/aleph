@@ -1,5 +1,5 @@
-#ifndef _op_life_H_
-#define _op_life_H_
+#ifndef _op_life_classic_H_
+#define _op_life_classic_H_
 
 #include "op.h"
 #include "op_math.h"
@@ -7,7 +7,7 @@
 #include "net_monome.h"
 
 
-//--- op_life_t : conways life
+//--- op_life_classic_t : conways life
 // next
 // size x (8/16)
 // sixe y (8/16)
@@ -24,7 +24,7 @@
 // val @ in x/y
 
 
-typedef struct op_life_struct {
+typedef struct op_life_classic_struct {
   op_t super;
   op_monome_t monome; 
 
@@ -41,9 +41,11 @@ typedef struct op_life_struct {
   volatile io_t focus;
   volatile io_t* in_val[9];
   op_out_t outs[3];
-} op_life_t;
+  s8 lifenow[256];
+  s8 lifenext[256];
+} op_life_classic_t;
 
-void op_life_init(void* life);
-void op_life_deinit(void* life);
+void op_life_classic_init(void* life);
+void op_life_classic_deinit(void* life);
 
 #endif // header guard

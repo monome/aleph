@@ -11,7 +11,9 @@ ldr_name = $(module_name)-$(version).ldr
 
 module_obj = waves.o  \
 	osc_waves.o \
-	svf_waves.o \
+	$(audio_dir)/filter_svf.o \
+	$(audio_dir)/ricks_tricks.o \
+	$(audio_dir)/osc_polyblep.o \
 	$(audio_dir)/conversion.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/interpolate.o \
@@ -66,11 +68,13 @@ deploy: $(module_name).ldr
 sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	waves.c  \
 	osc_waves.c \
-	svf_waves.c \
 	$(audio_dir)/conversion.c \
 	$(audio_dir)/filter_1p.c \
 	$(audio_dir)/interpolate.c \
 	$(audio_dir)/table.c \
+	$(audio_dir)/filter_svf.c \
+	$(audio_dir)/osc_polyblep.c \
+	$(audio_dir)/ricks_tricks.c \
 	$(bfin_lib_srcdir)/libfixmath/fix32.c \
 	$(bfin_lib_srcdir)/libfixmath/fix16.c \
 	../../utils/bfin_sim/src/cv.c \
@@ -92,3 +96,6 @@ sim:
 	touch $(sim_outfile)
 	rm ./$(sim_outfile)
 	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
+
+tags:
+	find . ../../dsp ../../common -name "*.[ch]" | etags -

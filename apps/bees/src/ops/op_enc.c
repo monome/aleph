@@ -84,22 +84,28 @@ static void op_enc_in_step(op_enc_t* enc, const io_t v) {
 // max
 static void op_enc_in_min(op_enc_t* enc, const io_t v) {
   /// fixme: for now, i am banning this kind of pathological shit:
-  if(v >= enc->max) { enc->min = enc->max - 1; }
-  else { enc->min = v; }
-  op_enc_perform(enc);
+  if(v >= enc->max) {
+    enc->min = enc->max - 1;
+  }
+  else {
+    enc->min = v;
+  }
 }
 
 // max
 static void op_enc_in_max(op_enc_t* enc, const io_t v) {
-  if(v <= enc->min) { enc->max = enc->min + 1; }
-  else { enc->max = v; }
-  op_enc_perform(enc);
+  if(v <= enc->min) {
+    enc->max = enc->min + 1;
+  }
+  else {
+    enc->max = v;
+  }
 }
 
 // wrap behavior
 static void op_enc_in_val(op_enc_t* enc, const io_t v) {
   enc->val32 = v;
-  op_enc_perform(enc);
+  enc->val = v;
 }
 
 // perform wrapping and output
@@ -183,11 +189,11 @@ static void op_enc_perform(op_enc_t* enc) {
   // }
 
   // output the value
-  net_activate(enc->outs[0], enc->val, enc);
+    net_activate(enc, 0, enc->val);
 
   // output the wrap amount
   // if (dif != 0) {
-    // net_activate(enc->outs[1], op_from_int(wrap), enc);  
+    // net_activate(enc, 1, op_from_int(wrap));  
   // }
 }
 
@@ -227,5 +233,5 @@ void op_enc_sys_input(op_enc_t* enc, s8 v) {
 
   enc->val32 = (s32)(enc->val) + (s32)(op_mul(enc->step, op_from_int(v)));
   op_enc_perform(enc);
-  net_activate(enc->outs[1], op_from_int(v), enc); 
+  net_activate(enc, 1, op_mul(v, enc->step));
 }

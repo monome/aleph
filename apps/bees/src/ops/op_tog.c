@@ -71,7 +71,7 @@ static void op_tog_in_state(op_tog_t* tog, const io_t v) {
     } else {
       tog->state = 0;
     }
-    net_activate(tog->outs[0], tog->state, tog);
+    net_activate(tog, 0, tog->state);
   }
 }
 
@@ -80,7 +80,7 @@ static void op_tog_in_mul(op_tog_t* tog, const io_t v) {
   tog->mul = v;
   if (tog->state > 0) {
     tog->state = (v);
-    net_activate(tog->outs[0], tog->state, tog);
+    net_activate(tog, 0, tog->state);
   }
 }
 

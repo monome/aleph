@@ -32,7 +32,8 @@
 #include "play.h"
 #include "render.h"
 #include "scene.h"
-
+#include "op_pool.h"
+#include "op.h"
 //-------------------------------------------
 //-- extern vars (here)
 
@@ -50,10 +51,102 @@ const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 //--- static vars
 static char versionString[12] = VERSIONSTRING;
 
+#include <stdio.h>
+#include "net.h"
+void print_net () {
+  int i;
+  for (i=0; i < net->numOps; i++) {
+    printf("printing op %d (%s)\n", i, net_op_name(i));
+  }
+  for(i=0; i < net->numIns; i++) {
+    printf("printing in %d (%s) from op %d, %d\n",
+	   i, net_in_name(i), net->ins[i].opIdx, net->ins[i].opInIdx);
+  }
+  for(i=0; i < net->numOuts; i++) {
+    printf("printing out %d (%s) from op %d, %d\n",
+	   i, net_out_name(i), net->outs[i].opIdx, net->outs[i].opOutIdx);
+  }
+}
+
+void test_net (void) {
+  print_net();
+  net_add_op_at(12, net->numOps);
+  net_add_op_at(13, net->numOps-1);
+  /* net_add_op_at(12, net->numOps); */
+  /* net_add_op_at(12, net->numOps); */
+  /* net_add_op_at(12, net->numOps); */
+  print_net();
+}
+void t1_callback(void *foo) {
+  printf("\r\nt1_callback");
+}
+void t2_callback(void *foo) {
+  printf("\r\nt2_callback");
+}
+
+void beekeep_test_timers(void) {
+  softTimer_t t1;
+  softTimer_t t2;
+  timer_add(&t1, 10, &t1_callback, NULL);
+  timer_add(&t1, 10, &t1_callback, NULL);
+  timer_remove(&t1);
+  timer_add(&t1, 10, &t1_callback, NULL);
+  timer_add(&t2, 20, &t2_callback, NULL);
+
+  int i;
+  for(i=0; i < 50; i++) {
+    process_timers();
+  }
+  timer_remove(&t1);
+  timer_remove(&t2);
+}
+
+#include "scalers/scaler_label.h"
+
+void beekeep_print_label (void) {
+  int i;
+  char str[256];
+  for(i=0; i < scaler_n_labels; i++) {
+    scaler_labels_str(str, NULL, i);
+    printf("\r\nscaler %d: %s", i, str);
+  }
+}
+
+void beekeep_dummy_load_label (void) {
+  scaler_start_parse_labels ();
+
+  FILE *f;
+  f = fopen("dummy_patchlabel.lab", "r");
+  char c;
+  while ((c = getc(f)) != EOF) {
+    scaler_parse_labels_char(c);
+  }
+  fclose(f);
+}
+
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
+  //  beekeep_test_timers();
+  int i;
+  for(i=0; i < numOpClasses; i++) {
+    printf("size of %s: %d\n", op_registry[i].name, op_registry[i].size);
+  }
+  initBigMemPool();
+  initSmallMemPool();
+  ParamDesc pd = {.type = eParamTypeLabel};
+  ParamScaler ps;
+  scaler_init(&ps, &pd);
+  scaler_labels_init(&ps);
 
+  // first print off the default label config
+  /* printf("\r\ndefault label:"); */
+  /* beekeep_print_label(); */
+
+  // now test out the code to load new patch labels (char-by-char)
+  /* printf("\r\nexample patch matrix from .ldr:"); */
+  /* beekeep_dummy_load_label(); */
+  /* beekeep_print_label(); */
   //hm
   print_dbg("\r\n preset_init...");  
   presets_init();
@@ -80,6 +173,7 @@ void app_init(void) {
 // this is called from main event handler
 u8 app_launch(u8 firstrun) {
 
+  /* test_net(); */
 
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);

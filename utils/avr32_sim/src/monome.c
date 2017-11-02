@@ -58,7 +58,8 @@ static void read_serial_dummy(void) { return; }
 u8 monomeFrameDirty = 0;
 // a buffer big enough to hold all l data for 256 or arc4
 // each led gets a full byte
-u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
+u8 dummyLedBuffer[MONOME_MAX_LED_BYTES];
+u8 *monomeLedBuffer = dummyLedBuffer;
 
 // global pointers to send functions.
 read_serial_t monome_read_serial = &read_serial_dummy;
@@ -95,6 +96,7 @@ static u8 txBuf[MONOME_TX_BUF_LEN];
 // setup for each protocol
 static void setup_40h(u8 cols, u8 rows);
 static void setup_series(u8 cols, u8 rows);
+static void setup_osc_dummy(u8 cols, u8 rows);
 static u8 setup_mext(void);
 
 // rx for each protocol
@@ -197,6 +199,14 @@ void init_monome(void) {
     monomeLedBuffer[i] = 0;
   }
   //  print_dbg("\r\n finished monome class init");
+}
+
+void set_monome_device_desc_osc_dummy(u8 cols, u8 rows) {
+  /* mdesc.protocol = eProtocolMext; */
+  mdesc.device = eDeviceGrid;
+  mdesc.cols = cols;
+  mdesc.rows = rows;
+  mdesc.vari = 1;
 }
 
 // determine if FTDI string descriptors match monome device pattern

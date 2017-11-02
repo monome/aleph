@@ -72,7 +72,7 @@ fract32 fade_ep_x_y_pos(fadeEP* fade, fract32 x, fract32 y, fract32 pos) {
 fract32 fade_ep_calc(fadeEP* fade) {
   // FIXME: far from optimal.
   /// fractional position converted to table index
-  fix16 xIdx = fix16_mul(FRACT_FIX16(fade->pos), FADE_SINE_BUF_SIZE_FIX);
+  fix16 xIdx = fix16_mul_fract(FRACT_FIX16(fade->pos), FADE_SINE_BUF_SIZE_FIX);
   fix16 yIdx = fix16_sub(FADE_SINE_BUF_SIZE_FIX, xIdx);
   fract32 xmul = table_lookup_idx(sineTab, FADE_SINE_BUF_SIZE, xIdx);
   fract32 ymul = table_lookup_idx(sineTab, FADE_SINE_BUF_SIZE, yIdx);

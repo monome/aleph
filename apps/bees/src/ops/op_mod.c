@@ -58,7 +58,7 @@ static void op_mod_in_a(op_mod_t* mod, const io_t v) {
   // printf("mod at %d received A %d\n", (int)mod, (int)*v);
   mod->a = v;
   mod->val = (mod->a % mod->b);
-  net_activate(mod->outs[0], mod->val, mod);
+  net_activate(mod, 0, mod->val);
 }
 
 // set operand B
@@ -69,7 +69,7 @@ static void op_mod_in_b(op_mod_t* mod, const io_t v) {
   }
   mod->val = (mod->a % mod->b);
   if(mod->btrig) {
-    net_activate(mod->outs[0], mod->val, mod);
+    net_activate(mod, 0, mod->val);
   }
 }
 

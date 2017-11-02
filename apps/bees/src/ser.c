@@ -228,12 +228,12 @@ void serial_bfinProgEcho (volatile u8* buf, int len) {
 
 void serial_triggerParam (s16 idx, io_t data) {
   //param thwacking code goes here
-  net_activate(idx+net->numIns, data, NULL);
+  net_activate_in(idx+net->numIns, data, NULL);
 }
 
 void serial_triggerIn (s16 idx, io_t data) {
   //bees thwacking code goes here
-  net_activate(idx, data, NULL);
+  net_activate_in(idx, data, NULL);
 }
 
 
@@ -276,13 +276,27 @@ void serial_disconnect (s16 idx) {
   net_disconnect(idx);
 }
 
-void serial_deleteOp (s16 idx) {
-  net_pop_op();
-  serial_debug("deleting last op - arbitrary op deletion not yet supported...");
+void serial_deleteOp (s16 opIdx) {
+  if (opIdx >= net->numOps || opIdx < 0) {
+    print_dbg("\r\n out-of-range op deletion requested: ");
+    print_dbg_ulong(opIdx);
+  }
+  else {
+    net_remove_op(opIdx);
+  }
 }
 
-void serial_newOp (s16 idx) {
-  net_add_op(userOpTypes[idx]);
+void serial_newOp (s16 opType, s16 opIdx) {
+  if (opType >= NUM_USER_OP_TYPES || opType < 0) {
+    print_dbg("\r\n invalid opType requested: ");
+    print_dbg_ulong(opType);
+  } else if (opIdx >= net->numOps || opIdx < 0) {
+    print_dbg("\r\n Out of range op insertion requested: ");
+    print_dbg_ulong(opIdx);
+  }
+  else {
+    net_add_op_at(userOpTypes[opType], opIdx);
+  }
 }
 
 void serial_connect (s16 outIdx, s16 inIdx) {
@@ -441,7 +455,7 @@ void processMessage (char* c, int len) {
     if(len < 3)
       serial_debug ("newOp requires 16 bit bees address");
     else {
-      serial_newOp(charsToS16(c[1],c[2]));
+      serial_newOp(charsToS16(c[1],c[2]), charsToS16(c[3],c[4]));
       /* serial_debug("added an op"); */
     }
     break;

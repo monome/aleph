@@ -8,9 +8,9 @@ version = $(maj).$(min).$(rev)
 ldr_name = $(module_name)-$(version).ldr
 
 module_obj = lines.o \
-	$(audio)/buffer.o \
+	$(audio)/buffer16.o \
 	$(audio)/conversion.o \
-	$(audio)/delayFadeN.o \
+	$(audio)/delayFade24_8.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \
@@ -66,14 +66,15 @@ deploy: $(module_name).ldr
 
 sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	lines.c \
-	$(audio)/buffer.c \
+	$(audio)/buffer16.c \
 	$(audio)/conversion.c \
-	$(audio)/delayFadeN.c \
+	$(audio)/delayFade24_8.c \
 	$(audio)/filter_1p.c \
 	$(audio)/filter_ramp.c \
 	$(audio)/filter_svf.c \
 	$(audio)/noise.c \
 	$(audio)/pan.c \
+	$(audio)/ricks_tricks.c \
 	$(audio)/table.c \
 	$(bfin)/libfixmath/fix32.c \
 	$(bfin)/libfixmath/fix16.c \
@@ -98,3 +99,6 @@ sim:
 	touch $(sim_outfile)
 	rm ./$(sim_outfile)
 	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
+
+tags:
+	find . ../../dsp ../../common -name "*.[ch]" | etags -

@@ -2,7 +2,18 @@
 #include <string.h>
 #include "module.h"
 #include "param_common.h"
-#include "params.h" 
+#include "params.h"
+
+void param_desc_aux (ParamDesc* desc,int param_idx,
+		     char* desc_string, ParamType type,
+		     s32 min, s32 max, u8 radix) {
+  strcpy(desc[param_idx].label,
+	 desc_string);
+  desc[param_idx].type = type;
+  desc[param_idx].min = min;
+  desc[param_idx].max = max;
+  desc[param_idx].radix = radix;
+}
 
 void fill_param_desc(ParamDesc* desc) {
   strcpy(desc[eParam_delay0].label, "delay0");
@@ -16,20 +27,6 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_loop0].min = 0x00000000; 
   desc[eParam_loop0].max = PARAM_SECONDS_MAX; 
   desc[eParam_loop0].radix = PARAM_SECONDS_RADIX;
-
-  // rate multiplier
-  strcpy(desc[eParam_rMul0].label, "rMul0");
-  desc[eParam_rMul0].type = eParamTypeFix; 
-  desc[eParam_rMul0].min = 0x00010000; 
-  desc[eParam_rMul0].max = 0x00080000; 
-  desc[eParam_rMul0].radix = 32;
-
-  // rate divider 
-  strcpy(desc[eParam_rDiv0].label, "rDiv0");
-  desc[eParam_rDiv0].type = eParamTypeFix; 
-  desc[eParam_rDiv0].min = 0x00010000; 
-  desc[eParam_rDiv0].max = 0x00080000; 
-  desc[eParam_rDiv0].radix = 32;
 
   strcpy(desc[eParam_write0].label, "write0");
   desc[eParam_write0].type = eParamTypeAmp; 
@@ -78,20 +75,6 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_loop1].min = 0x00000000; 
   desc[eParam_loop1].max = PARAM_SECONDS_MAX; 
   desc[eParam_loop1].radix = PARAM_SECONDS_RADIX;
-
-  /// FIXME
-  //// ????
-  strcpy(desc[eParam_rMul1].label, "rMul1");
-  desc[eParam_rMul1].type = eParamTypeFix; 
-  desc[eParam_rMul1].min = 0x00010000; 
-  desc[eParam_rMul1].max = 0x00080000; 
-  desc[eParam_rMul1].radix = 32; 
-
-  strcpy(desc[eParam_rDiv1].label, "rDiv1");
-  desc[eParam_rDiv1].type = eParamTypeFix; 
-  desc[eParam_rDiv1].min = 0x00010000; 
-  desc[eParam_rDiv1].max = 0x00080000; 
-  desc[eParam_rDiv1].radix = 32; 
 
   strcpy(desc[eParam_write1].label, "write1");
   desc[eParam_write1].type = eParamTypeAmp; 
@@ -622,6 +605,18 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParamFade1].max = PARAM_FADE_MAX;
   desc[eParamFade1].radix = PARAM_FADE_RADIX;
 
+  param_desc_aux (desc, eParam_readSpeed0, "readSpeed0",
+		  eParamTypeFix, -(0x80000), 0x80000,
+		  8);
+  param_desc_aux (desc, eParam_readSpeed1, "readSpeed1",
+		  eParamTypeFix, -(0x80000), 0x80000,
+		  8);
+  param_desc_aux (desc, eParam_writeSpeed0, "writeSpeed0",
+		  eParamTypeFix, -(0x20000), 0x20000,
+		  8);
+  param_desc_aux (desc, eParam_writeSpeed1, "writeSpeed1",
+		  eParamTypeFix, -(0x20000), 0x20000,
+		  8);
 }
 
 // EOF

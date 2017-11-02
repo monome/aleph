@@ -15,7 +15,7 @@ module_obj = monosynth.o \
 	$(audio)/biquad.o \
 	$(audio)/env_adsr.o \
 	$(audio)/osc_polyblep.o \
-	$(bfin)/libfixmath/fix16.o \
+	$(bfin)/libfixmath/fix16.o
 
 
 all: $(prefix)$(module_name).ldr

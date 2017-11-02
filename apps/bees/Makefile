@@ -41,3 +41,6 @@ deploy:
 	echo "building release..."
 	make -k R=1
 	cp $(project).hex $(project)-$(maj).$(min).$(rev).hex
+
+tags:
+	find . ../../avr32_lib/ ../../common -name '*.[ch]' | etags -

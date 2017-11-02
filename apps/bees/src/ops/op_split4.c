@@ -65,10 +65,10 @@ void op_split4_init(void* op) {
 // input state
 static void op_split4_in_val(op_split4_t* split4, const io_t v) {
   split4->val = v;
-  net_activate(split4->outs[0], split4->val, split4);
-  net_activate(split4->outs[1], split4->val, split4);
-  net_activate(split4->outs[2], split4->val, split4);
-  net_activate(split4->outs[3], split4->val, split4);
+  net_activate(split4, 0, split4->val);
+  net_activate(split4, 1, split4->val);
+  net_activate(split4, 2, split4->val);
+  net_activate(split4, 3, split4->val);
 }
 
 // serialization

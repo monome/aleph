@@ -90,6 +90,11 @@ heap_t alloc_mem(u32 bytes) {
 #endif
 }
 
+void free_mem(heap_t mem_ptr)
+{
+  free((void *)mem_ptr);
+}
+
 // memory test routine
 void sram_test(u32 numBytes, u32 offset) {
 #if 1

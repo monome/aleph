@@ -167,11 +167,11 @@ enum params {
   eParam_run_read1,		
   eParam_run_write1,	    
   eParam_loop1,			
-  eParam_rMul1,			
-  eParam_rDiv1,		       
   eParam_pre1,		       
   eParam_write1,	       
   eParam_delay1,	   
+  eParam_readSpeed1,
+  eParam_writeSpeed1,
 
   // line 0
   eParam_freq0,		
@@ -187,11 +187,11 @@ enum params {
   eParam_run_read0,		
   eParam_run_write0,	    
   eParam_loop0,			
-  eParam_rMul0,			
-  eParam_rDiv0,		       
   eParam_pre0,		       
   eParam_write0,	       
   eParam_delay0,	   
+  eParam_readSpeed0,
+  eParam_writeSpeed0,
 
   eParamNumParams
 };  

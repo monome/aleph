@@ -63,8 +63,8 @@ void op_split_init(void* op) {
 // input state
 static void op_split_in_val(op_split_t* split, const io_t v) {
   split->val = v;
-  net_activate(split->outs[0], split->val, split);
-  net_activate(split->outs[1], split->val, split);
+  net_activate(split, 0, split->val);
+  net_activate(split, 1, split->val);
 }
 
 

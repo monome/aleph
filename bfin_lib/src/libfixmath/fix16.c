@@ -6,7 +6,7 @@
   //////////////
   //// TODO: 
   // someday, a clever person should take the time to write more optimal 16.16 math for blackfin
-  // by  making use of the fract32 intrinsics (i think)
+  // by  making use of the fract32 intrinsics (see fix16_fract.c for a start on this)
 
   //////////////
   ///////////////

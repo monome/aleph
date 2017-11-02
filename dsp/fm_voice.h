@@ -17,14 +17,16 @@ typedef struct fm_voice {
 
   fract32 opTune[FM_OPS_MAX];
   u8 opMod1Source[FM_OPS_MAX];
-  fract32 opMod1Gain[FM_OPS_MAX];
+  fract16 opMod1Gain[FM_OPS_MAX];
   u8 opMod2Source[FM_OPS_MAX];
-  fract32 opMod2Gain[FM_OPS_MAX];
+  fract16 opMod2Gain[FM_OPS_MAX];
+  fract16 opModLast[FM_OPS_MAX];
   phasor opOsc[FM_OPS_MAX];
-  env_adsr opEnv[FM_OPS_MAX];
+  env_adsr_16 opEnv[FM_OPS_MAX];
   u8 opWaveshape[FM_OPS_MAX];
 
-  fract32 opOutputs[FM_OPS_MAX];
+  fract16 opOutputsInternal[FM_OPS_MAX];
+  fract16 opOutputs[FM_OPS_MAX];
 } fm_voice;
 void fm_voice_init (fm_voice *v, u8 nOps);
 void fm_voice_press (fm_voice *v);

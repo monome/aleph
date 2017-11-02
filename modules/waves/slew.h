@@ -30,14 +30,10 @@ typedef struct {
 				      sub_fr1x32((sl).y, (sl).x)	\
 				      ));				
 
-#define slew32_sync( sl ) ( sl.x == sl.y )
-
 #define slew16_calc( sl )					\
   (sl).y = add_fr1x16( (sl).x,					\
 		       mult_fr1x16((sl).c,			\
 				   sub_fr1x16((sl).y, (sl).x)	\
 				   ));				
 
-#define slew16_sync( sl ) ( (sl).x == (sl).y )
-      
 #endif // h guard

@@ -72,15 +72,15 @@ static void op_history_in_in(op_history_t* history, const io_t v) {
   for(i=0;i<8;i++) avg += history->val[i];
   avg = avg / 8;
 
-  net_activate(history->outs[0], avg, history);
-  net_activate(history->outs[1], history->val[0], history);
-  net_activate(history->outs[2], history->val[1], history);
-  net_activate(history->outs[3], history->val[2], history);
-  net_activate(history->outs[4], history->val[3], history);
-  net_activate(history->outs[5], history->val[4], history);
-  net_activate(history->outs[6], history->val[5], history);
-  net_activate(history->outs[7], history->val[6], history);
-  net_activate(history->outs[8], history->val[7], history);
+  net_activate(history, 0, avg);
+  net_activate(history, 1, history->val[0]);
+  net_activate(history, 2, history->val[1]);
+  net_activate(history, 3, history->val[2]);
+  net_activate(history, 4, history->val[3]);
+  net_activate(history, 5, history->val[4]);
+  net_activate(history, 6, history->val[5]);
+  net_activate(history, 7, history->val[6]);
+  net_activate(history, 8, history->val[7]);
 }
 
 

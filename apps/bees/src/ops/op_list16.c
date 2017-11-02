@@ -120,7 +120,7 @@ static void op_list16_in_index(op_list16_t* list16, const io_t val) {
 
   list16->val = *(list16->in_val[v+1]);
 
-  net_activate(list16->outs[0], list16->val, list16);
+  net_activate(list16, 0, list16->val);
 }
 
 static void op_list16_in_i0(op_list16_t* list16, const io_t val) {

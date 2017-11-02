@@ -53,7 +53,7 @@ static void op_change_in_val(op_change_t* op, const io_t v) {
   op->val = v;
   if (v != op->last) {
     op->last = op->val;
-    net_activate(op->outs[0], op->val, op);
+    net_activate(op, 0, op->val);
   }
 }
 

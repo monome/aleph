@@ -71,11 +71,18 @@ static softTimer_t hidPollTimer = { .next = NULL, .prev = NULL };
 // event data is a pointer to an arbitrary object/
 // here we use it for polled operators like op_metro.
 static void app_custom_event_callback(void* obj) {
+  // XXX look out - PD/beekeep has no event loop, so directly call
+  // from the timer thread into the poll handler (not very threadsafe)
+#ifdef BEEKEEP
+  op_poll_t* op_poll = (op_poll_t*)obj;
+  (*(op_poll->handler))(op_poll->op);
+#else
   event_t e = { .type=kEventAppCustom, .data=(s32)obj };
   e.type = kEventAppCustom;
   // post the object's address in the event data field
   e.data = (s32)obj;
   event_post(&e);
+#endif
 }
 
 // screen refresh callback
@@ -157,7 +164,7 @@ void init_app_timers(void) {
 
 // monome: start polling
 void timers_set_monome(void) {
-  timer_add(&monomePollTimer, 	 20, &monome_poll_timer_callback, NULL );
+  timer_add(&monomePollTimer, 	 5, &monome_poll_timer_callback, NULL );
   timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback, NULL );
 }
 
@@ -170,7 +177,7 @@ void timers_unset_monome(void) {
 // midi : start polling
 void timers_set_midi(void) {
   /// FIXME: where should default periods be defined...
-  timer_add( &midiPollTimer, 20, &midi_poll_timer_callback, NULL );
+  timer_add( &midiPollTimer, 5, &midi_poll_timer_callback, NULL );
   // TODO??
   //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, NULL, 1);
 }

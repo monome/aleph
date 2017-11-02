@@ -36,12 +36,12 @@ typedef struct env_adsr_16 {
   fract16 releaseTime;
 } env_adsr_16;
 
-void env_adsr_init_16(env_adsr_16 *env);
+void env_adsr_16_init(env_adsr_16 *env);
 
-void env_adsr_press_16 (env_adsr_16 *env);
+void env_adsr_16_press (env_adsr_16 *env);
 
-void env_adsr_release_16 (env_adsr_16 *env);
+void env_adsr_16_release (env_adsr_16 *env);
 
-fract16 env_adsr_next_16(env_adsr_16 *env);
+fract16 env_adsr_16_next(env_adsr_16 *env);
 
 #endif

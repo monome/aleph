@@ -8,7 +8,7 @@ delay line object interface
 #ifndef _ALEPH_LINES_DELAYLINE_H_
 #define _ALEPH_LINES_DELAYLINE_H_
 
-#include "buffer.h"
+#include "buffer16.h"
 #include "fade.h"
 #include "types.h"
 
@@ -16,13 +16,13 @@ delay line object interface
 // double-tapped delay line
 typedef struct _delayFadeN {
   //-- audio buffer class
-  audioBuffer buffer;
+  audioBuffer16 buffer;
   //-- read and write taps (non-interpolated)
-  bufferTapN tapRd[2];
-  bufferTapN tapWr[2];
+  buffer16TapN tapRd[2];
+  buffer16TapN tapWr[2];
   // level of existing data to mix with new data
   // negative == 1
-  fract32 preLevel;
+  fract16 preLevel;
   // flag to synchronize read tap with write tap
   u8 sync;
   // flag to toggle writing of new data
@@ -31,8 +31,8 @@ typedef struct _delayFadeN {
   u8 runRd;
   u8 runWr;
   // crossfade parameters [0-1]
-  fract32 fadeRd;
-  fract32 fadeWr;
+  fract16 fadeRd;
+  fract16 fadeWr;
   
   /* // interpolaters */
   /* filter_1p_lo lpRdPan; */
@@ -44,9 +44,9 @@ typedef struct _delayFadeN {
 } delayFadeN;
 
 // initialize with pointer to audio buffer data
-extern void delayFadeN_init(delayFadeN* dl, volatile fract32* bufData, u32 frames);
+extern void delayFadeN_init(delayFadeN* dl, volatile fract16* bufData, u32 frames);
 // get next value given input
-extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in);
+extern fract16 delayFadeN_next(delayFadeN* dl, fract16 in);
 // set loop endpoint in seconds / samples
 extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec , u8 id );
 extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samp , u8 id );
@@ -56,7 +56,7 @@ extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp, u8 id );
 // set read head rate
 //extern void delayFadeN_set_rate(delayFadeN* dl, fix16 rate , u8 id );
 // set erase level
-extern void delayFadeN_set_pre(delayFadeN* dl, fract32 pre);
+extern void delayFadeN_set_pre(delayFadeN* dl, fract16 pre);
 // set write flag
 extern void delayFadeN_set_write(delayFadeN* dl, u8 write);
 
@@ -78,8 +78,6 @@ extern void delayFadeN_set_mul(delayFadeN* dl, u32 val , u8 id );
 // set read-head rate divider
 extern void delayFadeN_set_div(delayFadeN* dl, u32 val , u8 id );
 
-// set erase level
-extern void delayFadeN_set_pre(delayFadeN* dl, fract32 pre);
 // set write level
 extern void delayFadeN_set_write(delayFadeN* dl, u8 write);
 
