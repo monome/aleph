@@ -105,6 +105,7 @@ static void op_enc_in_max(op_enc_t* enc, const io_t v) {
 // wrap behavior
 static void op_enc_in_val(op_enc_t* enc, const io_t v) {
   enc->val32 = v;
+  enc->val = v;
 }
 
 // perform wrapping and output
