@@ -19,7 +19,7 @@ void fm_voice_init (fm_voice *v, u8 nOps) {
     v->opOutputs[i] = 0;
     v->opOutputsInternal[i] = 0;
     phasor_init(&(v->opOsc[i]));
-    env_adsr_16_init(&(v->opEnv[i]));
+    env_adsr_init(&(v->opEnv[i]));
     v->opModLast[i] = 0;
   }
 }
@@ -27,13 +27,13 @@ void fm_voice_init (fm_voice *v, u8 nOps) {
 void fm_voice_press (fm_voice *v) {
   int i;
   for(i=0; i < v->nOps; i++) {
-    env_adsr_16_press(&(v->opEnv[i]));
+    env_adsr_press(&(v->opEnv[i]));
   }
 }
 void fm_voice_release (fm_voice *v) {
   int i;
   for(i=0; i < v->nOps; i++) {
-    env_adsr_16_release(&(v->opEnv[i]));
+    env_adsr_release(&(v->opEnv[i]));
   }
 }
 
@@ -49,7 +49,7 @@ void fm_voice_next (fm_voice *v) {
   fract16 envs[FM_OPS_MAX];
   fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
   for(i=0; i < v->nOps; i++) {
-    envs[i] = env_adsr_16_next(&(v->opEnv[i]));
+    envs[i] = env_adsr_next(&(v->opEnv[i]));
     opFreqs[i] = fix16_mul_fract(baseFreq, v->opTune[i]);
     opFreqs[i] = shr_fr1x32(opFreqs[i], FM_OVERSAMPLE_BITS);
   }

@@ -136,40 +136,40 @@ void module_init(void) {
   param_setup(eParam_op1Mod2Source, 0);
   param_setup(eParam_op1Mod2Gain, 0);
   param_setup(eParam_op1Tune, FIX16_ONE);
-  param_setup(eParam_op1Attack, shl_fr1x32(SLEW_100MS_16, 16));
-  param_setup(eParam_op1Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op1Attack, SLEW_100MS);
+  param_setup(eParam_op1Decay, SLEW_100MS);
   param_setup(eParam_op1Sustain, FR32_MAX);
-  param_setup(eParam_op1Release, shl_fr1x32(SLEW_1S_16, 16));
+  param_setup(eParam_op1Release, SLEW_1S);
 
   param_setup(eParam_op2Mod1Source, 0);
   param_setup(eParam_op2Mod1Gain, 0);
   param_setup(eParam_op2Mod2Source, 0);
   param_setup(eParam_op2Mod2Gain, 0);
   param_setup(eParam_op2Tune, FIX16_ONE);
-  param_setup(eParam_op2Attack, shl_fr1x32(SLEW_100MS_16, 16));
-  param_setup(eParam_op2Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op2Attack, SLEW_100MS);
+  param_setup(eParam_op2Decay, SLEW_100MS);
   param_setup(eParam_op2Sustain, FR32_MAX);
-  param_setup(eParam_op2Release, shl_fr1x32(SLEW_1S_16, 16));
+  param_setup(eParam_op2Release, SLEW_1S);
 
   param_setup(eParam_op3Mod1Source, 0);
   param_setup(eParam_op3Mod1Gain, 0);
   param_setup(eParam_op3Mod2Source, 0);
   param_setup(eParam_op3Mod2Gain, 0);
   param_setup(eParam_op3Tune, FIX16_ONE);
-  param_setup(eParam_op3Attack, shl_fr1x32(SLEW_100MS_16, 16));
-  param_setup(eParam_op3Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op3Attack, SLEW_100MS);
+  param_setup(eParam_op3Decay, SLEW_100MS);
   param_setup(eParam_op3Sustain, FR32_MAX);
-  param_setup(eParam_op3Release, shl_fr1x32(SLEW_1S_16, 16));
+  param_setup(eParam_op3Release, SLEW_1S);
 
   param_setup(eParam_op4Mod1Source, 0);
   param_setup(eParam_op4Mod1Gain, 0);
   param_setup(eParam_op4Mod2Source, 0);
   param_setup(eParam_op4Mod2Gain, 0);
   param_setup(eParam_op4Tune, FIX16_ONE);
-  param_setup(eParam_op4Attack, shl_fr1x32(SLEW_100MS_16, 16));
-  param_setup(eParam_op4Decay, shl_fr1x32(SLEW_100MS_16, 16));
+  param_setup(eParam_op4Attack, SLEW_100MS);
+  param_setup(eParam_op4Decay, SLEW_100MS);
   param_setup(eParam_op4Sustain, FR32_MAX);
-  param_setup(eParam_op4Release, shl_fr1x32(SLEW_1S_16, 16));
+  param_setup(eParam_op4Release, SLEW_1S);
 
   param_setup (eParam_lfoSpeed, 0x00640000);
   param_setup (eParam_lfoWaveshape, PAN_DEFAULT);
@@ -288,16 +288,16 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opTune[0] = v;
     break;
   case eParam_op1Attack :
-    voice.opEnv[0].attackTime = trunc_fr1x32(v);
+    voice.opEnv[0].attackTime = v;
     break;
   case eParam_op1Decay :
-    voice.opEnv[0].decayTime = trunc_fr1x32(v);
+    voice.opEnv[0].decayTime = v;
     break;
   case eParam_op1Sustain :
-    voice.opEnv[0].sustainLevel = trunc_fr1x32(v);
+    voice.opEnv[0].sustainLevel = v;
    break;
   case eParam_op1Release :
-    voice.opEnv[0].releaseTime = trunc_fr1x32(v);
+    voice.opEnv[0].releaseTime = v;
     break;
 
   case eParam_op2Mod1Source :
@@ -316,16 +316,16 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opTune[1] = v;
     break;
   case eParam_op2Attack :
-    voice.opEnv[1].attackTime = trunc_fr1x32(v);
+    voice.opEnv[1].attackTime = v;
     break;
   case eParam_op2Decay :
-    voice.opEnv[1].decayTime = trunc_fr1x32(v);
+    voice.opEnv[1].decayTime = v;
     break;
   case eParam_op2Sustain :
-    voice.opEnv[1].sustainLevel = trunc_fr1x32(v);
+    voice.opEnv[1].sustainLevel = v;
    break;
   case eParam_op2Release :
-    voice.opEnv[1].releaseTime = trunc_fr1x32(v);
+    voice.opEnv[1].releaseTime = v;
     break;
 
   case eParam_op3Mod1Source :
@@ -344,16 +344,16 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opTune[2] = v;
     break;
   case eParam_op3Attack :
-    voice.opEnv[2].attackTime = trunc_fr1x32(v);
+    voice.opEnv[2].attackTime = v;
     break;
   case eParam_op3Decay :
-    voice.opEnv[2].decayTime = trunc_fr1x32(v);
+    voice.opEnv[2].decayTime = v;
     break;
   case eParam_op3Sustain :
-    voice.opEnv[2].sustainLevel = trunc_fr1x32(v);
+    voice.opEnv[2].sustainLevel = v;
    break;
   case eParam_op3Release :
-    voice.opEnv[2].releaseTime = trunc_fr1x32(v);
+    voice.opEnv[2].releaseTime = v;
     break;
 
   case eParam_op4Mod1Source :
@@ -372,16 +372,16 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opTune[3] = v;
     break;
   case eParam_op4Attack :
-    voice.opEnv[3].attackTime = trunc_fr1x32(v);
+    voice.opEnv[3].attackTime = v;
     break;
   case eParam_op4Decay :
-    voice.opEnv[3].decayTime = trunc_fr1x32(v);
+    voice.opEnv[3].decayTime = v;
     break;
   case eParam_op4Sustain :
-    voice.opEnv[3].sustainLevel = trunc_fr1x32(v);
+    voice.opEnv[3].sustainLevel = v;
    break;
   case eParam_op4Release :
-    voice.opEnv[3].releaseTime = trunc_fr1x32(v);
+    voice.opEnv[3].releaseTime = v;
     break;
 
   case eParam_lfoSpeed :
