@@ -17,7 +17,7 @@ void param_desc_aux (ParamDesc* desc,int param_idx,
 #define param_desc_fader(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, FADER_TYPE, FADER_MIN, FADER_MAX, FADER_RADIX)
 #define param_desc_pan(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, PAN_TYPE, PAN_MIN, PAN_MAX, PAN_RADIX)
 #define param_desc_ratio(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, eParamTypeFix, RATIO_MIN, RATIO_MAX, RATIO_RADIX)
-#define param_desc_adsrTime(param_idx, desc_string)  param_desc_aux(desc, param_idx, desc_string, eParamTypeFix, 0x00010000, 0x00960000, 32);
+#define param_desc_adsrTime(param_idx, desc_string)  param_desc_aux(desc, param_idx, desc_string, eParamTypeIntegrator, 0x00000000, FR32_MAX, 32);
 
 extern void fill_param_desc(ParamDesc* desc) {
   strcpy(desc[eParam_cvVal0].label, "cv0");

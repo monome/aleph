@@ -342,7 +342,7 @@ void coarse_logSlew(fract32* current, fract32 target, fract32 speed) {
 
 //This guy auto-adjusts the radix - poor man's float I guess...
 void normalised_logSlew(fract32* current, fract32 target, fract32 speed) {
-  fract32 ratio = speed;
+  fract32 ratio = FR32_MAX - speed;
   fract32 difference = sub_fr1x32(target, *current);
   int radix = norm_fr1x32(difference);
   fract32 inc = mult_fr1x32x32(ratio, shl_fr1x32(difference, radix));
@@ -351,7 +351,7 @@ void normalised_logSlew(fract32* current, fract32 target, fract32 speed) {
 }
 
 void normalised_logSlew_16(fract16* current, fract16 target, fract16 speed) {
-  fract16 ratio = speed;
+  fract16 ratio = FR32_MAX - speed;
   fract16 difference = sub_fr1x16(target, *current);
   int radix = norm_fr1x16(difference);
   fract16 inc = mult_fr1x16(ratio, shl_fr1x16(difference, radix));
