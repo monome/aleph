@@ -23,6 +23,9 @@ void fm_voice_init (fm_voice *v, u8 nOps) {
     env_adsr_init(&(v->opEnv[i]));
     v->opModLast[i] = 0;
   }
+  for(i=0; i < FM_MOD_POINTS_MAX; i++) {
+    v->opModPointsExternal[i] = 0;
+  }
 }
 
 void fm_voice_press (fm_voice *v) {
@@ -61,12 +64,26 @@ void fm_voice_next (fm_voice *v) {
 
       // calculate modulation point & bandlimit to 20kHz or so...
       // add first modulation source
-      fract16 opMod = multr_fr1x16(v->opOutputsInternal[v->opMod1Source[i]],
-				   v->opMod1Gain[i]);
+      fract16 opMod;
+      if(v->opMod1Source[i] < v->nOps) {
+	opMod = multr_fr1x16(v->opOutputsInternal[v->opMod1Source[i]],
+			      v->opMod1Gain[i]);
+      }
+      else {
+	opMod = multr_fr1x16(v->opModPointsExternal[v->opMod1Source[i] - v->nOps],
+			     v->opMod1Gain[i]);
+      }
       // add second modulation source
-      opMod = add_fr1x16(opMod,
-			 multr_fr1x16(v->opOutputsInternal[v->opMod2Source[i]],
-				      v->opMod2Gain[i]));
+      if(v->opMod2Source[i] < v->nOps) {
+	opMod = add_fr1x16(opMod,
+			   multr_fr1x16(v->opOutputsInternal[v->opMod2Source[i]],
+					v->opMod2Gain[i]));
+      }
+      else {
+	opMod = add_fr1x16(opMod,
+			   multr_fr1x16(v->opModPointsExternal[v->opMod2Source[i] - v->nOps],
+					v->opMod2Gain[i]));
+      }
 
       opMod = shr_fr1x32(opMod, 2);
 

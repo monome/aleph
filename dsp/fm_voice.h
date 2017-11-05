@@ -5,6 +5,7 @@
 #include "ricks_tricks.h"
 
 #define FM_OPS_MAX 8
+#define FM_MOD_POINTS_MAX 8
 
 typedef struct fm_voice {
   u8 nOps;
@@ -27,6 +28,7 @@ typedef struct fm_voice {
 
   fract16 opOutputsInternal[FM_OPS_MAX];
   fract16 opOutputs[FM_OPS_MAX];
+  fract16 opModPointsExternal[FM_MOD_POINTS_MAX];
 } fm_voice;
 void fm_voice_init (fm_voice *v, u8 nOps);
 void fm_voice_press (fm_voice *v);

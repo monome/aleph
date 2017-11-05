@@ -193,10 +193,15 @@ void module_process_frame(void) {
   if(++cvChan == 4) {
     cvChan = 0;
   }
-  fm_voice_next(&voice);
   int i;
+  for(i=0; i < 4; i++) {
+    out[i] = 0;
+    voice.opModPointsExternal[i] = trunc_fr1x32(in[i]);
+  }
+  fm_voice_next(&voice);
+  fract32 opOut;
   for(i=0; i<FM_VOICE_NOPS; i++) {
-    fract32 opOut = shl_fr1x32(voice.opOutputs[i], 16);
+    opOut = shl_fr1x32(voice.opOutputs[i], 16);
     mix_panned_mono (opOut, &(out[0]), &(out[1]), opPans[i], opVols[i]);
   }
 }
