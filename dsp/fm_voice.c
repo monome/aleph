@@ -8,6 +8,7 @@ void fm_voice_init (fm_voice *v, u8 nOps) {
   v->nOps = nOps;
   v->noteHz = 440 << 16;
   v->noteTune = FIX16_ONE;
+  v->bandLimit = 1;
   phasor_init(&(v->lfo));
   int i;
   for(i=0; i < nOps; i++) {
@@ -39,7 +40,7 @@ void fm_voice_release (fm_voice *v) {
 
 #define FM_OVERSAMPLE_BITS 2
 #define FM_OVERSAMPLE (1 << FM_OVERSAMPLE_BITS)
-#define FM_SMOOTH ((fract16) (FR16_MAX * ((8.0 * PI * FM_OVERSAMPLE) / (1.0 + 8.0 * PI * FM_OVERSAMPLE))))
+#define FM_SMOOTH ((fract16) (FR16_MAX * ((4.0 * PI * FM_OVERSAMPLE) / (1.0 + 4.0 * PI * FM_OVERSAMPLE))))
 
 void fm_voice_next (fm_voice *v) {
   int i, j;
@@ -49,7 +50,7 @@ void fm_voice_next (fm_voice *v) {
   fract16 envs[FM_OPS_MAX];
   fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
   for(i=0; i < v->nOps; i++) {
-    envs[i] = env_adsr_next(&(v->opEnv[i]));
+    envs[i] = trunc_fr1x32(env_adsr_next(&(v->opEnv[i])));
     opFreqs[i] = fix16_mul_fract(baseFreq, v->opTune[i]);
     opFreqs[i] = shr_fr1x32(opFreqs[i], FM_OVERSAMPLE_BITS);
   }
@@ -64,15 +65,18 @@ void fm_voice_next (fm_voice *v) {
 				   v->opMod1Gain[i]);
       // add second modulation source
       opMod = add_fr1x16(opMod,
-			 multr_fr1x16(v->opOutputs[v->opMod2Source[i]],
+			 multr_fr1x16(v->opOutputsInternal[v->opMod2Source[i]],
 				      v->opMod2Gain[i]));
 
-      //bandlimit modulation signal with 20kHz iir
-      opMod = mult_fr1x16(opMod, FR16_MAX - FM_SMOOTH);
-      opMod = add_fr1x16(opMod,
-      			 multr_fr1x16(v->opModLast[i], FM_SMOOTH));
-      v->opModLast[i] = opMod;
+      opMod = shr_fr1x32(opMod, 2);
 
+      if(v->bandLimit) {
+	//bandlimit modulation signal with 20kHz iir
+	opMod = mult_fr1x16(opMod, FR16_MAX - FM_SMOOTH);
+	opMod = add_fr1x16(opMod,
+			   multr_fr1x16(v->opModLast[i], FM_SMOOTH));
+	v->opModLast[i] = opMod;
+      }
       // phase increment each op with the oversample-compensated frequency,
       // calculate the op output for next oversampled frame
       fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opFreqs[i]);

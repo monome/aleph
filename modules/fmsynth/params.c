@@ -89,6 +89,9 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
   param_desc_fader(eParam_noteVelocity, "noteVelocity");
+  param_desc_aux(desc, eParam_bandLimit, "bandLimit",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
 
   param_desc_aux(desc, eParam_op1Mod1Source, "op1Mod1Source",
 		 eParamTypeLabel, 0, 3, 1);

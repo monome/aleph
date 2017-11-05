@@ -130,6 +130,7 @@ void module_init(void) {
   param_setup( eParam_noteTune, FIX16_ONE );
   param_setup( eParam_noteTrigger, 0);
   param_setup( eParam_noteVelocity, PARAM_AMP_0 >> 2);
+  param_setup( eParam_bandLimit, 1 << 16);
 
   param_setup(eParam_op1Mod1Source, 0);
   param_setup(eParam_op1Mod1Gain,0);
@@ -270,6 +271,9 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_noteVelocity :
     voice.noteLevel = v;
+    break;
+  case eParam_bandLimit :
+    voice.bandLimit = trunc_fr1x32(v);
     break;
 
   case eParam_op1Mod1Source :
