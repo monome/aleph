@@ -140,7 +140,6 @@ void module_init(void) {
   param_setup(eParam_op1Decay, shl_fr1x32(SLEW_100MS_16, 16));
   param_setup(eParam_op1Sustain, FR32_MAX);
   param_setup(eParam_op1Release, shl_fr1x32(SLEW_1S_16, 16));
-  param_setup(eParam_op1Waveshape, 0);
 
   param_setup(eParam_op2Mod1Source, 0);
   param_setup(eParam_op2Mod1Gain, 0);
@@ -151,7 +150,6 @@ void module_init(void) {
   param_setup(eParam_op2Decay, shl_fr1x32(SLEW_100MS_16, 16));
   param_setup(eParam_op2Sustain, FR32_MAX);
   param_setup(eParam_op2Release, shl_fr1x32(SLEW_1S_16, 16));
-  param_setup(eParam_op2Waveshape, 0);
 
   param_setup(eParam_op3Mod1Source, 0);
   param_setup(eParam_op3Mod1Gain, 0);
@@ -162,7 +160,6 @@ void module_init(void) {
   param_setup(eParam_op3Decay, shl_fr1x32(SLEW_100MS_16, 16));
   param_setup(eParam_op3Sustain, FR32_MAX);
   param_setup(eParam_op3Release, shl_fr1x32(SLEW_1S_16, 16));
-  param_setup(eParam_op3Waveshape, 0);
 
   param_setup(eParam_op4Mod1Source, 0);
   param_setup(eParam_op4Mod1Gain, 0);
@@ -173,7 +170,6 @@ void module_init(void) {
   param_setup(eParam_op4Decay, shl_fr1x32(SLEW_100MS_16, 16));
   param_setup(eParam_op4Sustain, FR32_MAX);
   param_setup(eParam_op4Release, shl_fr1x32(SLEW_1S_16, 16));
-  param_setup(eParam_op4Waveshape, 0);
 
   param_setup (eParam_lfoSpeed, 0x00640000);
   param_setup (eParam_lfoWaveshape, PAN_DEFAULT);
@@ -303,9 +299,6 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_op1Release :
     voice.opEnv[0].releaseTime = trunc_fr1x32(v);
     break;
-  case eParam_op1Waveshape :
-    voice.opWaveshape[0] = v >> 16;
-    break;
 
   case eParam_op2Mod1Source :
     voice.opMod1Source[1] = v;
@@ -333,9 +326,6 @@ void module_set_param(u32 idx, ParamValue v) {
    break;
   case eParam_op2Release :
     voice.opEnv[1].releaseTime = trunc_fr1x32(v);
-    break;
-  case eParam_op2Waveshape :
-    voice.opWaveshape[1] = v >> 16;
     break;
 
   case eParam_op3Mod1Source :
@@ -365,9 +355,6 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_op3Release :
     voice.opEnv[2].releaseTime = trunc_fr1x32(v);
     break;
-  case eParam_op3Waveshape :
-    voice.opWaveshape[2] = v >> 16;
-    break;
 
   case eParam_op4Mod1Source :
     voice.opMod1Source[3] = v;
@@ -395,9 +382,6 @@ void module_set_param(u32 idx, ParamValue v) {
    break;
   case eParam_op4Release :
     voice.opEnv[3].releaseTime = trunc_fr1x32(v);
-    break;
-  case eParam_op4Waveshape :
-    voice.opWaveshape[3] = v >> 16;
     break;
 
   case eParam_lfoSpeed :

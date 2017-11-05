@@ -71,7 +71,6 @@ enum params {
   eParam_op1Decay,
   eParam_op1Sustain,
   eParam_op1Release,
-  eParam_op1Waveshape,
 
   eParam_op2Mod1Source,
   eParam_op2Mod1Gain,
@@ -82,7 +81,6 @@ enum params {
   eParam_op2Decay,
   eParam_op2Sustain,
   eParam_op2Release,
-  eParam_op2Waveshape,
 
   eParam_op3Mod1Source,
   eParam_op3Mod1Gain,
@@ -93,7 +91,6 @@ enum params {
   eParam_op3Decay,
   eParam_op3Sustain,
   eParam_op3Release,
-  eParam_op3Waveshape,
 
   eParam_op4Mod1Source,
   eParam_op4Mod1Gain,
@@ -104,7 +101,6 @@ enum params {
   eParam_op4Decay,
   eParam_op4Sustain,
   eParam_op4Release,
-  eParam_op4Waveshape,
 
   eParam_lfoSpeed,
   eParam_lfoWaveshape,

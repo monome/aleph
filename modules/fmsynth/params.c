@@ -101,9 +101,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op1Decay, "op1Decay");
   param_desc_fader(eParam_op1Sustain, "op1Sustain");
   param_desc_adsrTime(eParam_op1Release, "op1Release");
-  param_desc_aux(desc, eParam_op1Waveshape, "op1Waveshape",
-		 eParamTypeFix, 0x00000000, 0x00030000,
-		 32);
 
   param_desc_aux(desc, eParam_op2Mod1Source, "op2Mod1Source",
 		 eParamTypeLabel, 0, 3, 1);
@@ -116,9 +113,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op2Decay, "op2Decay");
   param_desc_fader(eParam_op2Sustain, "op2Sustain");
   param_desc_adsrTime(eParam_op2Release, "op2Release");
-  param_desc_aux(desc, eParam_op2Waveshape, "op2Waveshape",
-		 eParamTypeFix, 0x00000000, 0x00030000,
-		 32);
 
   param_desc_aux(desc, eParam_op3Mod1Source, "op3Mod1Source",
 		 eParamTypeLabel, 0, 3, 1);
@@ -131,9 +125,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op3Decay, "op3Decay");
   param_desc_fader(eParam_op3Sustain, "op3Sustain");
   param_desc_adsrTime(eParam_op3Release, "op3Release");
-  param_desc_aux(desc, eParam_op3Waveshape, "op3Waveshape",
-		 eParamTypeFix, 0x00000000, 0x00030000,
-		 32);
 
   param_desc_aux(desc, eParam_op4Mod1Source, "op4Mod1Source",
 		 eParamTypeLabel, 0, 3, 1);
@@ -146,9 +137,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op4Decay, "op4Decay");
   param_desc_fader(eParam_op4Sustain, "op4Sustain");
   param_desc_adsrTime(eParam_op4Release, "op4Release");
-  param_desc_aux(desc, eParam_op4Waveshape, "op4Waveshape",
-		 eParamTypeFix, 0x00000000, 0x00030000,
-		 32);
 
   param_desc_aux(desc, eParam_lfoSpeed, "LFOSpeed",
 		 eParamTypeFix, 0, FR32_MAX,
