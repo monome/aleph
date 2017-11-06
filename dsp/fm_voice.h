@@ -10,11 +10,8 @@
 typedef struct fm_voice {
   u8 nOps, nModPoints;
 
-  fract32 noteLevel;
   fix16 noteHz;
   fix16 noteTune;
-  u8 bandLimit;
-  u8 freqSaturate;
   phasor lfo;
   u8 lfoWaveshape;
 
@@ -25,7 +22,11 @@ typedef struct fm_voice {
   fract16 opMod2Gain[FM_OPS_MAX];
   fract16 opModLast[FM_OPS_MAX];
   phasor opOsc[FM_OPS_MAX];
+  fract32 opFreqs[FM_OPS_MAX];
+  fract32 portamento[FM_OPS_MAX];
   env_adsr opEnv[FM_OPS_MAX];
+  u8 bandLimit[FM_OPS_MAX];
+  u8 freqSaturate[FM_OPS_MAX];
 
   fract16 opOutputsInternal[FM_OPS_MAX];
   fract16 opOutputs[FM_OPS_MAX];

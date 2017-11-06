@@ -9,8 +9,6 @@ void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints) {
   v->nModPoints = nModPoints;
   v->noteHz = 440 << 16;
   v->noteTune = FIX16_ONE;
-  v->bandLimit = 1;
-  v->freqSaturate = 1;
   phasor_init(&(v->lfo));
   int i;
   for(i=0; i < nOps; i++) {
@@ -22,8 +20,12 @@ void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints) {
     v->opOutputs[i] = 0;
     v->opOutputsInternal[i] = 0;
     phasor_init(&(v->opOsc[i]));
+    v->opFreqs[i] = 0;
     env_adsr_init(&(v->opEnv[i]));
     v->opModLast[i] = 0;
+    v->bandLimit[i] = 1;
+    v->freqSaturate[i] = 1;
+    v->portamento[i] = SLEW_100MS;
   }
   for(i=0; i < FM_MOD_POINTS_MAX; i++) {
     v->opModPointsExternal[i] = 0;
@@ -55,14 +57,15 @@ void fm_voice_next (fm_voice *v) {
     oversample_envs[FM_OPS_MAX][FM_OVERSAMPLE],
     oversample_modPoints[FM_MOD_POINTS_MAX][FM_OVERSAMPLE];
 
-  fract32 opFreqs[FM_OPS_MAX];
+  fract32 opFreqTarget;
   fract32 envLast, envNext;
   fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
   for(i=0; i < v->nOps; i++) {
     envLast = v->opEnv[i].envOut;
     envNext = env_adsr_next(&(v->opEnv[i]));
-    opFreqs[i] = shr_fr1x32(fix16_mul_fract(baseFreq, v->opTune[i]),
-				FM_OVERSAMPLE_BITS);
+    opFreqTarget = shr_fr1x32(fix16_mul_fract(baseFreq, v->opTune[i]),
+			      FM_OVERSAMPLE_BITS);
+    normalised_logSlew(&(v->opFreqs[i]), opFreqTarget, v->portamento[i]);
     fract32 envInc = shr_fr1x32(envNext - envLast,
 				FM_OVERSAMPLE_BITS);
     for(j=0; j < FM_OVERSAMPLE; j++) {
@@ -109,7 +112,7 @@ void fm_voice_next (fm_voice *v) {
 
       opMod = shr_fr1x32(opMod, 2);
 
-      if(v->bandLimit) {
+      if(v->bandLimit[i]) {
 	//bandlimit modulation signal with 20kHz iir
 	opMod = mult_fr1x16(opMod, FR16_MAX - FM_SMOOTH);
 	opMod = add_fr1x16(opMod,
@@ -118,8 +121,8 @@ void fm_voice_next (fm_voice *v) {
       }
       // phase increment each op with the oversample-compensated frequency,
       // calculate the op output for next oversampled frame
-      fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opFreqs[i]);
-      if(v->freqSaturate) {
+      fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), v->opFreqs[i]);
+      if(v->freqSaturate[i]) {
 	opPhase += shl_fr1x32(opMod, 20);
       }
       else {

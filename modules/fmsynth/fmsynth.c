@@ -58,6 +58,7 @@ static filter_1p_lo cvSlew[4];
 static u8 cvChan = 0;
 
 fm_voice voice;
+fract32 noteVelocity;
 fract32 opVols[4];
 fract32 opPans[4];
 
@@ -130,8 +131,6 @@ void module_init(void) {
   param_setup( eParam_noteTune, FIX16_ONE );
   param_setup( eParam_noteTrigger, 0);
   param_setup( eParam_noteVelocity, PARAM_AMP_0 >> 2);
-  param_setup( eParam_bandLimit, 1 << 16);
-  param_setup( eParam_freqSaturate, 1 << 16);
 
   param_setup(eParam_op1Mod1Source, 0);
   param_setup(eParam_op1Mod1Gain,0);
@@ -142,6 +141,9 @@ void module_init(void) {
   param_setup(eParam_op1Decay, SLEW_100MS);
   param_setup(eParam_op1Sustain, FR32_MAX);
   param_setup(eParam_op1Release, SLEW_1S);
+  param_setup(eParam_op1FreqSlew, SLEW_100MS);
+  param_setup( eParam_op1BandLimit, 1 << 16);
+  param_setup( eParam_op1FreqSat, 1 << 16);
 
   param_setup(eParam_op2Mod1Source, 0);
   param_setup(eParam_op2Mod1Gain, 0);
@@ -152,6 +154,9 @@ void module_init(void) {
   param_setup(eParam_op2Decay, SLEW_100MS);
   param_setup(eParam_op2Sustain, FR32_MAX);
   param_setup(eParam_op2Release, SLEW_1S);
+  param_setup(eParam_op2FreqSlew, SLEW_100MS);
+  param_setup(eParam_op2BandLimit, 1 << 16);
+  param_setup(eParam_op2FreqSat, 1 << 16);
 
   param_setup(eParam_op3Mod1Source, 0);
   param_setup(eParam_op3Mod1Gain, 0);
@@ -162,6 +167,9 @@ void module_init(void) {
   param_setup(eParam_op3Decay, SLEW_100MS);
   param_setup(eParam_op3Sustain, FR32_MAX);
   param_setup(eParam_op3Release, SLEW_1S);
+  param_setup(eParam_op3FreqSlew, SLEW_100MS);
+  param_setup(eParam_op3BandLimit, 1 << 16);
+  param_setup(eParam_op3FreqSat, 1 << 16);
 
   param_setup(eParam_op4Mod1Source, 0);
   param_setup(eParam_op4Mod1Gain, 0);
@@ -172,6 +180,9 @@ void module_init(void) {
   param_setup(eParam_op4Decay, SLEW_100MS);
   param_setup(eParam_op4Sustain, FR32_MAX);
   param_setup(eParam_op4Release, SLEW_1S);
+  param_setup(eParam_op4FreqSlew, SLEW_100MS);
+  param_setup(eParam_op4BandLimit, 1 << 16);
+  param_setup(eParam_op4FreqSat, 1 << 16);
 
   param_setup (eParam_lfoSpeed, 0x00640000);
   param_setup (eParam_lfoWaveshape, PAN_DEFAULT);
@@ -205,6 +216,8 @@ void module_process_frame(void) {
     opOut = shl_fr1x32(voice.opOutputs[i], 16);
     mix_panned_mono (opOut, &(out[0]), &(out[1]), opPans[i], opVols[i]);
   }
+  out[0] = mult_fr1x32x32(out[0], noteVelocity);
+  out[1] = mult_fr1x32x32(out[1], noteVelocity);
 }
 
 // parameter set function
@@ -276,13 +289,7 @@ void module_set_param(u32 idx, ParamValue v) {
     }
     break;
   case eParam_noteVelocity :
-    voice.noteLevel = v;
-    break;
-  case eParam_bandLimit :
-    voice.bandLimit = trunc_fr1x32(v);
-    break;
-  case eParam_freqSaturate :
-    voice.freqSaturate = trunc_fr1x32(v);
+    noteVelocity = v;
     break;
 
   case eParam_op1Mod1Source :
@@ -312,6 +319,15 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_op1Release :
     voice.opEnv[0].releaseTime = v;
     break;
+  case eParam_op1BandLimit :
+    voice.bandLimit[0] = trunc_fr1x32(v);
+    break;
+  case eParam_op1FreqSat :
+    voice.freqSaturate[0] = trunc_fr1x32(v);
+    break;
+  case eParam_op1FreqSlew :
+    voice.portamento[0] = v;
+    break;
 
   case eParam_op2Mod1Source :
     voice.opMod1Source[1] = v;
@@ -339,6 +355,15 @@ void module_set_param(u32 idx, ParamValue v) {
    break;
   case eParam_op2Release :
     voice.opEnv[1].releaseTime = v;
+    break;
+  case eParam_op2BandLimit :
+    voice.bandLimit[1] = trunc_fr1x32(v);
+    break;
+  case eParam_op2FreqSat :
+    voice.freqSaturate[1] = trunc_fr1x32(v);
+    break;
+  case eParam_op2FreqSlew :
+    voice.portamento[1] = v;
     break;
 
   case eParam_op3Mod1Source :
@@ -368,6 +393,15 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_op3Release :
     voice.opEnv[2].releaseTime = v;
     break;
+  case eParam_op3BandLimit :
+    voice.bandLimit[2] = trunc_fr1x32(v);
+    break;
+  case eParam_op3FreqSat :
+    voice.freqSaturate[2] = trunc_fr1x32(v);
+    break;
+  case eParam_op3FreqSlew :
+    voice.portamento[2] = v;
+    break;
 
   case eParam_op4Mod1Source :
     voice.opMod1Source[3] = v;
@@ -395,6 +429,15 @@ void module_set_param(u32 idx, ParamValue v) {
    break;
   case eParam_op4Release :
     voice.opEnv[3].releaseTime = v;
+    break;
+  case eParam_op4BandLimit :
+    voice.bandLimit[3] = trunc_fr1x32(v);
+    break;
+  case eParam_op4FreqSat :
+    voice.freqSaturate[3] = trunc_fr1x32(v);
+    break;
+  case eParam_op4FreqSlew :
+    voice.portamento[3] = v;
     break;
 
   case eParam_lfoSpeed :

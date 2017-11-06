@@ -90,12 +90,6 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
   param_desc_fader(eParam_noteVelocity, "noteVelocity");
-  param_desc_aux(desc, eParam_bandLimit, "bandLimit",
-		 eParamTypeFix, 0x00000000, 0x00010000,
-		 32);
-  param_desc_aux(desc, eParam_freqSaturate, "freqSaturation",
-		 eParamTypeFix, 0x00000000, 0x00010000,
-		 32);
 
   param_desc_modMatrix(eParam_op1Mod1Source, "op1Mod1Source");
   param_desc_fader(eParam_op1Mod1Gain, "op1Mod1Gain");
@@ -106,6 +100,13 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op1Decay, "op1Decay");
   param_desc_fader(eParam_op1Sustain, "op1Sustain");
   param_desc_adsrTime(eParam_op1Release, "op1Release");
+  param_desc_adsrTime(eParam_op1FreqSlew, "op1FreqSlew");
+  param_desc_aux(desc, eParam_op1BandLimit, "op1BandLimit",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux(desc, eParam_op1FreqSat, "op1FreqSat",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
 
   param_desc_modMatrix(eParam_op2Mod1Source, "op2Mod1Source");
   param_desc_fader(eParam_op2Mod1Gain, "op2Mod1Gain");
@@ -116,6 +117,13 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op2Decay, "op2Decay");
   param_desc_fader(eParam_op2Sustain, "op2Sustain");
   param_desc_adsrTime(eParam_op2Release, "op2Release");
+  param_desc_adsrTime(eParam_op2FreqSlew, "op2FreqSlew");
+  param_desc_aux(desc, eParam_op2BandLimit, "op2BandLimit",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux(desc, eParam_op2FreqSat, "op2FreqSat",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
 
   param_desc_modMatrix(eParam_op3Mod1Source, "op3Mod1Source");
   param_desc_fader(eParam_op3Mod1Gain, "op3Mod1Gain");
@@ -126,6 +134,13 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op3Decay, "op3Decay");
   param_desc_fader(eParam_op3Sustain, "op3Sustain");
   param_desc_adsrTime(eParam_op3Release, "op3Release");
+  param_desc_adsrTime(eParam_op3FreqSlew, "op3FreqSlew");
+  param_desc_aux(desc, eParam_op3BandLimit, "op3BandLimit",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux(desc, eParam_op3FreqSat, "op3FreqSat",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
 
   param_desc_modMatrix(eParam_op4Mod1Source, "op4Mod1Source");
   param_desc_fader(eParam_op4Mod1Gain, "op4Mod1Gain");
@@ -136,6 +151,13 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_adsrTime(eParam_op4Decay, "op4Decay");
   param_desc_fader(eParam_op4Sustain, "op4Sustain");
   param_desc_adsrTime(eParam_op4Release, "op4Release");
+  param_desc_adsrTime(eParam_op4FreqSlew, "op4FreqSlew");
+  param_desc_aux(desc, eParam_op4BandLimit, "op4BandLimit",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux(desc, eParam_op4FreqSat, "op4FreqSat",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
 
   param_desc_aux(desc, eParam_lfoSpeed, "LFOSpeed",
 		 eParamTypeFix, 0, FR32_MAX,

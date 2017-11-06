@@ -61,8 +61,6 @@ enum params {
   eParam_noteTune,
   eParam_noteTrigger,
   eParam_noteVelocity,
-  eParam_bandLimit,
-  eParam_freqSaturate,
 
   eParam_op1Mod1Source,
   eParam_op1Mod1Gain,
@@ -73,6 +71,9 @@ enum params {
   eParam_op1Decay,
   eParam_op1Sustain,
   eParam_op1Release,
+  eParam_op1FreqSlew,
+  eParam_op1BandLimit,
+  eParam_op1FreqSat,
 
   eParam_op2Mod1Source,
   eParam_op2Mod1Gain,
@@ -83,6 +84,9 @@ enum params {
   eParam_op2Decay,
   eParam_op2Sustain,
   eParam_op2Release,
+  eParam_op2FreqSlew,
+  eParam_op2BandLimit,
+  eParam_op2FreqSat,
 
   eParam_op3Mod1Source,
   eParam_op3Mod1Gain,
@@ -93,6 +97,9 @@ enum params {
   eParam_op3Decay,
   eParam_op3Sustain,
   eParam_op3Release,
+  eParam_op3FreqSlew,
+  eParam_op3BandLimit,
+  eParam_op3FreqSat,
 
   eParam_op4Mod1Source,
   eParam_op4Mod1Gain,
@@ -103,6 +110,9 @@ enum params {
   eParam_op4Decay,
   eParam_op4Sustain,
   eParam_op4Release,
+  eParam_op4FreqSlew,
+  eParam_op4BandLimit,
+  eParam_op4FreqSat,
 
   eParam_lfoSpeed,
   eParam_lfoWaveshape,
