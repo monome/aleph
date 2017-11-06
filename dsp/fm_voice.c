@@ -117,7 +117,7 @@ void fm_voice_next (fm_voice *v) {
       // phase increment each op with the oversample-compensated frequency,
       // calculate the op output for next oversampled frame
       fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opFreqs[i]);
-      opPhase += shl_fr1x32(opMod, 22);
+      opPhase += shl_fr1x32(opMod, 20);
       fract16 oscSignal;
       oscSignal = sine_polyblep(opPhase);
       nextOpOutputs[i] = multr_fr1x16(oversample_envs[i][j],
