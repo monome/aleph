@@ -43,4 +43,4 @@ deploy:
 	cp $(project).hex $(project)-$(maj).$(min).$(rev).hex
 
 tags:
-	find . ../../avr32_lib/ ../../common -name '*.[ch]' | etags -
+	find . ../../libavr32 ../../common ../../avr32 -name '*.[ch]' | etags -
