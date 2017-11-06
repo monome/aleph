@@ -27,11 +27,8 @@
 
 static u16 serial_read_pos = 0;
 void serial_init(void) {
-  // FIXME some extra stuff had to be added to BEES' serial code in
-  // order to get remote serial control working.  merge that stuff
-  // back in to new avr32lib & uncomment these lines!
-  /* serial_rx_flow_control = true; */
-  /* serial_delimiter = END_FLAG; */
+  serial_rx_flow_control = true;
+  serial_delimiter = END_FLAG;
 }
 
 void serial_putc(char c) {
@@ -327,6 +324,7 @@ int serial_bfinDscBuf_idx;
 #define MAX_SERIAL_DSC_SIZE (256 * 1024)
 
 void serial_bfinProgStart() {
+  pause_timers();
   if(serial_bfinHexBuf == NULL)
     serial_bfinHexBuf = alloc_mem(MAX_SERIAL_HEX_SIZE);
   serial_bfinHexBuf_idx = 0;
@@ -379,6 +377,7 @@ void serial_bfinProgEnd() {
   bfin_enable();
   app_resume();
 
+  start_timers();
 }
 
 
