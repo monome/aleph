@@ -102,7 +102,7 @@ void module_init(void) {
   filter_1p_lo_init( &(cvSlew[2]), 0 );
   filter_1p_lo_init( &(cvSlew[3]), 0 );
 
-  fm_voice_init(&voice, FM_VOICE_NOPS);
+  fm_voice_init(&voice, FM_VOICE_NOPS, 4);
 
   param_setup( eParam_cvSlew0, PARAM_CV_SLEW_DEFAULT );
   param_setup( eParam_cvSlew1, PARAM_CV_SLEW_DEFAULT );
@@ -196,7 +196,7 @@ void module_process_frame(void) {
   int i;
   for(i=0; i < 4; i++) {
     out[i] = 0;
-    voice.opModPointsExternal[i] = trunc_fr1x32(in[i]);
+    voice.opModPointsExternal[i] = in[i];
   }
   fm_voice_next(&voice);
   fract32 opOut;

@@ -8,7 +8,7 @@
 #define FM_MOD_POINTS_MAX 8
 
 typedef struct fm_voice {
-  u8 nOps;
+  u8 nOps, nModPoints;
 
   fract32 noteLevel;
   fix16 noteHz;
@@ -28,9 +28,10 @@ typedef struct fm_voice {
 
   fract16 opOutputsInternal[FM_OPS_MAX];
   fract16 opOutputs[FM_OPS_MAX];
-  fract16 opModPointsExternal[FM_MOD_POINTS_MAX];
+  fract32 opModPointsExternal[FM_MOD_POINTS_MAX];
+  fract32 opModPointsLast[FM_MOD_POINTS_MAX];
 } fm_voice;
-void fm_voice_init (fm_voice *v, u8 nOps);
+void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints);
 void fm_voice_press (fm_voice *v);
 void fm_voice_release (fm_voice *v);
 void fm_voice_next (fm_voice *v);

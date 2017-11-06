@@ -4,8 +4,9 @@
 #include "libfixmath/fix16_fract.h"
 #include "osc_polyblep.h"
 
-void fm_voice_init (fm_voice *v, u8 nOps) {
+void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints) {
   v->nOps = nOps;
+  v->nModPoints = nModPoints;
   v->noteHz = 440 << 16;
   v->noteTune = FIX16_ONE;
   v->bandLimit = 1;
@@ -25,6 +26,7 @@ void fm_voice_init (fm_voice *v, u8 nOps) {
   }
   for(i=0; i < FM_MOD_POINTS_MAX; i++) {
     v->opModPointsExternal[i] = 0;
+    v->opModPointsLast[i] = 0;
   }
 }
 
@@ -43,19 +45,37 @@ void fm_voice_release (fm_voice *v) {
 
 #define FM_OVERSAMPLE_BITS 2
 #define FM_OVERSAMPLE (1 << FM_OVERSAMPLE_BITS)
-#define FM_SMOOTH ((fract16) (FR16_MAX * ((4.0 * PI * FM_OVERSAMPLE) / (1.0 + 4.0 * PI * FM_OVERSAMPLE))))
+#define FM_SMOOTH ((fract16) (FR16_MAX * ((8.0 * PI * FM_OVERSAMPLE) / (1.0 + 8.0 * PI * FM_OVERSAMPLE))))
 
 void fm_voice_next (fm_voice *v) {
   int i, j;
-  fract16 oversample_outs[FM_OPS_MAX][FM_OVERSAMPLE];
+  fract16 oversample_outs[FM_OPS_MAX][FM_OVERSAMPLE],
+    oversample_envs[FM_OPS_MAX][FM_OVERSAMPLE],
+    oversample_modPoints[FM_MOD_POINTS_MAX][FM_OVERSAMPLE];
 
   fract32 opFreqs[FM_OPS_MAX];
-  fract16 envs[FM_OPS_MAX];
+  fract32 envLast, envNext;
   fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
   for(i=0; i < v->nOps; i++) {
-    envs[i] = trunc_fr1x32(env_adsr_next(&(v->opEnv[i])));
-    opFreqs[i] = fix16_mul_fract(baseFreq, v->opTune[i]);
-    opFreqs[i] = shr_fr1x32(opFreqs[i], FM_OVERSAMPLE_BITS);
+    envLast = v->opEnv[i].envOut;
+    envNext = env_adsr_next(&(v->opEnv[i]));
+    opFreqs[i] = shr_fr1x32(fix16_mul_fract(baseFreq, v->opTune[i]),
+				FM_OVERSAMPLE_BITS);
+    fract32 envInc = shr_fr1x32(envNext - envLast,
+				FM_OVERSAMPLE_BITS);
+    for(j=0; j < FM_OVERSAMPLE; j++) {
+      oversample_envs[i][j] = trunc_fr1x32(envLast);
+      envLast = add_fr1x32(envLast, envInc);
+    }
+  }
+  for(i=0; i < v->nModPoints; i++) {
+    fract32 modPointsInc = shr_fr1x32(v->opModPointsExternal[i] - v->opModPointsLast[i],
+				      FM_OVERSAMPLE_BITS);
+    for(j=0; j < FM_OVERSAMPLE; j++) {
+      oversample_modPoints[i][j] = trunc_fr1x32(v->opModPointsLast[i]);
+      v->opModPointsLast[i] = add_fr1x32(v->opModPointsLast[i], modPointsInc);
+    }
+    v->opModPointsLast[i] = v->opModPointsExternal[i];
   }
 
   for(j=0; j < FM_OVERSAMPLE; j++) {
@@ -70,7 +90,7 @@ void fm_voice_next (fm_voice *v) {
 			      v->opMod1Gain[i]);
       }
       else {
-	opMod = multr_fr1x16(v->opModPointsExternal[v->opMod1Source[i] - v->nOps],
+	opMod = multr_fr1x16(oversample_modPoints[v->opMod1Source[i] - v->nOps][j],
 			     v->opMod1Gain[i]);
       }
       // add second modulation source
@@ -81,7 +101,7 @@ void fm_voice_next (fm_voice *v) {
       }
       else {
 	opMod = add_fr1x16(opMod,
-			   multr_fr1x16(v->opModPointsExternal[v->opMod2Source[i] - v->nOps],
+			   multr_fr1x16(oversample_modPoints[v->opMod2Source[i] - v->nOps][j],
 					v->opMod2Gain[i]));
       }
 
@@ -89,9 +109,9 @@ void fm_voice_next (fm_voice *v) {
 
       if(v->bandLimit) {
 	//bandlimit modulation signal with 20kHz iir
-	opMod = mult_fr1x16(opMod, FR16_MAX - FM_SMOOTH);
+	opMod = mult_fr1x16(opMod, FM_SMOOTH);
 	opMod = add_fr1x16(opMod,
-			   multr_fr1x16(v->opModLast[i], FM_SMOOTH));
+			   multr_fr1x16(v->opModLast[i], FR16_MAX - FM_SMOOTH));
 	v->opModLast[i] = opMod;
       }
       // phase increment each op with the oversample-compensated frequency,
@@ -100,7 +120,7 @@ void fm_voice_next (fm_voice *v) {
       opPhase += shl_fr1x32(opMod, 22);
       fract16 oscSignal;
       oscSignal = sine_polyblep(opPhase);
-      nextOpOutputs[i] = multr_fr1x16(envs[i],
+      nextOpOutputs[i] = multr_fr1x16(oversample_envs[i][j],
 				      oscSignal);
     }
 
