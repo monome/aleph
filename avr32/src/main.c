@@ -95,7 +95,13 @@ static void dummy_handler(s32 data) {
 // static void dummy_render(void) { ;; }
 
 // core event handlers
-static void handler_FtdiConnect(s32 data) { ftdi_setup(); }
+static void handler_FtdiConnect(s32 data) {
+  if(!launch) {
+    // print_dbg("\r\n got monome device connection, saving flag for app launch");
+    ftdiConnect = 1;
+  }
+  ftdi_setup();
+}
 static void handler_FtdiDisconnect(s32 data) {
     /// FIXME: assuming that FTDI == monome
     event_t e = {.type = kEventMonomeDisconnect };
@@ -267,14 +273,21 @@ static void init_ctl(void) {
     print_dbg("\r\n enabled interrupts");
 }
 
+static event_t e1 = { .data = 0 };
+static event_t e2 = { .data = 0 };
+static event_t e3 = { .data = 0 };
+static event_t e4 = { .data = 0 };
+
 // launch application
 void check_startup(void) {
-    event_t e = {.data = 0 };
 
     if (!launch) {
-        //// haven't launched yet
-        // wipe out the event queue
-        init_events();
+      // haven't launched yet
+      // handle all events in queue
+      static event_t e;
+      while( event_next(&e) ) {
+	(app_event_handlers)[e.type](e.data);
+      }
         // clear the power sw interrupt? wtf?? ok
         gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
         // return 1 if app completed firstrun tasks
@@ -301,24 +314,22 @@ void check_startup(void) {
                 flash_write_firstrun();
             }
             // re-send connection events if we got any
-            if (ftdiConnect) {
-                e.type = kEventFtdiConnect;
-                event_post(&e);
-            }
-            if (monomeConnectMain) {
-                // print_dbg("\r\n posting MonomeConnect event after app
-                // launch");
-                e.type = kEventMonomeConnect;
-                event_post(&e);
-            }
-            if (hidConnect) {
-                e.type = kEventHidConnect;
-                event_post(&e);
-            }
-            if (midiConnect) {
-                e.type = kEventMidiConnect;
-                event_post(&e);
-            }
+	    if(ftdiConnect) {
+	      e1.type = kEventFtdiConnect;
+	      event_post(&e1);
+	    }
+	    if (monomeConnectMain) {
+	      e2.type = kEventMonomeConnect;
+	      event_post(&e2);
+	    }
+	    if (hidConnect) {
+	      e3.type = kEventHidConnect;
+	      event_post(&e3);
+	    }
+	    if (midiConnect) {
+	      e4.type = kEventMidiConnect;
+	      event_post(&e4);
+	    }
         } else {
             if (firstrun) {
                 // firstrun, but app launch failed, so clear magic number to try
@@ -338,6 +349,7 @@ void check_events(void) {
 // !!!!!!!!!!!!!
 // main function
 int main(void) {
+    init_events();
     // set up avr32 hardware and peripherals
     init_avr32();
 
