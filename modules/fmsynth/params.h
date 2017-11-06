@@ -59,6 +59,7 @@ enum params {
   /* eParam_Semitone, */
   eParam_noteHz,
   eParam_noteTune,
+  eParam_notePortamento,
   eParam_noteTrigger,
   eParam_noteVelocity,
 
@@ -113,9 +114,6 @@ enum params {
   eParam_op4FreqSlew,
   eParam_op4BandLimit,
   eParam_op4FreqSat,
-
-  eParam_lfoSpeed,
-  eParam_lfoWaveshape,
 
   eParamNumParams
 

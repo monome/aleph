@@ -129,6 +129,7 @@ void module_init(void) {
 
   param_setup( eParam_noteHz, 220 << 16 );
   param_setup( eParam_noteTune, FIX16_ONE );
+  param_setup( eParam_notePortamento, SLEW_10MS);
   param_setup( eParam_noteTrigger, 0);
   param_setup( eParam_noteVelocity, PARAM_AMP_0 >> 2);
 
@@ -183,9 +184,6 @@ void module_init(void) {
   param_setup(eParam_op4FreqSlew, SLEW_100MS);
   param_setup(eParam_op4BandLimit, 1 << 16);
   param_setup(eParam_op4FreqSat, 1 << 16);
-
-  param_setup (eParam_lfoSpeed, 0x00640000);
-  param_setup (eParam_lfoWaveshape, PAN_DEFAULT);
 
 }
 
@@ -280,6 +278,9 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_noteTune :
     voice.noteTune = v;
     break;
+  case eParam_notePortamento :
+    voice.portamento = v;
+    break;
   case eParam_noteTrigger :
     if (v > 0) {
       fm_voice_press(&voice);
@@ -326,7 +327,7 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.freqSaturate[0] = trunc_fr1x32(v);
     break;
   case eParam_op1FreqSlew :
-    voice.portamento[0] = v;
+    voice.opSlew[0] = v;
     break;
 
   case eParam_op2Mod1Source :
@@ -363,7 +364,7 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.freqSaturate[1] = trunc_fr1x32(v);
     break;
   case eParam_op2FreqSlew :
-    voice.portamento[1] = v;
+    voice.opSlew[1] = v;
     break;
 
   case eParam_op3Mod1Source :
@@ -400,7 +401,7 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.freqSaturate[2] = trunc_fr1x32(v);
     break;
   case eParam_op3FreqSlew :
-    voice.portamento[2] = v;
+    voice.opSlew[2] = v;
     break;
 
   case eParam_op4Mod1Source :
@@ -437,14 +438,7 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.freqSaturate[3] = trunc_fr1x32(v);
     break;
   case eParam_op4FreqSlew :
-    voice.portamento[3] = v;
-    break;
-
-  case eParam_lfoSpeed :
-    voice.lfo.freq = shl_fr1x32(v, -4);
-    break;
-  case eParam_lfoWaveshape :
-    voice.lfoWaveshape = v;
+    voice.opSlew[3] = v;
     break;
 
   default:

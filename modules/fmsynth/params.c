@@ -86,6 +86,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeNote, OSC_HZ_MIN, OSC_HZ_MAX,
 		 OSC_HZ_RADIX);
   param_desc_ratio(eParam_noteTune, "noteTune");
+  param_desc_adsrTime(eParam_notePortamento, "portamento");
   param_desc_aux(desc, eParam_noteTrigger, "noteTrigger",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
@@ -158,11 +159,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_op4FreqSat, "op4FreqSat",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
-
-  param_desc_aux(desc, eParam_lfoSpeed, "LFOSpeed",
-		 eParamTypeFix, 0, FR32_MAX,
-		 16);
-  param_desc_pan(eParam_lfoWaveshape, "lfoWaveshape");
 
 }
 

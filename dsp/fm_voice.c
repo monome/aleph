@@ -9,7 +9,9 @@ void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints) {
   v->nModPoints = nModPoints;
   v->noteHz = 440 << 16;
   v->noteTune = FIX16_ONE;
-  phasor_init(&(v->lfo));
+  v->portamento = SLEW_100MS;
+  v->noteBaseFreq = 0;
+
   int i;
   for(i=0; i < nOps; i++) {
     v->opTune[i] = FIX16_ONE;
@@ -25,7 +27,7 @@ void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints) {
     v->opModLast[i] = 0;
     v->bandLimit[i] = 1;
     v->freqSaturate[i] = 1;
-    v->portamento[i] = SLEW_100MS;
+    v->opSlew[i] = SLEW_100MS;
   }
   for(i=0; i < FM_MOD_POINTS_MAX; i++) {
     v->opModPointsExternal[i] = 0;
@@ -59,13 +61,16 @@ void fm_voice_next (fm_voice *v) {
 
   fract32 opFreqTarget;
   fract32 envLast, envNext;
-  fract32 baseFreq = fix16_mul_fract(v->noteHz, v->noteTune);
+  normalised_logSlew(&(v->noteBaseFreq), fix16_mul_fract(v->noteHz, v->noteTune), v->portamento);
+  /* v->noteBaseFreq = fix16_mul_fract(v->noteHz, v->noteTune); */
   for(i=0; i < v->nOps; i++) {
     envLast = v->opEnv[i].envOut;
     envNext = env_adsr_next(&(v->opEnv[i]));
-    opFreqTarget = shr_fr1x32(fix16_mul_fract(baseFreq, v->opTune[i]),
+    opFreqTarget = shr_fr1x32(fix16_mul_fract(v->noteBaseFreq, v->opTune[i]),
 			      FM_OVERSAMPLE_BITS);
-    normalised_logSlew(&(v->opFreqs[i]), opFreqTarget, v->portamento[i]);
+    normalised_logSlew(&(v->opFreqs[i]), opFreqTarget, v->opSlew[i]);
+    /* coarse_logSlew(&(v->opFreqs[i]), opFreqTarget, v->opSlew[i]); */
+    /* v->opFreqs[i] = opFreqTarget; */
     fract32 envInc = shr_fr1x32(envNext - envLast,
 				FM_OVERSAMPLE_BITS);
     for(j=0; j < FM_OVERSAMPLE; j++) {
