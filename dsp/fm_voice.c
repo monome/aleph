@@ -55,8 +55,8 @@ void fm_voice_release (fm_voice *v) {
 
 void fm_voice_next (fm_voice *v) {
   int i, j;
-  fract16 oversample_outs[FM_OPS_MAX][FM_OVERSAMPLE],
-    oversample_modPoints[FM_MOD_POINTS_MAX][FM_OVERSAMPLE];
+  fract16 oversample_outs[FM_OPS_MAX][FM_OVERSAMPLE];
+  fract16 modPoints[FM_MOD_POINTS_MAX];
 
   fract32 opFreqTarget;
   fract16 envNext[FM_OPS_MAX];
@@ -68,13 +68,7 @@ void fm_voice_next (fm_voice *v) {
     normalised_logSlew(&(v->opFreqs[i]), opFreqTarget, v->opSlew[i]);
   }
   for(i=0; i < v->nModPoints; i++) {
-    fract32 modPointsInc = shr_fr1x32(v->opModPointsExternal[i] - v->opModPointsLast[i],
-				      FM_OVERSAMPLE_BITS);
-    for(j=0; j < FM_OVERSAMPLE; j++) {
-      oversample_modPoints[i][j] = trunc_fr1x32(v->opModPointsLast[i]);
-      v->opModPointsLast[i] = add_fr1x32(v->opModPointsLast[i], modPointsInc);
-    }
-    v->opModPointsLast[i] = v->opModPointsExternal[i];
+    modPoints[i] = trunc_fr1x32(v->opModPointsExternal[i]);
   }
 
   for(j=0; j < FM_OVERSAMPLE; j++) {
@@ -89,7 +83,7 @@ void fm_voice_next (fm_voice *v) {
 			      v->opMod1Gain[i]);
       }
       else {
-	opMod = multr_fr1x16(oversample_modPoints[v->opMod1Source[i] - v->nOps][j],
+	opMod = multr_fr1x16(modPoints[v->opMod1Source[i] - v->nOps],
 			     v->opMod1Gain[i]);
       }
       // add second modulation source
@@ -100,7 +94,7 @@ void fm_voice_next (fm_voice *v) {
       }
       else {
 	opMod = add_fr1x16(opMod,
-			   multr_fr1x16(oversample_modPoints[v->opMod2Source[i] - v->nOps][j],
+			   multr_fr1x16(modPoints[v->opMod2Source[i] - v->nOps],
 					v->opMod2Gain[i]));
       }
 
