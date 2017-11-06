@@ -14,6 +14,7 @@ typedef struct fm_voice {
   fix16 noteHz;
   fix16 noteTune;
   u8 bandLimit;
+  u8 freqSaturate;
   phasor lfo;
   u8 lfoWaveshape;
 

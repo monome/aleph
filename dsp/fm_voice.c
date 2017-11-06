@@ -10,6 +10,7 @@ void fm_voice_init (fm_voice *v, u8 nOps, u8 nModPoints) {
   v->noteHz = 440 << 16;
   v->noteTune = FIX16_ONE;
   v->bandLimit = 1;
+  v->freqSaturate = 1;
   phasor_init(&(v->lfo));
   int i;
   for(i=0; i < nOps; i++) {
@@ -45,7 +46,8 @@ void fm_voice_release (fm_voice *v) {
 
 #define FM_OVERSAMPLE_BITS 2
 #define FM_OVERSAMPLE (1 << FM_OVERSAMPLE_BITS)
-#define FM_SMOOTH ((fract16) (FR16_MAX * ((8.0 * PI * FM_OVERSAMPLE) / (1.0 + 8.0 * PI * FM_OVERSAMPLE))))
+/* #define FM_SMOOTH ((fract16) (FR16_MAX * ((4.0 * PI * FM_OVERSAMPLE) / (1.0 + 4.0 * PI * FM_OVERSAMPLE)))) */
+#define FM_SMOOTH ((fract16) (FR16_MAX * 0.7))
 
 void fm_voice_next (fm_voice *v) {
   int i, j;
@@ -109,15 +111,20 @@ void fm_voice_next (fm_voice *v) {
 
       if(v->bandLimit) {
 	//bandlimit modulation signal with 20kHz iir
-	opMod = mult_fr1x16(opMod, FM_SMOOTH);
+	opMod = mult_fr1x16(opMod, FR16_MAX - FM_SMOOTH);
 	opMod = add_fr1x16(opMod,
-			   multr_fr1x16(v->opModLast[i], FR16_MAX - FM_SMOOTH));
+			   multr_fr1x16(v->opModLast[i], FM_SMOOTH));
 	v->opModLast[i] = opMod;
       }
       // phase increment each op with the oversample-compensated frequency,
       // calculate the op output for next oversampled frame
       fract32 opPhase = phasor_next_dynamic(&(v->opOsc[i]), opFreqs[i]);
-      opPhase += shl_fr1x32(opMod, 20);
+      if(v->freqSaturate) {
+	opPhase += shl_fr1x32(opMod, 20);
+      }
+      else {
+	opPhase += (opMod << 20);
+      }
       fract16 oscSignal;
       oscSignal = sine_polyblep(opPhase);
       nextOpOutputs[i] = multr_fr1x16(oversample_envs[i][j],

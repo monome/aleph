@@ -62,6 +62,7 @@ enum params {
   eParam_noteTrigger,
   eParam_noteVelocity,
   eParam_bandLimit,
+  eParam_freqSaturate,
 
   eParam_op1Mod1Source,
   eParam_op1Mod1Gain,

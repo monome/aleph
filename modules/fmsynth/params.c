@@ -93,6 +93,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_bandLimit, "bandLimit",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
+  param_desc_aux(desc, eParam_freqSaturate, "freqSaturation",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
 
   param_desc_modMatrix(eParam_op1Mod1Source, "op1Mod1Source");
   param_desc_fader(eParam_op1Mod1Gain, "op1Mod1Gain");
