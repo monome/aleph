@@ -76,7 +76,7 @@ static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v) {
     break;
 
   case dsynParamAmpAtkSlew : // fract32 raw 1pole coefficient
-    voices[vid]->envAmp.adsr.attackTime = FR32_MAX - v;
+    voices[vid]->envAmp.adsr.attackTime = v;
     break;
 
   case dsynParamAmpSus : // fract32 amp
@@ -84,11 +84,11 @@ static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v) {
     break;
     
   case dsynParamAmpDecSlew : // fract32 raw 1pole coefficient
-    voices[vid]->envAmp.adsr.decayTime = FR32_MAX - v;
+    voices[vid]->envAmp.adsr.decayTime = v;
     break;
 
   case dsynParamAmpRelSlew :
-    voices[vid]->envAmp.adsr.releaseTime = FR32_MAX - v;
+    voices[vid]->envAmp.adsr.releaseTime = v;
     break;
 
   case dsynParamAmpSusDur :
@@ -97,7 +97,7 @@ static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v) {
 
 
   case dsynParamFreqAtkSlew : // fract32 raw 1pole coefficient
-    voices[vid]->envFreq.adsr.attackTime = FR32_MAX - v;
+    voices[vid]->envFreq.adsr.attackTime = v;
     break;
 
   case dsynParamFreqSus : // fract32 freq
@@ -105,11 +105,11 @@ static void module_set_dsyn_voice_param(u8 vid, u32 idx, ParamValue v) {
     break;
     
   case dsynParamFreqDecSlew : // fract32 raw 1pole coefficient
-    voices[vid]->envFreq.adsr.decayTime = FR32_MAX - v;
+    voices[vid]->envFreq.adsr.decayTime = v;
     break;
 
   case dsynParamFreqRelSlew :
-    voices[vid]->envFreq.adsr.releaseTime = FR32_MAX - v;
+    voices[vid]->envFreq.adsr.releaseTime = v;
     break;
 
   case dsynParamFreqSusDur :
@@ -163,16 +163,16 @@ void params_default(void) {
 
       param_setup(o + dsynParamPreGain, PARAM_AMP_6);
       param_setup(o + dsynParamPostGain, PARAM_AMP_6);
-      param_setup(o + dsynParamAmpAtkSlew, FR32_MAX - SLEW_1MS);
-      param_setup(o + dsynParamAmpDecSlew, FR32_MAX - SLEW_100MS);
-      param_setup(o + dsynParamAmpRelSlew, FR32_MAX - SLEW_1S);
+      param_setup(o + dsynParamAmpAtkSlew, SLEW_1MS);
+      param_setup(o + dsynParamAmpDecSlew, SLEW_100MS);
+      param_setup(o + dsynParamAmpRelSlew, SLEW_1S);
       param_setup(o + dsynParamAmpSusDur, 4800);
       param_setup( o + dsynParamFreqOff, PARAM_CUT_DEFAULT >> 1);
       param_setup( o + dsynParamFreqOn, PARAM_CUT_DEFAULT ); 
       param_setup( o + dsynParamFreqSus, PARAM_CUT_DEFAULT);
-      param_setup( o + dsynParamFreqAtkSlew, FR32_MAX - SLEW_1MS );
-      param_setup( o + dsynParamFreqDecSlew, FR32_MAX - SLEW_100MS );
-      param_setup( o + dsynParamFreqRelSlew, FR32_MAX - SLEW_1S );
+      param_setup( o + dsynParamFreqAtkSlew, SLEW_1MS );
+      param_setup( o + dsynParamFreqDecSlew, SLEW_100MS );
+      param_setup( o + dsynParamFreqRelSlew, SLEW_1S );
       param_setup( o + dsynParamFreqSusDur, 2400 );
 
       param_setup( o + dsynParamRq, PARAM_RQ_DEFAULT );
@@ -193,16 +193,16 @@ void params_default(void) {
       param_setup(o + monosynthParamNoteTune, FIX16_ONE);
       param_setup( o + monosynthParamOscFlava, 0 );
 
-      param_setup(o + monosynthParamAmpAttack, FR32_MAX - SLEW_1MS);
-      param_setup(o + monosynthParamAmpDecay, FR32_MAX - SLEW_100MS);
+      param_setup(o + monosynthParamAmpAttack, SLEW_1MS);
+      param_setup(o + monosynthParamAmpDecay, SLEW_100MS);
       param_setup(o + monosynthParamAmpSustain, PARAM_AMP_6);
-      param_setup(o + monosynthParamAmpRelease, FR32_MAX - SLEW_1S);
+      param_setup(o + monosynthParamAmpRelease, SLEW_1S);
       param_setup(o + monosynthParamNoteLevel, FR32_MAX);
 
-      param_setup(o + monosynthParamFiltAttack, FR32_MAX - SLEW_1MS);
-      param_setup(o + monosynthParamFiltDecay, FR32_MAX - SLEW_100MS);
+      param_setup(o + monosynthParamFiltAttack, SLEW_1MS);
+      param_setup(o + monosynthParamFiltDecay, SLEW_100MS);
       param_setup(o + monosynthParamFiltSustain, PARAM_AMP_6);
-      param_setup(o + monosynthParamFiltRelease, FR32_MAX - SLEW_1S);
+      param_setup(o + monosynthParamFiltRelease, SLEW_1S);
       param_setup( o + monosynthParamFreqOff, PARAM_CUT_DEFAULT >> 2);
       param_setup( o + monosynthParamFreqOn, PARAM_CUT_DEFAULT << 4);
 
@@ -241,32 +241,32 @@ static void module_set_monosynth_voice_param(u8 vid, u32 idx, ParamValue v) {
     break;
 
   case monosynthParamAmpAttack : // fract32 raw 1pole coefficient
-    mVoices[vid].ampEnv.attackTime = FR32_MAX - v;
+    mVoices[vid].ampEnv.attackTime = v;
     break;
   case monosynthParamAmpDecay : // fract32 raw 1pole coefficient
-    mVoices[vid].ampEnv.decayTime = FR32_MAX - v;
+    mVoices[vid].ampEnv.decayTime = v;
     break;
   case monosynthParamAmpSustain : // fract32 freq
     mVoices[vid].ampEnv.sustainLevel = v;
     break;
   case monosynthParamAmpRelease :
-    mVoices[vid].ampEnv.releaseTime = FR32_MAX - v;
+    mVoices[vid].ampEnv.releaseTime = v;
     break;
   case monosynthParamNoteLevel :
     monosynthLevels[vid] = v;
     break;
 
   case monosynthParamFiltAttack : // fract32 raw 1pole coefficient
-    mVoices[vid].filterEnv.attackTime = FR32_MAX - v;
+    mVoices[vid].filterEnv.attackTime = v;
     break;
   case monosynthParamFiltDecay : // fract32 raw 1pole coefficient
-    mVoices[vid].filterEnv.decayTime = FR32_MAX - v;
+    mVoices[vid].filterEnv.decayTime = v;
     break;
   case monosynthParamFiltSustain : // fract32 freq
     mVoices[vid].filterEnv.sustainLevel = v;
     break;
   case monosynthParamFiltRelease :
-    mVoices[vid].filterEnv.releaseTime = FR32_MAX - v;
+    mVoices[vid].filterEnv.releaseTime = v;
     break;
 
   case monosynthParamFreqOff : // fract32 raw SVF corner coefficient
