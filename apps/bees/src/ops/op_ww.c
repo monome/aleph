@@ -233,6 +233,8 @@ static void op_ww_in_focus(op_ww_t* op, const io_t v) {
   u8 i1;
   // print_dbg("\r\n// monome connect /////////////////"); 
   op->x.keycount_pos = 0;
+  op->x.keycount_series = 0;
+  op->x.keycount_cv = 0;
   op->x.key_count = 0;
   op->x.SIZE = monome_size_x();
   op->x.LENGTH = op->x.SIZE - 1;
