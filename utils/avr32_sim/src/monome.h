@@ -208,7 +208,7 @@ extern u8 monome_size_x(void);
 extern u8 monome_size_y(void);
 extern u8 monome_is_vari(void);
 
-extern eMonomeDevice monome_dev_type(void);
+extern eMonomeDevice monome_device(void);
 
 
 #ifdef __cplusplus

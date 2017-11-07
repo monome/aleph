@@ -501,7 +501,7 @@ u8 monome_size_x(void) { return mdesc.cols; }
 u8 monome_size_y(void) {  return mdesc.rows; }
 u8 monome_is_vari(void) {  return mdesc.vari; }
 
-eMonomeDevice monome_dev_type(void) { return mdesc.device; }
+eMonomeDevice monome_device(void) { return mdesc.device; }
 
 //=============================================
 //------ static function definitions
