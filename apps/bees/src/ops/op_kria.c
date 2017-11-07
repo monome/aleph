@@ -1248,6 +1248,8 @@ const u8* op_kria_unpickle(op_kria_t* kria, const u8* src) {
     src = unpickle_32(src, kria_state);
     kria_state +=1;
   }
+  calc_scale(kria, 0);
+  calc_scale(kria, 1);
   if (kria->focus > 0) {
     net_monome_set_focus( &(kria->monome), 1);
   }
