@@ -648,37 +648,33 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
       if (net->outs[i].target >= opFirstIn) {
 	net_connect(i, net->outs[i].target + ins);
       }
-
-      /// do the same in all presets!
-      for(j=0; j<NET_PRESETS_MAX; j++) {
-	if(preset_out_enabled(j, i)) {
-	  s16 tar = presets[j].outs[i].target;
-	  if(tar >= opFirstIn) {
-	    tar = tar + ins;
-	    presets[j].outs[i].target = tar;
-	  }
-	}
-      } // preset loop
     } // outs loop
 
     for(i=0; i<NET_PRESETS_MAX; i++) {
-      // shift parameter nodes in preset data
+      // shift input nodes in preset data
       for(j=net->numParams + net->numIns - 1; j>=opFirstIn + ins; j--) {
-	if(j >= PRESET_INODES_COUNT) {
-	  print_dbg("\r\n out of preset input nodes in new op creation! ");
-	  continue;
-	} else {
-	  presets[i].ins[j].value = presets[i].ins[j - ins].value;
-	  presets[i].ins[j].enabled = presets[i].ins[j - ins].enabled;
-	  // clear the old data. it may correspond to new operator inputs.
-	  presets[i].ins[j - ins].enabled = 0;
-	  presets[i].ins[j - ins].value = 0;
+	presets[i].ins[j].value = presets[i].ins[j - ins].value;
+	presets[i].ins[j].enabled = presets[i].ins[j - ins].enabled;
+	// disable preset ins for new op
+	presets[i].ins[j - ins].enabled = 0;
+      }
+      // shift output nodes in preset data
+      for(j=net->numOuts - 1 ; j >= opFirstOut + outs; j--) {
+	presets[i].outs[j].target = presets[i].outs[j-outs].target;
+	presets[i].outs[j].enabled = presets[i].outs[j-outs].enabled;
+	// disable preset outs for new op
+	presets[i].outs[j - outs].enabled = 0;
+      }
+      for(j=0; j < net->numOuts; j++) {
+	if(presets[i].outs[j].enabled) {
+	  s16 tar = presets[i].outs[j].target;
+	  if(tar >= opFirstIn) {
+	    presets[i].outs[j].target = tar + ins;
+	  }
 	}
       }
     }
-
   }
-
   return opIdx;
 }
 
@@ -836,23 +832,6 @@ s16 net_remove_op(const u32 opIdx) {
     }
   }
 
-  for(i=0; i < net->numOuts; i++) {
-    for(j=0; j<NET_PRESETS_MAX; j++) {
-      if(preset_out_enabled(j, i)) {
-	s16 tar = presets[j].outs[i].target;
-	if(tar >= opFirstIn + opNumInputs) { // target above deleted op, reshuffle
-	  tar = tar - opNumInputs;
-	  presets[j].outs[i].target = tar;
-	}
-	else if (tar >= opFirstIn) { // targetting deleted op, forget
-	  presets[j].outs[i].enabled = 0;
-	}
-      }
-    } // preset loop
-  } // outs loop
-
-  // FIXME: shift preset param data
-  // since they share an indexing list with inputs and we just changed it.
   for(i=0; i<NET_PRESETS_MAX; ++i) {
     // shift parameter nodes in preset data
     for(j=opFirstIn; j<net->numParams + net->numIns; ++j) {
@@ -862,6 +841,17 @@ s16 net_remove_op(const u32 opIdx) {
     for(j=opFirstOut; j < net->numOuts; ++j) {
       presets[i].outs[j].target = presets[i].outs[j + opNumOutputs].target;
       presets[i].outs[j].enabled = presets[i].outs[j + opNumOutputs].enabled;
+    }
+    for(j=0; j < net->numOuts; j++) {
+      if(presets[i].outs[j].enabled) {
+	s16 tar = presets[i].outs[j].target;
+	if(tar >= opFirstIn + opNumInputs) { // target above deleted op, reshuffle
+	  presets[i].outs[j].target = tar - opNumInputs;
+	}
+	else if (tar >= opFirstIn) { // targetting deleted op, forget
+	  presets[i].outs[j].enabled = 0;
+	}
+      }
     }
   }
   app_resume();
