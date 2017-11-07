@@ -1304,6 +1304,9 @@ u8* net_pickle(u8* dst) {
 
   return dst;
 }
+// XXX HACK - we need this global flag to tell grid ops not to grab
+// focus on init during scene recall
+u8 recallingScene = 0;
 
 // unpickle the network!
 u8* net_unpickle(const u8* src) {
@@ -1341,7 +1344,10 @@ u8* net_unpickle(const u8* src) {
 
     // add and initialize from class id
     /// .. this should update the operator count, inodes and onodes
+
+    recallingScene = 1;
     net_add_op(id);
+    recallingScene = 0;
 
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];

@@ -77,7 +77,9 @@ void op_mgrid_classic_init(void* mem) {
 
   op->lastPos = 0;
   op->focus = OP_ONE;
-  net_monome_set_focus(&(op->monome), 1);
+  if(!recallingScene) {
+    net_monome_set_focus(&(op->monome), 1);
+  }
 }
 
 // de-init
@@ -207,6 +209,8 @@ const u8* op_mgrid_classic_unpickle(op_mgrid_classic_t* mgrid, const u8* src) {
     src++;
   }
 
-  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
+  if(mgrid->focus > 0) {
+    net_monome_set_focus( &(mgrid->monome), 1);
+  }
   return src;
 }

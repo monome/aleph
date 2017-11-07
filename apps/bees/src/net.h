@@ -189,6 +189,9 @@ extern u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
 //! return incremented pointer to dst
 extern u8* net_pickle(u8* dst);
 
+// XXX HACK - we need this global flag to tell grid ops not to
+// grab focus on init during scene recall
+extern u8 recallingScene;
 //! unpickle the network!
 //! return incremented pointer to src
 extern u8* net_unpickle(const u8* src);

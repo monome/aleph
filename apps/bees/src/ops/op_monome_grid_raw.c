@@ -81,7 +81,9 @@ void op_mgrid_raw_init(void* mem) {
   op->outs[1] = -1;
   op->outs[2] = -1;
 
-  net_monome_set_focus(&(op->monome), 1);
+  if(!recallingScene) {
+    net_monome_set_focus(&(op->monome), 1);
+  }
 }
 
 // de-init
@@ -191,6 +193,8 @@ const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* mgrid, const u8* src) {
     mgrid->monome.opLedBuffer[i] = *src;
     src++;
   }
-  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
+  if(mgrid->focus > 0) {
+    net_monome_set_focus( &(mgrid->monome), 1);
+  }
   return src;
 }

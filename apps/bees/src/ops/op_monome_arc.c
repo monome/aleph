@@ -94,7 +94,9 @@ void op_marc_init(void* mem) {
   op->vals[2] = 0;
   op->vals[3] = 0;
 
-  net_monome_set_focus(&(op->monome), 1);
+  if(!recallingScene) {
+    net_monome_set_focus(&(op->monome), 1);
+  }
 }
 
 // de-init
@@ -185,6 +187,8 @@ u8* op_marc_pickle(op_marc_t* marc, u8* dst) {
 const u8* op_marc_unpickle(op_marc_t* marc, const u8* src) {
   src = unpickle_io(src, (u32*)&(marc->focus));
   src = unpickle_io(src, (u32*)&(marc->loop));
-  net_monome_set_focus( &(marc->monome), marc->focus > 0);
+  if (marc->focus > 0) {
+    net_monome_set_focus( &(marc->monome), 1);
+  }
   return src;
 }

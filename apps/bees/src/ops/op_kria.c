@@ -258,7 +258,9 @@ void op_kria_init(void* mem) {
 
 
 
-  net_monome_set_focus( &(op->monome), 1);
+  if(!recallingScene) {
+    net_monome_set_focus( &(op->monome), 1);
+  }
 
   // init monome drawing
   kria_refresh(&op->monome);
@@ -1245,6 +1247,9 @@ const u8* op_kria_unpickle(op_kria_t* kria, const u8* src) {
   while ((u8*)kria_state < ((u8*) &(kria->k)) + sizeof(kria_set)) {
     src = unpickle_32(src, kria_state);
     kria_state +=1;
+  }
+  if (kria->focus > 0) {
+    net_monome_set_focus( &(kria->monome), 1);
   }
   return src;
 }

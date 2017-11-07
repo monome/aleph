@@ -201,7 +201,9 @@ void op_ww_init(void* mem) {
 
 
 
-  net_monome_set_focus( &(op->monome), 1);
+    if(!recallingScene) {
+      net_monome_set_focus( &(op->monome), 1);
+    }
   
   // init monome drawing
   op_ww_redraw(&op->monome);
@@ -1598,15 +1600,9 @@ const u8* op_ww_unpickle(op_ww_t* mgrid, const u8* src) {
     src = unpickle_32(src, ww_state);
     ww_state +=1;
   }
-  /*
-    probably shouldn't call this here...
-   if we assume that network monome device focus is null during unpickling,
-   it will be ok.  that assumption should hold true, but if it doesn't, 
-   or if we change something and forget to update this,
-   the result is both and hard to track (dereferencing a garbage pointer.)
-   we should just explicitly check for focused grid ops after scene recall, last one wins...
-  */
-  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
+  if(mgrid->focus > 0) {
+    net_monome_set_focus( &(mgrid->monome), 1);
+  }
   return src;
 }
 

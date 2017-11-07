@@ -103,7 +103,9 @@ void op_life_classic_init(void* mem) {
 
   life_init(life);
 
-  net_monome_set_focus(&(life->monome), 1);
+  if(!recallingScene) {
+    net_monome_set_focus(&(life->monome), 1);
+  }
 }
 
 // de-init
@@ -319,6 +321,9 @@ const u8* op_life_classic_unpickle(op_life_classic_t* op, const u8* src ) {
     op->lifenow[i] = *src;
     op->monome.opLedBuffer[i] = *src * 15;
     src++;
+  }
+  if(op->focus > 0) {
+    net_monome_set_focus( &(op->monome), 1);
   }
   return src;
 }
