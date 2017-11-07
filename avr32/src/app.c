@@ -17,6 +17,14 @@ void (*app_event_handlers[kNumEventTypes])(s32 data);
 
 static volatile s8 app_pause_resume_nesting = 0;
 
+void pause_timers (void) {
+  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
+}
+
+void start_timers (void) {
+  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
+}
+
 void app_pause(void) {
     if (!app_pause_resume_nesting > 0) {
         cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);

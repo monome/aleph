@@ -48,5 +48,7 @@ extern void app_pause(void);
 extern void app_notify(const char* msg);
 // resume UI
 extern void app_resume(void);
+extern void pause_timers (void);
+extern void start_timers (void);
 
 #endif  // h guard
