@@ -71,12 +71,15 @@ void op_mem1d_init(void* mem) {
 //---- static func define
 
 static void op_mem1d_in_n(op_mem1d_t* mem1d, const io_t v) {
-  if(v > 16)
-    mem1d->n = 16;
-  if (v < 0)
+  if(v >= MEM_1D_DATA_LENGTH) {
+    mem1d->n = MEM_1D_DATA_LENGTH - 1;
+  }
+  else if (v < 0) {
     mem1d->n = 0;
-  else
+  }
+  else {
     mem1d->n = v;
+  }
 }
 
 static void op_mem1d_in_write(op_mem1d_t* mem1d, const io_t v) {

@@ -89,21 +89,27 @@ void op_mem2d_init(void* mem) {
 //net_activate(mem2d->outs[0], mem2d->val, mem2d);
 
 static void op_mem2d_in_x(op_mem2d_t* mem2d, const io_t v) {
-  if(v > 16)
-    mem2d->x = 16;
-  if (v < 0)
+  if(v >= MEM_2D_DATA_LENGTH) {
+    mem2d->x = MEM_2D_DATA_LENGTH - 1;
+  }
+  else if (v < 0) {
     mem2d->x = 0;
-  else
+  }
+  else {
     mem2d->x = v;
+  }
 }
 
 static void op_mem2d_in_y(op_mem2d_t* mem2d, const io_t v) {
-  if(v > 16)
-    mem2d->y = 16;
-  if (v < 0)
+  if(v >= MEM_2D_DATA_LENGTH) {
+    mem2d->y = MEM_2D_DATA_LENGTH - 1;
+  }
+  else if (v < 0) {
     mem2d->y = 0;
-  else
+  }
+  else {
     mem2d->y = v;
+  }
 }
 
 static void op_mem2d_in_write(op_mem2d_t* mem2d, const io_t v) {
