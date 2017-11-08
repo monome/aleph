@@ -332,6 +332,11 @@ u8* op_step_pickle(op_step_t* mgrid, u8* dst) {
     dst = pickle_32(*step_state, dst);
     step_state +=1;
   }
+  int i;
+  for (i=0; i < 256; i++) {
+    *dst = mgrid->monome.opLedBuffer[i];
+    dst++;
+  }
 
   /// no state...???
   return dst;
@@ -345,6 +350,12 @@ const u8* op_step_unpickle(op_step_t* mgrid, const u8* src) {
     src = unpickle_32(src, step_state);
     step_state +=1;
   }
+  int i;
+  for (i=0; i < 256; i++) {
+    mgrid->monome.opLedBuffer[i] = *src;
+    src++;
+  }
+
   if( mgrid->focus > 0) {
     net_monome_set_focus( &(mgrid->monome), 1);
   }
