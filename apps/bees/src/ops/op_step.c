@@ -80,18 +80,6 @@ void op_step_init(void* mem) {
   op->outs[6] = -1;
   op->outs[7] = -1;
 
-  op->s_start = 0;
-  op->s_end = 7;
-  op->s_length = 7;
-  op->s_now = 0;
-  op->s_cut = 0;
-
-  op->s_start2 = 0;
-  op->s_end2 = 7;
-  op->s_length2 = 7;
-  op->s_now2 = 0;
-  op->s_cut2 = 0;
-
   for(i=0;i<16;i++) {
     op->steps[0][i] = 0;
     op->steps[1][i] = 0;
@@ -100,6 +88,18 @@ void op_step_init(void* mem) {
   }
 
   op->size = monome_size_x();
+
+  op->s_start = 0;
+  op->s_end = op->size;
+  op->s_length = op->size;
+  op->s_now = 0;
+  op->s_cut = 0;
+
+  op->s_start2 = 0;
+  op->s_end2 = op->size;
+  op->s_length2 = op->size;
+  op->s_now2 = 0;
+  op->s_cut2 = 0;
 
   op->focus = 0; //OP_ONE;
   if(!recallingScene) {
