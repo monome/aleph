@@ -27,7 +27,7 @@
 #include "filter_1p.h"
 #include "filter_ramp.h"
 
-#include "delayFade24_8.h"
+#include "delayFadeN.h"
 #include "module.h"
 ////test
 #include "noise.h"
@@ -54,7 +54,7 @@ typedef struct _linesData {
   ModuleData super;
   //  ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  volatile fract16 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } linesData;
 
 //-------------------------
@@ -69,36 +69,36 @@ ModuleData* gModuleData;
 linesData* pLinesData;
 
 // delay lines (each has buffer descriptor and read/write taps)
-delayFade24_8 lines[NLINES];
+delayFadeN lines[NLINES];
 
 // state variable filters
 filter_svf svf[NLINES];
 
 //---- mix points
 // each input -> one delay
-fract16 mix_adc_del[4][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0} };
+fract32 mix_adc_del[4][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0} };
 // each delay -> each delay
-fract16 mix_del_del[2][2] = { { 0, 0 }, { 0, 0 } };
+fract32 mix_del_del[2][2] = { { 0, 0 }, { 0, 0 } };
 // each input -> each output
-fract16 mix_adc_dac[4][4] = { { 0, 0, 0, 0 },
+fract32 mix_adc_dac[4][4] = { { 0, 0, 0, 0 },
 			      { 0, 0, 0, 0 },
 			      { 0, 0, 0, 0 },
 			      { 0, 0, 0, 0 } };
 // each delay -> each dac
-fract16 mix_del_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+fract32 mix_del_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 
 // svf balance
-fract16 mix_fwet[NLINES] = { 0, 0 };
-fract16 mix_fdry[NLINES] = { 0, 0 };
+fract32 mix_fwet[NLINES] = { 0, 0 };
+fract32 mix_fdry[NLINES] = { 0, 0 };
 
 // -- mixed inputs
 // delay 
-fract16 in_del[NLINES] = { 0, 0 };
+fract32 in_del[NLINES] = { 0, 0 };
 
 //-- outputs
 // delay
-fract16 out_del[NLINES] = { 0, 0 };
-fract16 out_svf[NLINES] = { 0, 0 };
+fract32 out_del[NLINES] = { 0, 0 };
+fract32 out_svf[NLINES] = { 0, 0 };
 
 //-- parameter integrators
 filter_1p_lo svfCutSlew[2];
@@ -137,131 +137,116 @@ static inline void param_setup(u32 id, ParamValue v) {
 static void mix_del_inputs(void) {
   //  u8 i, j;
   //  fract32* pIn;
-  fract16 mul;
-  fract16 in16[4];
-  u8 i;
-  for(i=0; i < 4; i++) {
-    in16[i] = trunc_fr1x32(in[i]);
-  }
-
+  fract32 mul;
+  
   //--- del 0
   in_del[0] = 0;
 
   //adc->del
   mul = mix_adc_del[0][0];
-  in_del[0] = add_fr1x16(in_del[0], multr_fr1x16(in16[0], mul));
+  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_del[1][0];
-  in_del[0] = add_fr1x16(in_del[0], multr_fr1x16(in16[1], mul));
+  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[1], mul)); 
   mul = mix_adc_del[2][0];
-  in_del[0] = add_fr1x16(in_del[0], multr_fr1x16(in16[2], mul));
+  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[2], mul)); 
   mul = mix_adc_del[3][0];
-  in_del[0] = add_fr1x16(in_del[0], multr_fr1x16(in16[3], mul));
+  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[3], mul)); 
 
   // del->del
   mul = mix_del_del[0][0];
-  in_del[0] = add_fr1x16(in_del[0], multr_fr1x16(out_del[0], mul));
+  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_del[1][0];
-  in_del[0] = add_fr1x16(in_del[0], multr_fr1x16(out_del[1], mul));
+  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[1], mul)); 
 
   //--- del 1
   in_del[1] = 0;
   // adc
   mul = mix_adc_del[0][1];
-  in_del[1] = add_fr1x16(in_del[1], multr_fr1x16(in16[0], mul));
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_del[1][1];
-  in_del[1] = add_fr1x16(in_del[1], multr_fr1x16(in16[1], mul));
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[1], mul)); 
   mul = mix_adc_del[2][1];
-  in_del[1] = add_fr1x16(in_del[1], multr_fr1x16(in16[2], mul));
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[2], mul)); 
   mul = mix_adc_del[3][1];
-  in_del[1] = add_fr1x16(in_del[1], multr_fr1x16(in16[3], mul));
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[3], mul)); 
   // del 
   mul = mix_del_del[0][1];
-  in_del[1] = add_fr1x16(in_del[1], multr_fr1x16(out_del[0], mul));
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_del[1][1];
-  in_del[1] = add_fr1x16(in_del[1], multr_fr1x16(out_del[1], mul));
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));
 }
 
 static void mix_outputs(void) {
-  fract16 mul;
-  fract16 out16[4];
-  fract16 in16[4];
-  u8 i;
-  for(i=0;i < 4; i++) {
-    in16[i] = trunc_fr1x32(in[i]);
-  }
+  fract32 mul;
   
   //-- out 0
-  out16[0] = 0;
+  out[0] = 0;
   // del
   mul = mix_del_dac[0][0];
-  out16[0] = add_fr1x16(out16[0], multr_fr1x16(out_del[0], mul));
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_dac[1][0];
-  out16[0] = add_fr1x16(out16[0], multr_fr1x16(out_del[1], mul));
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[1], mul)); 
   // adc
   mul = mix_adc_dac[0][0];
-  out16[0] = add_fr1x16(out16[0], multr_fr1x16(in16[0], mul));
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_dac[1][0];
-  out16[0] = add_fr1x16(out16[0], multr_fr1x16(in16[1], mul));
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[1], mul)); 
   mul = mix_adc_dac[2][0];
-  out16[0] = add_fr1x16(out16[0], multr_fr1x16(in16[2], mul));
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[2], mul)); 
   mul = mix_adc_dac[3][0];
-  out16[0] = add_fr1x16(out16[0], multr_fr1x16(in16[3], mul));
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[3], mul)); 
 
   //-- out 1
-  out16[1] = 0;
+  out[1] = 0;
   // del
   mul = mix_del_dac[0][1];
-  out16[1] = add_fr1x16(out16[1], multr_fr1x16(out_del[0], mul));
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_dac[1][1];
-  out16[1] = add_fr1x16(out16[1], multr_fr1x16(out_del[1], mul));
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(out_del[1], mul)); 
   // adc
   mul = mix_adc_dac[0][1];
-  out16[1] = add_fr1x16(out16[1], multr_fr1x16(in16[0], mul));
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_dac[1][1];
-  out16[1] = add_fr1x16(out16[1], multr_fr1x16(in16[1], mul));
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[1], mul)); 
   mul = mix_adc_dac[2][1];
-  out16[1] = add_fr1x16(out16[1], multr_fr1x16(in16[2], mul));
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[2], mul)); 
   mul = mix_adc_dac[3][1];
-  out16[1] = add_fr1x16(out16[1], multr_fr1x16(in16[3], mul));
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[3], mul)); 
 
   //-- out 2
-  out16[2] = 0;
+  out[2] = 0;
   // del
   mul = mix_del_dac[0][2];
-  out16[2] = add_fr1x16(out16[2], multr_fr1x16(out_del[0], mul));
+  out[2] = add_fr1x32(out[2], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_dac[1][2];
-  out16[2] = add_fr1x16(out16[2], multr_fr1x16(out_del[1], mul));
+  out[2] = add_fr1x32(out[2], mult_fr1x32x32(out_del[1], mul)); 
   // adc
   mul = mix_adc_dac[0][2];
-  out16[2] = add_fr1x16(out16[2], multr_fr1x16(in16[0], mul));
+  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_dac[1][2];
-  out16[2] = add_fr1x16(out16[2], multr_fr1x16(in16[1], mul));
+  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[1], mul)); 
   mul = mix_adc_dac[2][2];
-  out16[2] = add_fr1x16(out16[2], multr_fr1x16(in16[2], mul));
+  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[2], mul)); 
   mul = mix_adc_dac[3][2];
-  out16[2] = add_fr1x16(out16[2], multr_fr1x16(in16[3], mul));
+  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[3], mul)); 
 
   //-- out 3
-  out16[3] = 0;
+  out[3] = 0;
   // del
   mul = mix_del_dac[0][3];
-  out16[3] = add_fr1x16(out16[3], multr_fr1x16(out_del[0], mul));
+  out[3] = add_fr1x32(out[3], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_dac[1][3];
-  out16[3] = add_fr1x16(out16[3], multr_fr1x16(out_del[1], mul));
+  out[3] = add_fr1x32(out[3], mult_fr1x32x32(out_del[1], mul)); 
   // adc
   mul = mix_adc_dac[0][3];
-  out16[3] = add_fr1x16(out16[3], multr_fr1x16(in16[0], mul));
+  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_dac[1][3];
-  out16[3] = add_fr1x16(out16[3], multr_fr1x16(in16[1], mul));
+  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[1], mul)); 
   mul = mix_adc_dac[2][3];
-  out16[3] = add_fr1x16(out16[3], multr_fr1x16(in16[2], mul));
+  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[2], mul)); 
   mul = mix_adc_dac[3][3];
-  out16[3] = add_fr1x16(out16[3], multr_fr1x16(in16[3], mul));
+  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[3], mul));
 
-  for(i=0; i < 4; i++) {
-    out[i] = out16[i];
-    out[i] = shl_fr1x32(out[i], 16);
-  }
 }
 
 //----------------------
@@ -280,7 +265,7 @@ void module_init(void) {
   gModuleData->numParams = eParamNumParams;
 
   for(i=0; i<NLINES; i++) {
-    delayFade24_8_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
+    delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
 
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
@@ -295,7 +280,7 @@ void module_init(void) {
     /* } */
 
     // need to zero everything to avoid horrible noise at boot...
-    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract16));
+    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract32));
     // however, it is causing crashes or hangs here, for some damn reason.
 
     // at least zero the end of the buffer
@@ -303,7 +288,6 @@ void module_init(void) {
     /*   pLinesData->audioBuffer[i][j] = 0x00000000;  */
     /* } */
   }
-
 
   // dac
   filter_1p_lo_init( &(cvSlew[0]), 0xf );
@@ -316,9 +300,9 @@ void module_init(void) {
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
 
-  param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX / 60 );
-  /* param_setup( 	eParam_rMul0,		0x10000 ); */
-  /* param_setup( 	eParam_rDiv0,		0x10000 ); */
+  param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
+  param_setup( 	eParam_rMul0,		0x10000 );
+  param_setup( 	eParam_rDiv0,		0x10000 );
   param_setup( 	eParam_write0,		FRACT32_MAX );
   param_setup( 	eParam_pre0,		0 );
   param_setup( 	eParam_pos_write0,		0 );
@@ -329,9 +313,9 @@ void module_init(void) {
   param_setup( 	eParam_run_read0, 1 );
   param_setup( 	eParam_run_write0, 1 );
 
-  param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX / 60 );
-  /* param_setup( 	eParam_rMul1,		0x10000 ); */
-  /* param_setup( 	eParam_rDiv1,		0x10000 ); */
+  param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX );
+  param_setup( 	eParam_rMul1,		0x10000 );
+  param_setup( 	eParam_rDiv1,		0x10000 );
   param_setup( 	eParam_write1,		FRACT32_MAX );
   param_setup( 	eParam_pre1,		0 );
   param_setup( 	eParam_pos_write1,		0 );
@@ -346,10 +330,6 @@ void module_init(void) {
   param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );
   param_setup( 	eParam_del1_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_del1_dac3,		PARAM_AMP_6 );
-  param_setup( 	eParam_del0_dac0,		PARAM_AMP_6 );
-  param_setup( 	eParam_del0_dac1,		PARAM_AMP_12 );
-  param_setup( 	eParam_del0_dac2,		PARAM_AMP_6 );
-  param_setup( 	eParam_del0_dac3,		PARAM_AMP_12 );
 
   param_setup( 	eParam_adc0_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac1,		PARAM_AMP_12 );
@@ -367,16 +347,6 @@ void module_init(void) {
   param_setup( 	eParam_adc3_dac1,		PARAM_AMP_12 );
   param_setup( 	eParam_adc3_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_adc3_dac3,		PARAM_AMP_12 );
-
-  param_setup(  eParam_adc0_del0, PARAM_AMP_6);
-  param_setup(  eParam_adc1_del0, PARAM_AMP_6);
-  param_setup(  eParam_adc2_del0, PARAM_AMP_6);
-  param_setup(  eParam_adc3_del0, PARAM_AMP_6);
-
-  param_setup(  eParam_adc0_del1, PARAM_AMP_6);
-  param_setup(  eParam_adc1_del1, PARAM_AMP_6);
-  param_setup(  eParam_adc2_del1, PARAM_AMP_6);
-  param_setup(  eParam_adc3_del1, PARAM_AMP_6);
 
 
   param_setup(  eParam_freq1,	PARAM_CUT_DEFAULT);
@@ -413,12 +383,6 @@ void module_init(void) {
   param_setup(  eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
   param_setup(  eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
 
-  param_setup(eParam_readSpeed0, 300 << 8);
-  param_setup(eParam_readSpeed1, 195 << 8);
-  param_setup(eParam_writeSpeed0, 230 << 8);
-  param_setup(eParam_writeSpeed1, 135 << 8);
-
-
 }
 
 // de-init
@@ -431,8 +395,8 @@ u32 module_get_num_params(void) {
 }
 
 
-void module_process_frame(void) {
-  static fract16 tmpDel, tmpSvf;
+void module_process_frame(void) { 
+  static fract32 tmpDel, tmpSvf;
   u8 i;
 
   tmpDel = 0;
@@ -446,11 +410,10 @@ void module_process_frame(void) {
   for(i=0; i<NLINES; i++) {
     // process fade integrator
     //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
-    lines[i].fadeRd = trunc_fr1x32(filter_ramp_tog_next(&(lpFadeRd[i])));
+    lines[i].fadeRd = filter_ramp_tog_next(&(lpFadeRd[i]));
 
     // process delay line
-    tmpDel = delayFade24_8_next( &(lines[i]), in_del[i]);
-
+    tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
     // process filters
     // check integrators for filter params
 
@@ -460,10 +423,10 @@ void module_process_frame(void) {
     if( !filter_1p_sync(&(svfRqSlew[i])) ) {
       filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
     }
-    tmpSvf = trunc_fr1x32(filter_svf_next( &(svf[i]), tmpDel << 16));
+    tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
     // mix
-    tmpDel = multr_fr1x16( tmpDel, mix_fdry[i] );
-    tmpDel = add_fr1x16(tmpDel, multr_fr1x16(tmpSvf, mix_fwet[i]) );
+    tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
+    tmpDel = add_fr1x32(tmpDel, mult_fr1x32x32(tmpSvf, mix_fwet[i]) );
 
     out_del[i] = tmpDel;
 
