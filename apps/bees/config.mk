@@ -76,6 +76,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_mem2d.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
+	$(APP_DIR)/src/ops/op_midi_prog.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
 	$(APP_DIR)/src/ops/op_midi_out_cc.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \

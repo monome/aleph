@@ -44,6 +44,7 @@
 #include "ops/op_mem2d.h"
 #include "ops/op_metro.h"
 #include "ops/op_midi_cc.h"
+#include "ops/op_midi_prog.h"
 #include "ops/op_midi_note.h"
 #include "ops/op_midi_out_cc.h"
 #include "ops/op_midi_out_note.h"
