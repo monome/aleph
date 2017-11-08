@@ -1,4 +1,4 @@
-#N canvas 0 29 1918 1169 10;
+#N canvas 0 47 1364 719 10;
 #X obj 37 37 bees_op;
 #X obj 277 119 BEES_MP;
 #X obj 373 120 BEES_GRID;
@@ -73,7 +73,7 @@
 #X obj 848 415 BEES_ADD;
 #X obj 866 379 BEES_MUL;
 #X msg 898 346 5;
-#X obj 204 326 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 204 326 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
 1;
 #X obj 610 908 BEES_POLY;
 #X floatatom 591 952 5 0 0 0 - - -, f 5;
@@ -91,10 +91,15 @@
 #X obj 534 751 t f f;
 #X obj 591 750 t f f;
 #X obj 656 750 t f f;
-#X obj 696 839 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 696 839 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 948 476 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
+#X obj 106 604 BEES_RAND;
+#X msg 79 485 0;
+#X msg 117 489 16;
+#X floatatom 118 685 5 0 0 0 - - -, f 5;
+#X msg 185 519 1;
 #X connect 2 0 7 0;
 #X connect 2 1 8 0;
 #X connect 2 2 9 0;
@@ -119,6 +124,7 @@
 #X connect 20 0 18 3;
 #X connect 21 0 23 2;
 #X connect 21 0 31 2;
+#X connect 21 0 89 3;
 #X connect 22 0 21 2;
 #X connect 23 0 24 0;
 #X connect 23 1 25 0;
@@ -199,3 +205,7 @@
 #X connect 86 1 83 0;
 #X connect 87 0 74 4;
 #X connect 88 0 65 4;
+#X connect 89 0 92 0;
+#X connect 90 0 89 1;
+#X connect 91 0 89 2;
+#X connect 93 0 89 3;
