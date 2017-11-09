@@ -30,6 +30,7 @@ $(LIB_AVR32)src/region.c \
 $(LIB_AVR32)src/screen.c \
 $(LIB_AVR32)src/timers.c \
 $(LIB_AVR32)src/interrupts.c \
+$(LIB_AVR32)src/midi_common.c \
 $(LIB_AVR32)src/usb.c \
 $(LIB_AVR32)src/usb/ftdi/uhi_ftdi.c \
 $(LIB_AVR32)src/usb/ftdi/ftdi.c \

@@ -75,14 +75,13 @@ void op_midi_note_init(void* mem) {
   op->chan = -1;
   op->chanIo = OP_NEG_ONE;
 
-  // FIXME: should sanity-check that the op isn't already in the dang list
-  net_midi_list_push(&(op->midi));
+  net_midi_note_subscribe(&(op->midi));
 }
 
 // de-init
 void op_midi_note_deinit(void* op) {
   // remove from list
-  net_midi_list_remove( &(((op_midi_note_t*)op)->midi) );
+  net_midi_note_unsubscribe( &(((op_midi_note_t*)op)->midi) );
 }
 
 //-------------------------------------------------

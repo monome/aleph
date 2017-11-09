@@ -70,13 +70,13 @@ void op_midi_prog_init(void* mem) {
 
   op->chan = op_from_int(-1);
 
-  net_midi_list_push(&(op->midi));
+  net_midi_program_change_subscribe(&(op->midi));
 }
 
 // de-init
 void op_midi_prog_deinit(void* op) {
   // remove from list
-  net_midi_list_remove( &(((op_midi_note_t*)op)->midi) );
+  net_midi_program_change_unsubscribe( &(((op_midi_note_t*)op)->midi) );
 }
 
 //-------------------------------------------------

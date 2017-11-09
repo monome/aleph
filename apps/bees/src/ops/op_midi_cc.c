@@ -74,13 +74,13 @@ void op_midi_cc_init(void* mem) {
   op->chan = op_from_int(-1);
   op->num = 0;
 
-  net_midi_list_push(&(op->midi));
+  net_midi_control_change_subscribe(&(op->midi));
 }
 
 // de-init
 void op_midi_cc_deinit(void* op) {
   // remove from list
-  net_midi_list_remove( &(((op_midi_note_t*)op)->midi) );
+  net_midi_control_change_unsubscribe( &(((op_midi_note_t*)op)->midi) );
 }
 
 //-------------------------------------------------
