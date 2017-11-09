@@ -61,6 +61,7 @@ beekeep_src += \
 	$(bees)/src/ops/op_maginc.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
+	$(bees)/src/ops/op_midi_prog.c \
 	$(bees)/src/ops/op_midi_note.c \
 	$(bees)/src/ops/op_midi_out_cc.c \
 	$(bees)/src/ops/op_midi_out_note.c \

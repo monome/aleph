@@ -65,7 +65,7 @@ void op_random_init(void* mem) {
 //---- static func define
 
 static void countBits(op_random_t* random) {
-  random->range = random->max - random->min;
+  random->range = random->max - random->min + 1;
   u16 n = random->range;
   int counter = 0;
   while(n) {
