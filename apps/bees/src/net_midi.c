@@ -28,6 +28,7 @@ static void net_midi_pitch_bend (u8 ch, u16 bend);
 static void net_midi_control_change (u8 ch, u8 num, u8 val);
 static void net_midi_program_change (u8 ch, u8 num);
 static void net_midi_clock_tick (void);
+static void net_midi_seq_start (void);
 static void net_midi_seq_stop (void);
 static void net_midi_seq_continue (void);
 static void net_midi_panic (void);
@@ -40,6 +41,7 @@ static midi_behavior_t net_midi_behaviour = {
   .control_change = net_midi_control_change,
   .program_change = net_midi_program_change,
   .clock_tick = net_midi_clock_tick,
+  .seq_start = net_midi_seq_start,
   .seq_stop = net_midi_seq_stop,
   .seq_continue = net_midi_seq_continue,
   .panic = net_midi_panic
@@ -148,12 +150,9 @@ void net_midi_control_change (u8 ch, u8 num, u8 val) {
 }
 
 void net_midi_program_change (u8 ch, u8 num) {
-  print_dbg("\r\nbpfff, hit prog_change_net_midi");
   op_midi_t *m = midi_program_change_subscribers;
   while(m != NULL) {
-    print_dbg("\r\nping");
     if(m->handler.program_change) {
-      print_dbg("\r\nclunk");
       m->handler.program_change(m->sub, ch, num);
     }
     m = m->next;
@@ -175,6 +174,16 @@ void net_midi_seq_stop (void) {
   while(m != NULL) {
     if(m->handler.seq_stop) {
       m->handler.seq_stop(m->sub);
+    }
+    m = m->next;
+  }
+}
+
+void net_midi_seq_start (void) {
+  op_midi_t *m = midi_real_time_subscribers;
+  while(m != NULL) {
+    if(m->handler.seq_start) {
+      m->handler.seq_start(m->sub);
     }
     m = m->next;
   }
