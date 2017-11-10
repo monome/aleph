@@ -28,7 +28,7 @@ static u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst);
 static const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src);
 
 /// midi event handler
-static void op_midi_note_handler(op_midi_t* op_midi, u32 data);
+static void op_midi_note_handler(op_midi_note_t* op, u8 ch, u8 num, u8 vel);
 
 // input func pointer array
 static op_in_fn op_midi_note_in_fn[1] = {
@@ -49,10 +49,15 @@ void op_midi_note_init(void* mem) {
   op->super.unpickle = (op_unpickle_fn) (&op_midi_note_unpickle);
 
   //--- midi
-  op->midi.handler = (midi_handler_t)&op_midi_note_handler;
+
+  net_midi_init(&(op->midi));
+  op->midi.handler.note_on = (net_midi_note_on_t)&op_midi_note_handler;
+  op->midi.handler.note_off = (net_midi_note_off_t)&op_midi_note_handler;
+  // superclass state
   op->midi.sub = op;
 
-  // superclass state
+  op->midi.handler.channel_pressure = NULL; //add channel pressure & pitch bend maybe???
+  op->midi.handler.pitch_bend = NULL;
 
   op->super.type = eOpMidiNote;
   op->super.flags |= (1 << eOpFlagMidiIn);
@@ -100,45 +105,13 @@ static void op_midi_note_in_chan(op_midi_note_t* op, const io_t v) {
 }
 
 
-static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
-  static u8 com;
-  static u8 ch, num, vel;
-  op_midi_note_t* op = (op_midi_note_t*)(op_midi->sub);
-
-  // check status byte  
-  com = (data & 0xf0000000) >> 28; 
-  if (com == 0x9) {
-
-    if(op->chan != -1) {
-      ch = (data & 0x0f000000) >> 24;
-      if(ch != op->chan) {
-	return;
-      }
-    }
-    
-    // got here, so channel matched, or we want all channels
-    num = (data & 0xff0000) >> 16;
-    vel = (data & 0xff00) >> 8;
-    net_activate(op, 0, op_from_int(num));
-    net_activate(op, 1, op_from_int(vel));
-    
-  } else if (com == 0x8) {
-    // note off
-    if(op->chan != -1) {
-      ch = (data & 0x0f000000) >> 24;
-      if(ch != op->chan) {
-	return;
-      }
-    }
-    // got here, so channel matched, or we want all channels
-    num = (data & 0xff0000) >> 16;
-    vel = (data & 0xff00) >> 8;
-    net_activate(op, 0, op_from_int(num));
-    net_activate(op, 1, 0);
-    net_activate(op, 2, op_from_int(vel));
+static void op_midi_note_handler(op_midi_note_t* op, u8 ch, u8 num, u8 vel) {
+  // check status byte
+  if(op->chan == -1 || op->chan == ch) {
+    net_activate(op, 0, num);
+    net_activate(op, 1, vel);
   }
 }
-
 
 // pickle / unpickle
 u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst) {

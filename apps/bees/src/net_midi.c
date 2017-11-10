@@ -11,6 +11,16 @@
 //-----------------------------
 //-- static variables
 
+void net_midi_init(op_midi_t *midi) {
+  // we need to zero all the memory, mostly to ensure that unassigned
+  // callbacks are NULL
+  int i;
+  u8 *m = (u8*) midi;
+  for(i=0; i < sizeof(m); i++) {
+    m[i] = 0;
+  }
+}
+
 static void net_midi_note_on (u8 ch, u8 num, u8 vel);
 static void net_midi_note_off (u8 ch, u8 num, u8 vel);
 static void net_midi_channel_pressure (u8 ch, u8 val);
@@ -90,8 +100,9 @@ void net_midi_real_time_unsubscribe (op_midi_t *u) {
 void net_midi_note_on (u8 ch, u8 num, u8 vel) {
   op_midi_t *m = midi_note_subscribers;
   while(m != NULL) {
-    midi_note_on_t h = (midi_note_on_t) m->handler;
-    h(ch, num, vel);
+    if(m->handler.note_on) {
+      m->handler.note_on(m->sub, ch, num, vel);
+    }
     m = m->next;
   }
 }
@@ -99,25 +110,99 @@ void net_midi_note_on (u8 ch, u8 num, u8 vel) {
 void net_midi_note_off (u8 ch, u8 num, u8 vel) {
   op_midi_t *m = midi_note_subscribers;
   while(m != NULL) {
-    midi_note_off_t h = (midi_note_off_t) m->handler;
-    h(ch, num, vel);
+    if(m->handler.note_off) {
+      m->handler.note_off(m->sub, ch, num, vel);
+    }
     m = m->next;
   }
 }
 
 void net_midi_channel_pressure (u8 ch, u8 val) {
+  op_midi_t *m = midi_note_subscribers;
+  while(m != NULL) {
+    if(m->handler.channel_pressure) {
+      m->handler.channel_pressure(m->sub, ch, val);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_pitch_bend (u8 ch, u16 bend) {
+  op_midi_t *m = midi_note_subscribers;
+  while(m != NULL) {
+    if(m->handler.pitch_bend) {
+      m->handler.pitch_bend(m->sub, ch, bend);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_control_change (u8 ch, u8 num, u8 val) {
+  op_midi_t *m = midi_control_change_subscribers;
+  while(m != NULL) {
+    if(m->handler.control_change) {
+      m->handler.control_change(m->sub, ch, num, val);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_program_change (u8 ch, u8 num) {
+  print_dbg("\r\nbpfff, hit prog_change_net_midi");
+  op_midi_t *m = midi_program_change_subscribers;
+  while(m != NULL) {
+    print_dbg("\r\nping");
+    if(m->handler.program_change) {
+      print_dbg("\r\nclunk");
+      m->handler.program_change(m->sub, ch, num);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_clock_tick (void) {
+  op_midi_t *m = midi_real_time_subscribers;
+  while(m != NULL) {
+    if(m->handler.clock_tick) {
+      m->handler.clock_tick(m->sub);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_seq_stop (void) {
+  op_midi_t *m = midi_real_time_subscribers;
+  while(m != NULL) {
+    if(m->handler.seq_stop) {
+      m->handler.seq_stop(m->sub);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_seq_continue (void) {
+  op_midi_t *m = midi_real_time_subscribers;
+  while(m != NULL) {
+    if(m->handler.seq_continue) {
+      m->handler.seq_continue(m->sub);
+    }
+    m = m->next;
+  }
 }
+
 void net_midi_panic (void) {
+  // all subscribed lists should get the panic signal
+  op_midi_t *m[4] = { midi_note_subscribers,
+		      midi_control_change_subscribers,
+		      midi_program_change_subscribers,
+		      midi_real_time_subscribers};
+  int i;
+  for(i=0; i < 4; i++) {
+    while(m[i] != NULL) {
+      if(m[i]->handler.panic) {
+	m[i]->handler.panic(m[i]->sub);
+      }
+      m[i] = m[i]->next;
+    }
+  }
 }

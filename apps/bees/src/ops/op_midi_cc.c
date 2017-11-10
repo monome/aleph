@@ -27,7 +27,7 @@ static u8* op_midi_cc_pickle(op_midi_cc_t* mcc, u8* dst);
 static const u8* op_midi_cc_unpickle(op_midi_cc_t* mcc, const u8* src);
 
 /// midi event handler
-static void op_midi_cc_handler(op_midi_t* op_midi, u32 data);
+static void op_midi_cc_handler(op_midi_cc_t* op, u8 ch, u8 num, u8 val);
 
 // input func pointer array
 static op_in_fn op_midi_cc_in_fn[2] = {
@@ -49,7 +49,8 @@ void op_midi_cc_init(void* mem) {
   op->super.unpickle = (op_unpickle_fn) (&op_midi_cc_unpickle);
 
   //--- midi
-  op->midi.handler = (midi_handler_t)&op_midi_cc_handler;
+  net_midi_init(&(op->midi));
+  op->midi.handler.control_change = (net_midi_control_change_t)&op_midi_cc_handler;
   op->midi.sub = op;
 
   // superclass state
@@ -102,34 +103,10 @@ static void op_midi_cc_in_num(op_midi_cc_t* op, const io_t v) {
 }
 
 // midi event handler
-static void op_midi_cc_handler(op_midi_t* op_midi, u32 data) {
-  static u8 com;
-  static io_t ch, num, val;
-  op_midi_cc_t* op = (op_midi_cc_t*)(op_midi->sub);
-
-  // check command: status high nib
-  com = (data & 0xf0000000) >> 28; 
-  if (com == 0xb) { // cc
-    if(op->chan < 0) {
-      // take all channels
-      // check number: data 1
-      num = (data & 0x00ff0000) >> 16;
-      if(num == op->num) {
-	val = (data & 0x0000ff00) >> 8;
-	net_activate(op, 0, val);
-      }
-    } else {
-      // check channel: status low nib
-      ch = (data & 0x0f000000) >> 24;
-      if(ch == op->chan) {
-	// check number: data 1
-	num = (data & 0x00ff0000) >> 16;
-	if(num == op->num) {
-	  // send value: data 2
-	  val = (data & 0x0000ff00) >> 8;
-	  net_activate(op, 0, val);
-	}
-      }
+static void op_midi_cc_handler(op_midi_cc_t* op, u8 ch, u8 num, u8 val) {
+  if(op->chan == -1 || op->chan == ch) {
+    if(op->num == num) {
+      net_activate(op, 0, val);
     }
   }
 }
