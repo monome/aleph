@@ -17,7 +17,7 @@
 // #include "print_funcs.h"
 #include "pm.h"
 #include "gpio.h"
-// #include "wdt.h"
+#include "wdt.h"
 #include "sd_mmc_spi.h"
 #include "smc.h"
 #include "sysclk.h"
@@ -164,6 +164,8 @@ static void check_events(void) {
 ////main function
 int main (void) {
 
+  wdt_disable();
+  
   u8 isFirstRun = 0;
   u8 isSwDown = 0;
   
