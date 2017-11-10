@@ -5,7 +5,7 @@
  * set_timer() and kill_timer() disable interrupts and so are safe to call from ISRs.
  */
 
-#include "aleph_board.h"
+#include "conf_board.h"
 #include "timers.h"
 
 //-----------------------------------------------
@@ -23,9 +23,6 @@ static bool add_timer( swTimer_t* newTimer );
 static swTimer_t* find_timer( timerCallback callback, int tag ) {
   int k;
   swTimer_t* t;
-
-  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
-  //  Disable_interrupt_level( TIMER_INT_LEVEL );
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
 
   for ( k = 0; k < MAX_TIMERS; k++ ) {
@@ -38,8 +35,7 @@ static swTimer_t* find_timer( timerCallback callback, int tag ) {
       if ( callback != NULL ) {
 	if ( t->callback == callback ) {
 	  // tag and callback both specified and matched
-	  //	  if (fReenableInterrupts)
-	  //	    Enable_interrupt_level( TIMER_INT_LEVEL );
+
 	  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
 	  return t;
 	} else {
@@ -49,27 +45,18 @@ static swTimer_t* find_timer( timerCallback callback, int tag ) {
       }
 
       // only tag specified, matched
-      //      if (fReenableInterrupts) {
-      //	Enable_interrupt_level( TIMER_INT_LEVEL ); 
       cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
       return t;
-	//      }
     }
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  /* if (fReenableInterrupts) { */
-  /*   Enable_interrupt_level( TIMER_INT_LEVEL ); */
-  /* } */
-
   return NULL;
 }
 
 // Add timer to pointer array. Finds first empty slot.
 static bool add_timer( swTimer_t* newTimer) {
   int k;
-  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
-  //  Disable_interrupt_level( TIMER_INT_LEVEL );
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
   // find empty slot
@@ -77,16 +64,11 @@ static bool add_timer( swTimer_t* newTimer) {
     if ( timers[k] ==  NULL ) {
       timers[k] = newTimer;
       cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-      //      Enable_interrupt_level( TIMER_INT_LEVEL );
       return true;
     }
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  //  if (fReenableInterrupts) {
-  //    Enable_interrupt_level( TIMER_INT_LEVEL );
-  //  }
-
   return false;
 }
 
