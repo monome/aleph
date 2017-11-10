@@ -162,8 +162,7 @@ void op_midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   print_dbg_char_hex(pack[1]);    print_dbg(" ");
   print_dbg_char_hex(pack[2]);    print_dbg(" ");
 
-  midi_write(pack, 3);
-
+  midi_write_test(mout->chan);
 }
 
 // pickle / unpickle
