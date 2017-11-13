@@ -193,7 +193,7 @@ fract32 buffer_tapN_read(bufferTapN *tap) {
       b = tap->buf->data[ tap->idx + 1 ];
     }
     tmp = FRACT_FIX16( sub_fr1x32(b, a) );
-    tmp = fix16_mul(tmp, fix16_from_int(tap->divCount));
+    tmp = fix16_mul_fract(tmp, fix16_from_int(tap->divCount));
     return add_fr1x32(a, FIX16_FRACT_TRUNC(tmp));
   }
 #else

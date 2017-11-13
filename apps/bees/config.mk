@@ -9,11 +9,12 @@ APP = bees
 # baudrate! can override in make invocation
 BAUD=115200
 
-# boilerplate avr32 configuration
-include ../../avr32_lib/avr32_lib_config.mk
-# boilerplate avr32 sources
-include ../../avr32_lib/avr32_lib_src.mk
+# avr32 configuration
+include ../aleph_avr32_config.mk
+# avr32 sources
+include ../aleph_avr32_src.mk
 
+# $(info CSRCS="$(CSRCS)")
 
 # add C source files from application
 # please keep this alphabetized... 
@@ -57,23 +58,34 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_fade.c \
 	$(APP_DIR)/src/ops/op_gate.c \
+	$(APP_DIR)/src/ops/op_harry.c \
 	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
-	$(APP_DIR)/src/ops/op_life.c \
+	$(APP_DIR)/src/ops/op_iter.c \
+	$(APP_DIR)/src/ops/op_kria.c \
+	$(APP_DIR)/src/ops/op_life_classic.c \
+	$(APP_DIR)/src/ops/op_life_raw.c \
 	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_list16.c \
 	$(APP_DIR)/src/ops/op_logic.c \
+	$(APP_DIR)/src/ops/op_maginc.c \
+	$(APP_DIR)/src/ops/op_mem0d.c \
+	$(APP_DIR)/src/ops/op_mem1d.c \
+	$(APP_DIR)/src/ops/op_mem2d.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
+	$(APP_DIR)/src/ops/op_midi_prog.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
 	$(APP_DIR)/src/ops/op_midi_out_cc.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_arc.c \
+	$(APP_DIR)/src/ops/op_monome_grid_classic.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
+	$(APP_DIR)/src/ops/op_poly.c \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_route.c \
@@ -108,6 +120,7 @@ CSRCS += \
 	$(APP_DIR)/src/scalers/scaler_integrator.c \
 	$(APP_DIR)/src/scalers/scaler_integrator_short.c \
 	$(APP_DIR)/src/scalers/scaler_note.c \
+	$(APP_DIR)/src/scalers/scaler_label.c \
 	$(APP_DIR)/src/scalers/scaler_short.c \
 	$(APP_DIR)/src/scalers/scaler_svf_fc.c
 

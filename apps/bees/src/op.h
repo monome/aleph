@@ -21,7 +21,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 47
+#define NUM_USER_OP_TYPES 58
 
 EXTERN_C_BEGIN
     
@@ -48,7 +48,7 @@ typedef enum {
   eOpAdd,
   eOpMul,
   eOpGate,
-  eOpMonomeGridRaw,
+  eOpMonomeGridClassic,
   eOpMidiNote,
   eOpAdc,
   eOpMetro,
@@ -67,7 +67,7 @@ typedef enum {
   eOpIs,
   eOpLogic,
   eOpList2,
-  eOpLife,
+  eOpLifeClassic,
   eOpHistory,
   eOpBignum,
   eOpScreen,
@@ -94,6 +94,17 @@ typedef enum {
   eOpBars8,
   eOpMidiOutCC,
   eOpParam,
+  eOpMem0d,
+  eOpMem1d,
+  eOpMem2d,
+  eOpIter,
+  eOpMonomeGridRaw,
+  eOpLifeRaw,
+  eOpMaginc,
+  eOpKria,
+  eOpHarry,
+  eOpPoly,
+  eOpMidiProg,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
@@ -118,6 +129,12 @@ typedef u8* (*op_unpickle_fn)(void* op, const u8* src);
 // an index into the global output table
 // a negative index is not evaluated
 typedef s16 op_out_t; 
+
+// XXX FIXME
+// because BEES net representation is inherently somewhat insane we
+// have to specify a max number of outs which can display on the play
+// screen
+#define MAX_PLAY_OUTS 16
 
 // ---- op_t
 // base class for all processors in a control network
@@ -147,6 +164,13 @@ typedef struct op_struct {
   u32 type;
   // behavior flags
   u32 flags;
+
+  // display operator output bangs on play screen
+  u8 playOuts[MAX_PLAY_OUTS];
+#ifdef BEEKEEP
+  // pointer to puredata bees object
+  void* bees_pd_object;
+#endif
   // pointer to child class
   void* child;
 } op_t;

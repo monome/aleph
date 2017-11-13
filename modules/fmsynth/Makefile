@@ -16,7 +16,7 @@ module_obj = fmsynth.o \
 	$(audio)/env_adsr.o \
 	$(audio)/osc_polyblep.o \
 	$(audio)/fm_voice.o \
-	$(bfin)/libfixmath/fix16.o \
+	$(bfin)/libfixmath/fix16.o
 
 
 all: $(prefix)$(module_name).ldr

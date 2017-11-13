@@ -1,6 +1,6 @@
-#include "types.h"
 #ifndef _SER_H_
 #define _SER_H_
+#include "types.h"
 #include "op.h"
 #include "op_math.h"
 #include "types.h"

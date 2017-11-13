@@ -1,6 +1,6 @@
-/* 
+/*
    protocol.h
-   
+
    common
    aleph
 

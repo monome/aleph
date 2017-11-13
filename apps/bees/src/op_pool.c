@@ -4,6 +4,28 @@
 #include "print_funcs.h"
 #include "memory.h"
 
+static u8* smallOpData;
+
+typedef struct _smallOpCons {
+  u8* head;
+  struct _smallOpCons *tail;
+} smallOpCons;
+
+static smallOpCons smallOpPool[MAX_SMALL_OPS];
+
+static smallOpCons *smallOpHead;
+
+static u8* bigOpData;
+
+typedef struct _bigOpCons {
+  u8* head;
+  struct _bigOpCons *tail;
+} bigOpCons;
+
+static bigOpCons bigOpPool[MAX_BIG_OPS];
+
+static bigOpCons *bigOpHead;
+
 
 void initBigMemPool (void) {
   bigOpData = (u8*)alloc_mem(BIG_OP_SIZE * MAX_BIG_OPS);

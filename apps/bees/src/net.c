@@ -289,9 +289,87 @@ void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
 }
+#ifndef PD
+// activate an input node with a value
+void net_activate(void *op_void, s16 outIdx, const io_t val) {
+  static inode_t* pIn;
+  s16 pIndex;
+  u8 visIn, visOut;
+  op_t *op = (op_t *)op_void;
+  s16 inIdx = op->out[outIdx];
+
+  /* print_dbg("\r\n net_activate, input idx: "); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(" , value: "); */
+  /* print_dbg_hex(val); */
+
+  /* print_dbg(" , op index: "); */
+  /* print_dbg_ulong(net->ins[inIdx].opIdx); */
+  /* print_dbg(" , input idx: "); */
+  /* print_dbg_ulong(net->ins[inIdx].opInIdx); */
+
+  if(!netActive) {
+    if(op != NULL) {
+      // if the net isn't active, dont respond to requests from operators
+      print_dbg(" ... ignoring node activation from op.");
+      return;
+    }
+  }
+
+  if(outIdx < MAX_PLAY_OUTS) {
+    visOut = op->playOuts[outIdx];
+  }
+  else {
+    visOut = 0;
+  }
+
+  if(pageIdx == ePagePlay) {
+    if(opPlay) {
+      // operators have focus, do nothing
+    } else {
+      if(visOut) {
+	play_output(op, outIdx, val);
+      }
+    }
+  }
+
+  if(inIdx < 0) {
+    return;
+  }
+
+  visIn = net_get_in_play(inIdx);
+
+  if(inIdx < net->numIns) {      
+    // this is an op input
+    pIn = &(net->ins[inIdx]);
+    
+    op_set_in_val(net->ops[pIn->opIdx],
+		  pIn->opInIdx,
+		  val);
+    
+  } else { 
+    // this is a parameter
+    //// FIXME this is horrible
+    pIndex = inIdx - net->numIns;
+    if (pIndex >= net->numParams) { return; }
+    set_param_value(pIndex, val);
+  }
+
+  /// only process for play mode if we're in play mode
+  if(pageIdx == ePagePlay) {
+    if(opPlay) {
+      // operators have focus, do nothing
+    } else {
+      // process if play-mode-visibility is set on this input
+      if(visIn) {
+	play_input(inIdx);
+      }
+    }
+  }  
+}
 
 // activate an input node with a value
-void net_activate(s16 inIdx, const io_t val, void* op) {
+void net_activate_in(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
   s16 pIndex;
   u8 vis;
@@ -351,6 +429,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }  
   
 }
+#endif
 
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
@@ -569,38 +648,34 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
       if (net->outs[i].target >= opFirstIn) {
 	net_connect(i, net->outs[i].target + ins);
       }
-
-      /// do the same in all presets!
-      for(j=0; j<NET_PRESETS_MAX; j++) {
-	if(preset_out_enabled(j, i)) {
-	  s16 tar = presets[j].outs[i].target;
-	  if(tar >= opFirstIn) {
-	    tar = tar + ins;
-	    presets[j].outs[i].target = tar;
-	  }
-	}
-      } // preset loop
     } // outs loop
 
     for(i=0; i<NET_PRESETS_MAX; i++) {
-      // shift parameter nodes in preset data
+      // shift input nodes in preset data
       for(j=net->numParams + net->numIns - 1; j>=opFirstIn + ins; j--) {
-	if(j >= PRESET_INODES_COUNT) {
-	  print_dbg("\r\n out of preset input nodes in new op creation! ");
-	  continue;
-	} else {
-	  presets[i].ins[j].value = presets[i].ins[j - ins].value;
-	  presets[i].ins[j].enabled = presets[i].ins[j - ins].enabled;
-	  // clear the old data. it may correspond to new operator inputs.
-	  presets[i].ins[j - ins].enabled = 0;
-	  presets[i].ins[j - ins].value = 0;
+	presets[i].ins[j].value = presets[i].ins[j - ins].value;
+	presets[i].ins[j].enabled = presets[i].ins[j - ins].enabled;
+	// disable preset ins for new op
+	presets[i].ins[j - ins].enabled = 0;
+      }
+      // shift output nodes in preset data
+      for(j=net->numOuts - 1 ; j >= opFirstOut + outs; j--) {
+	presets[i].outs[j].target = presets[i].outs[j-outs].target;
+	presets[i].outs[j].enabled = presets[i].outs[j-outs].enabled;
+	// disable preset outs for new op
+	presets[i].outs[j - outs].enabled = 0;
+      }
+      for(j=0; j < net->numOuts; j++) {
+	if(presets[i].outs[j].enabled) {
+	  s16 tar = presets[i].outs[j].target;
+	  if(tar >= opFirstIn) {
+	    presets[i].outs[j].target = tar + ins;
+	  }
 	}
       }
     }
-
   }
-
-  return net->numOps - 1;
+  return opIdx;
 }
 
 // destroy last operator created
@@ -757,8 +832,6 @@ s16 net_remove_op(const u32 opIdx) {
     }
   }
 
-  // FIXME: shift preset param data and connections to params,
-  // since they share an indexing list with inputs and we just changed it.
   for(i=0; i<NET_PRESETS_MAX; ++i) {
     // shift parameter nodes in preset data
     for(j=opFirstIn; j<net->numParams + net->numIns; ++j) {
@@ -768,6 +841,17 @@ s16 net_remove_op(const u32 opIdx) {
     for(j=opFirstOut; j < net->numOuts; ++j) {
       presets[i].outs[j].target = presets[i].outs[j + opNumOutputs].target;
       presets[i].outs[j].enabled = presets[i].outs[j + opNumOutputs].enabled;
+    }
+    for(j=0; j < net->numOuts; j++) {
+      if(presets[i].outs[j].enabled) {
+	s16 tar = presets[i].outs[j].target;
+	if(tar >= opFirstIn + opNumInputs) { // target above deleted op, reshuffle
+	  presets[i].outs[j].target = tar - opNumInputs;
+	}
+	else if (tar >= opFirstIn) { // targetting deleted op, forget
+	  presets[i].outs[j].enabled = 0;
+	}
+      }
     }
   }
   app_resume();
@@ -1066,6 +1150,62 @@ u8 net_get_in_play(u32 inIdx) {
 }
 
 
+// toggle play inclusion for output
+u8 net_toggle_out_play(u32 outIdx) {
+  if(outIdx > net->numOuts) {
+    print_dbg("\r\nrequested out-of-range output for play screen display toggling");
+    return 0;
+  }
+  else {
+    s32 opIdx = net->outs[outIdx].opIdx;
+    s32 opOutIdx = net->outs[outIdx].opOutIdx;
+    if(opOutIdx < MAX_PLAY_OUTS) {
+      net->ops[opIdx]->playOuts[opOutIdx] ^= 1;
+    } else {
+      print_dbg("\r\nrequested out-of-range op output for play screen display toggling");
+      return 0;
+    }
+  }
+  return 0;
+}
+
+// set play inclusion for output
+void net_set_out_play(u32 outIdx, u8 val) {
+  if(outIdx > net->numOuts) {
+    print_dbg("\r\nrequested out-of-range output for play screen display setting");
+    return;
+  }
+  else {
+    s32 opIdx = net->outs[outIdx].opIdx;
+    s32 opOutIdx = net->outs[outIdx].opOutIdx;
+    if(opOutIdx < MAX_PLAY_OUTS) {
+      net->ops[opIdx]->playOuts[opOutIdx] = val;
+    }
+    else {
+      print_dbg("\r\nrequested out-of-range op output for play screen display setting");
+    }
+  }
+}
+
+// get play inclusion for output
+u8 net_get_out_play(u32 outIdx) {
+  if(outIdx > net->numOuts) {
+    print_dbg("\r\nrequested out-of-range output for play screen display getting");
+    return 0;
+  }
+  else {
+    s32 opIdx = net->outs[outIdx].opIdx;
+    s32 opOutIdx = net->outs[outIdx].opOutIdx;
+    if(opOutIdx < MAX_PLAY_OUTS) {
+      return net->ops[opIdx]->playOuts[opOutIdx];
+    } else {
+      print_dbg("\r\nrequested out-of-range op output for play screen display getting");
+      return 0;
+    }
+  }
+}
+
+
 //------------------------------------
 //------ params
 
@@ -1164,6 +1304,9 @@ u8* net_pickle(u8* dst) {
 
   return dst;
 }
+// XXX HACK - we need this global flag to tell grid ops not to grab
+// focus on init during scene recall
+u8 recallingScene = 0;
 
 // unpickle the network!
 u8* net_unpickle(const u8* src) {
@@ -1201,7 +1344,10 @@ u8* net_unpickle(const u8* src) {
 
     // add and initialize from class id
     /// .. this should update the operator count, inodes and onodes
+
+    recallingScene = 1;
     net_add_op(id);
+    recallingScene = 0;
 
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
@@ -1303,11 +1449,12 @@ void net_disconnect_params(void) {
 s16 net_split_out(s16 outIdx) {
   // saved target
   s16 target =   net->outs[outIdx].target;
+  s16 opIdx = net->outs[outIdx].opIdx;
   // index of added split operator
   s16 split;
   if( target < 0) {
     // no target
-    split = net_add_op(eOpSplit);
+    split = net_add_op_at(eOpSplit, opIdx);
     if(split < 0) {
       // failed to add, do nothing
       return outIdx; 
@@ -1318,7 +1465,7 @@ s16 net_split_out(s16 outIdx) {
     } // add ok
   } else {
     // had target; reroute
-    split = net_add_op(eOpSplit);
+    split = net_add_op_at(eOpSplit, opIdx);
     // get the target again, because maybe it was a DSP param
     // (if it was, its index will have shifted. 
     // patch and presets have been updated, but local var has not.)

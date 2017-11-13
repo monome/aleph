@@ -8,9 +8,9 @@ version = $(maj).$(min).$(rev)
 ldr_name = $(module_name)-$(version).ldr
 
 module_obj = lines.o \
+	delayFadeN.o \
 	$(audio)/buffer.o \
 	$(audio)/conversion.o \
-	$(audio)/delayFadeN.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \

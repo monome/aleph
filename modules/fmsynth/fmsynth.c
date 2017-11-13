@@ -34,7 +34,7 @@
 /// custom
 #include "params.h"
 #define PAN_DEFAULT PAN_MAX/2
-#define FADER_DEFAULT PARAM_AMP_0
+#define FADER_DEFAULT PARAM_AMP_12
 
 // data structure of external memory
 typedef struct _fmsynthData {
@@ -58,6 +58,7 @@ static filter_1p_lo cvSlew[4];
 static u8 cvChan = 0;
 
 fm_voice voice;
+fract32 noteVelocity;
 fract32 opVols[4];
 fract32 opPans[4];
 
@@ -102,7 +103,7 @@ void module_init(void) {
   filter_1p_lo_init( &(cvSlew[2]), 0 );
   filter_1p_lo_init( &(cvSlew[3]), 0 );
 
-  fm_voice_init(&voice, FM_VOICE_NOPS);
+  fm_voice_init(&voice, FM_VOICE_NOPS, 4);
 
   param_setup( eParam_cvSlew0, PARAM_CV_SLEW_DEFAULT );
   param_setup( eParam_cvSlew1, PARAM_CV_SLEW_DEFAULT );
@@ -128,6 +129,7 @@ void module_init(void) {
 
   param_setup( eParam_noteHz, 220 << 16 );
   param_setup( eParam_noteTune, FIX16_ONE );
+  param_setup( eParam_notePortamento, SLEW_10MS);
   param_setup( eParam_noteTrigger, 0);
   param_setup( eParam_noteVelocity, PARAM_AMP_0 >> 2);
 
@@ -136,47 +138,52 @@ void module_init(void) {
   param_setup(eParam_op1Mod2Source, 0);
   param_setup(eParam_op1Mod2Gain, 0);
   param_setup(eParam_op1Tune, FIX16_ONE);
-  param_setup(eParam_op1Attack, SLEW_1S);
-  param_setup(eParam_op1Decay, SLEW_1S);
-  param_setup(eParam_op1Sustain, PARAM_AMP_0 >> 2);
+  param_setup(eParam_op1Attack, SLEW_100MS);
+  param_setup(eParam_op1Decay, SLEW_100MS);
+  param_setup(eParam_op1Sustain, FR32_MAX);
   param_setup(eParam_op1Release, SLEW_1S);
-  param_setup(eParam_op1Waveshape, 0);
+  param_setup(eParam_op1FreqSlew, SLEW_100MS);
+  param_setup( eParam_op1BandLimit, 1 << 16);
+  param_setup( eParam_op1FreqSat, 1 << 16);
 
   param_setup(eParam_op2Mod1Source, 0);
-  param_setup(eParam_op2Mod1Gain,PARAM_AMP_0 >> 3);
+  param_setup(eParam_op2Mod1Gain, 0);
   param_setup(eParam_op2Mod2Source, 0);
   param_setup(eParam_op2Mod2Gain, 0);
   param_setup(eParam_op2Tune, FIX16_ONE);
-  param_setup(eParam_op2Attack, 0x00320000);
-  param_setup(eParam_op2Decay, 0x00320000);
-  param_setup(eParam_op2Sustain, PARAM_AMP_0);
-  param_setup(eParam_op2Release, 0x00320000);
-  param_setup(eParam_op2Waveshape, 0);
+  param_setup(eParam_op2Attack, SLEW_100MS);
+  param_setup(eParam_op2Decay, SLEW_100MS);
+  param_setup(eParam_op2Sustain, FR32_MAX);
+  param_setup(eParam_op2Release, SLEW_1S);
+  param_setup(eParam_op2FreqSlew, SLEW_100MS);
+  param_setup(eParam_op2BandLimit, 1 << 16);
+  param_setup(eParam_op2FreqSat, 1 << 16);
 
   param_setup(eParam_op3Mod1Source, 0);
-  param_setup(eParam_op3Mod1Gain,PARAM_AMP_0 >> 2);
+  param_setup(eParam_op3Mod1Gain, 0);
   param_setup(eParam_op3Mod2Source, 0);
-  param_setup(eParam_op3Mod2Gain, PARAM_AMP_0 >> 2);
+  param_setup(eParam_op3Mod2Gain, 0);
   param_setup(eParam_op3Tune, FIX16_ONE);
-  param_setup(eParam_op3Attack, 0x00320000);
-  param_setup(eParam_op3Decay, 0x00320000);
-  param_setup(eParam_op3Sustain, PARAM_AMP_0 >> 2);
-  param_setup(eParam_op3Release, 0x00320000);
-  param_setup(eParam_op3Waveshape, 0);
+  param_setup(eParam_op3Attack, SLEW_100MS);
+  param_setup(eParam_op3Decay, SLEW_100MS);
+  param_setup(eParam_op3Sustain, FR32_MAX);
+  param_setup(eParam_op3Release, SLEW_1S);
+  param_setup(eParam_op3FreqSlew, SLEW_100MS);
+  param_setup(eParam_op3BandLimit, 1 << 16);
+  param_setup(eParam_op3FreqSat, 1 << 16);
 
   param_setup(eParam_op4Mod1Source, 0);
-  param_setup(eParam_op4Mod1Gain,PARAM_AMP_0 >> 2);
+  param_setup(eParam_op4Mod1Gain, 0);
   param_setup(eParam_op4Mod2Source, 0);
-  param_setup(eParam_op4Mod2Gain, PARAM_AMP_0 >> 2);
+  param_setup(eParam_op4Mod2Gain, 0);
   param_setup(eParam_op4Tune, FIX16_ONE);
-  param_setup(eParam_op4Attack, 0x00320000);
-  param_setup(eParam_op4Decay, 0x00320000);
-  param_setup(eParam_op4Sustain, PARAM_AMP_0 >> 2);
-  param_setup(eParam_op4Release, 0x00320000);
-  param_setup(eParam_op4Waveshape, 0);
-
-  param_setup (eParam_lfoSpeed, 0x00640000);
-  param_setup (eParam_lfoWaveshape, PAN_DEFAULT);
+  param_setup(eParam_op4Attack, SLEW_100MS);
+  param_setup(eParam_op4Decay, SLEW_100MS);
+  param_setup(eParam_op4Sustain, FR32_MAX);
+  param_setup(eParam_op4Release, SLEW_1S);
+  param_setup(eParam_op4FreqSlew, SLEW_100MS);
+  param_setup(eParam_op4BandLimit, 1 << 16);
+  param_setup(eParam_op4FreqSat, 1 << 16);
 
 }
 
@@ -196,11 +203,19 @@ void module_process_frame(void) {
   if(++cvChan == 4) {
     cvChan = 0;
   }
-  fm_voice_next(&voice);
   int i;
-  for(i=0; i<FM_VOICE_NOPS; i++) {
-    mix_panned_mono (voice.opOutputs[i], &(out[0]), &(out[1]), opPans[i], opVols[i]);
+  for(i=0; i < 4; i++) {
+    out[i] = 0;
+    voice.opModPointsExternal[i] = in[i];
   }
+  fm_voice_next(&voice);
+  fract32 opOut;
+  for(i=0; i<FM_VOICE_NOPS; i++) {
+    opOut = shl_fr1x32(voice.opOutputs[i], 16);
+    mix_panned_mono (opOut, &(out[0]), &(out[1]), opPans[i], opVols[i]);
+  }
+  out[0] = mult_fr1x32x32(out[0], noteVelocity);
+  out[1] = mult_fr1x32x32(out[1], noteVelocity);
 }
 
 // parameter set function
@@ -240,7 +255,7 @@ void module_set_param(u32 idx, ParamValue v) {
     opPans[0] = v;
     break;
   case eParam_op2Vol :
-    opVols[2] = v;
+    opVols[1] = v;
     break;
   case eParam_op2Pan :
     opPans[1] = v;
@@ -263,6 +278,9 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_noteTune :
     voice.noteTune = v;
     break;
+  case eParam_notePortamento :
+    voice.portamento = v;
+    break;
   case eParam_noteTrigger :
     if (v > 0) {
       fm_voice_press(&voice);
@@ -272,20 +290,20 @@ void module_set_param(u32 idx, ParamValue v) {
     }
     break;
   case eParam_noteVelocity :
-    voice.noteLevel = v;
+    noteVelocity = v;
     break;
 
   case eParam_op1Mod1Source :
-    voice.opMod1Source[0] = v >> 16;
+    voice.opMod1Source[0] = v;
     break;
   case eParam_op1Mod1Gain :
-    voice.opMod1Gain[0] = v;
+    voice.opMod1Gain[0] = trunc_fr1x32(v);
     break;
   case eParam_op1Mod2Source :
-    voice.opMod2Source[0] = v >> 16;
+    voice.opMod2Source[0] = v;
     break;
   case eParam_op1Mod2Gain :
-    voice.opMod2Gain[0] = v;
+    voice.opMod2Gain[0] = trunc_fr1x32(v);
     break;
   case eParam_op1Tune :
     voice.opTune[0] = v;
@@ -297,26 +315,32 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opEnv[0].decayTime = v;
     break;
   case eParam_op1Sustain :
-   voice.opEnv[0].sustainLevel = v;
+    voice.opEnv[0].sustainLevel = v;
    break;
   case eParam_op1Release :
     voice.opEnv[0].releaseTime = v;
     break;
-  case eParam_op1Waveshape :
-    voice.opWaveshape[0] = v >> 16;
+  case eParam_op1BandLimit :
+    voice.bandLimit[0] = trunc_fr1x32(v);
+    break;
+  case eParam_op1FreqSat :
+    voice.freqSaturate[0] = trunc_fr1x32(v);
+    break;
+  case eParam_op1FreqSlew :
+    voice.opSlew[0] = v;
     break;
 
   case eParam_op2Mod1Source :
-    voice.opMod1Source[1] = v >> 16;
+    voice.opMod1Source[1] = v;
     break;
   case eParam_op2Mod1Gain :
-    voice.opMod1Gain[1] = v;
+    voice.opMod1Gain[1] = trunc_fr1x32(v);
     break;
   case eParam_op2Mod2Source :
-    voice.opMod2Source[1] = v >> 16;
+    voice.opMod2Source[1] = v;
     break;
   case eParam_op2Mod2Gain :
-    voice.opMod2Gain[1] = v;
+    voice.opMod2Gain[1] = trunc_fr1x32(v);
     break;
   case eParam_op2Tune :
     voice.opTune[1] = v;
@@ -328,26 +352,32 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opEnv[1].decayTime = v;
     break;
   case eParam_op2Sustain :
-   voice.opEnv[1].sustainLevel = v;
+    voice.opEnv[1].sustainLevel = v;
    break;
   case eParam_op2Release :
     voice.opEnv[1].releaseTime = v;
     break;
-  case eParam_op2Waveshape :
-    voice.opWaveshape[1] = v >> 16;
+  case eParam_op2BandLimit :
+    voice.bandLimit[1] = trunc_fr1x32(v);
+    break;
+  case eParam_op2FreqSat :
+    voice.freqSaturate[1] = trunc_fr1x32(v);
+    break;
+  case eParam_op2FreqSlew :
+    voice.opSlew[1] = v;
     break;
 
   case eParam_op3Mod1Source :
-    voice.opMod1Source[2] = v >> 16;
+    voice.opMod1Source[2] = v;
     break;
   case eParam_op3Mod1Gain :
-    voice.opMod1Gain[2] = v;
+    voice.opMod1Gain[2] = trunc_fr1x32(v);
     break;
   case eParam_op3Mod2Source :
-    voice.opMod2Source[2] = v >> 16;
+    voice.opMod2Source[2] = v;
     break;
   case eParam_op3Mod2Gain :
-    voice.opMod2Gain[2] = v;
+    voice.opMod2Gain[2] = trunc_fr1x32(v);
     break;
   case eParam_op3Tune :
     voice.opTune[2] = v;
@@ -359,26 +389,32 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opEnv[2].decayTime = v;
     break;
   case eParam_op3Sustain :
-   voice.opEnv[2].sustainLevel = v;
+    voice.opEnv[2].sustainLevel = v;
    break;
   case eParam_op3Release :
     voice.opEnv[2].releaseTime = v;
     break;
-  case eParam_op3Waveshape :
-    voice.opWaveshape[2] = v >> 16;
+  case eParam_op3BandLimit :
+    voice.bandLimit[2] = trunc_fr1x32(v);
+    break;
+  case eParam_op3FreqSat :
+    voice.freqSaturate[2] = trunc_fr1x32(v);
+    break;
+  case eParam_op3FreqSlew :
+    voice.opSlew[2] = v;
     break;
 
   case eParam_op4Mod1Source :
-    voice.opMod1Source[3] = v >> 16;
+    voice.opMod1Source[3] = v;
     break;
   case eParam_op4Mod1Gain :
-    voice.opMod1Gain[3] = v;
+    voice.opMod1Gain[3] = trunc_fr1x32(v);
     break;
   case eParam_op4Mod2Source :
-    voice.opMod2Source[3] = v >> 16;
+    voice.opMod2Source[3] = v;
     break;
   case eParam_op4Mod2Gain :
-    voice.opMod2Gain[3] = v;
+    voice.opMod2Gain[3] = trunc_fr1x32(v);
     break;
   case eParam_op4Tune :
     voice.opTune[3] = v;
@@ -390,20 +426,19 @@ void module_set_param(u32 idx, ParamValue v) {
     voice.opEnv[3].decayTime = v;
     break;
   case eParam_op4Sustain :
-   voice.opEnv[3].sustainLevel = v;
+    voice.opEnv[3].sustainLevel = v;
    break;
   case eParam_op4Release :
     voice.opEnv[3].releaseTime = v;
     break;
-  case eParam_op4Waveshape :
-    voice.opWaveshape[3] = v >> 16;
+  case eParam_op4BandLimit :
+    voice.bandLimit[3] = trunc_fr1x32(v);
     break;
-
-  case eParam_lfoSpeed :
-    voice.lfo.freq = shl_fr1x32(v, -4);
+  case eParam_op4FreqSat :
+    voice.freqSaturate[3] = trunc_fr1x32(v);
     break;
-  case eParam_lfoWaveshape :
-    voice.lfoWaveshape = v;
+  case eParam_op4FreqSlew :
+    voice.opSlew[3] = v;
     break;
 
   default:

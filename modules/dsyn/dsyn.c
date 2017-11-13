@@ -69,7 +69,7 @@ static fract32 frameVal;
 //-----------------------------
 //----- static functions
 
-static void drumsyn_voice_init(void* mem, int i);
+static void drumsyn_voice_init(drumsynVoice* voice, int i);
 static fract32 drumsyn_voice_next(drumsynVoice* voice, int i);
 static fract32 noise_next(drumsynVoice* voice, int i);
 
@@ -79,8 +79,7 @@ fract32 noise_next(drumsynVoice* voice, int i) {
 }
 
 // initialize voice
-void drumsyn_voice_init(void* mem, int i) {
-  drumsynVoice* voice = (drumsynVoice*)mem;
+void drumsyn_voice_init(drumsynVoice* voice, int i) {
   // svf
   filter_svf_init(&(voice->svf));
 

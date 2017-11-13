@@ -64,7 +64,8 @@ extern s16 net_pop_op(void);
 extern s16 net_remove_op(const u32 idx);
 
 //! activate an input node with some input data
-extern void net_activate(s16 inIdx, const io_t val, void* srcOp);
+extern void net_activate(void* op, s16 outIdx, const io_t val);
+extern void net_activate_in(s16 inIdx, const io_t val, void* srcOp);
 
 //! get current count of operators
 extern u16 net_num_ops(void);
@@ -152,6 +153,15 @@ extern void net_set_in_play(u32 inIdx, u8 val);
 //! get play inclusion for input 
 extern u8 net_get_in_play(u32 inIdx);
 
+//! toggle play inclusion for output
+extern u8 net_toggle_out_play(u32 outIdx);
+
+//! set play inclusion for output
+extern void net_set_out_play(u32 outIdx, u8 val);
+
+//! get play inclusion for output
+extern u8 net_get_out_play(u32 outIdx);
+
 //! add a new parameter
 extern void net_add_param(u32 idx, const ParamDesc* pdesc);
 
@@ -179,6 +189,9 @@ extern u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
 //! return incremented pointer to dst
 extern u8* net_pickle(u8* dst);
 
+// XXX HACK - we need this global flag to tell grid ops not to
+// grab focus on init during scene recall
+extern u8 recallingScene;
 //! unpickle the network!
 //! return incremented pointer to src
 extern u8* net_unpickle(const u8* src);

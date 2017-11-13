@@ -1,7 +1,7 @@
 
 /* param_common.h
  * aleph-common
- * 
+ *
  * common parameter data types
  */
 
@@ -9,7 +9,7 @@
 #define _ALEPH_COMMON_PARAM_H_
 
 #include "fix.h"
-#include "types.h"
+//#include "types.h"
 
 // max characters in param name
 #define PARAM_LABEL_LEN 16
@@ -39,7 +39,9 @@ typedef enum {
   // 7 generic 16b signed integer
   eParamTypeShort,   
   // 8 16b integrator time/coefficient
-  eParamTypeIntegratorShort,  
+  eParamTypeIntegratorShort,
+  // Patch Matrix labels
+  eParamTypeLabel,
 
   eParamNumTypes
 } ParamType;

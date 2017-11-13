@@ -57,14 +57,14 @@ void op_sub_init(void* mem) {
 static void op_sub_in_a(op_sub_t* sub, const io_t v) {
   sub->a = v;
   sub->val = op_ssub(sub->a, sub->b);
-  net_activate(sub->outs[0], sub->val, sub);
+  net_activate(sub, 0, sub->val);
 }
 
 static void op_sub_in_b(op_sub_t* sub, const io_t v) {
   sub->b = v;
   sub->val = op_ssub(sub->a, sub->b);
   if(sub->btrig) {
-    net_activate(sub->outs[0], sub->val, sub);
+    net_activate(sub, 0, sub->val);
   }
 }
 

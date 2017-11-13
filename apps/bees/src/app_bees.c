@@ -12,14 +12,15 @@
 #include "print_funcs.h"
 #include "sd_mmc_spi.h"
 
+// libavr32
+#include "events.h"
+#include "monome.h"
+#include "screen.h"
+
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
-#include "events.h"
-#include "event_types.h"
 #include "flash.h"
-#include "monome.h"
-#include "screen.h"
 
 // bees
 #include "app_bees.h"
@@ -92,7 +93,6 @@ u8 app_launch(eLaunchState state) {
   itoa_whole(DEV_USART_BAUDRATE, buf + 10, 8); 
 #endif
 
-  
   print_dbg("\r\n launching app with state: ");
   print_dbg_ulong(state);
 

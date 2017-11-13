@@ -3,8 +3,8 @@
 
 #ifdef BEEKEEP
 #else
+#include "conf_board.h"
 #include "usart.h"
-#include "aleph_board.h"
 #endif
 
 // avr32 lib
@@ -103,7 +103,7 @@ static void op_serial_in_b(op_serial_t* op, const io_t v) {
 }
 
 /* void op_serial_out (op_serial_t* op, const io_t v) { */
-/*   net_activate(op->outs[0], v, op); */
+/*   net_activate(op, 0, v); */
 /* } */
 
 // pickle / unpickle

@@ -47,11 +47,13 @@ region* headRegion = NULL;
 region* footRegion[4] = { NULL, NULL, NULL, NULL };
 region* lineRegion = NULL;
 region* selectRegion = NULL;
+region* customRegion = NULL;
 
 //------------------------
 //---- static vars
 
 static region headRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
+static region customRegion_pr = { .w=0, .h=0, .x = 0, .y = 0  };
 static region footRegion_pr[4] = {
   { .w=32, .h=8, .x = 0,  .y = 56 },
   { .w=32, .h=8, .x = 32, .y = 56 },
@@ -131,6 +133,7 @@ void render_init(void) {
   region_alloc((region*)(&(footRegion_pr[3])));
   //  region_alloc((region*)(&selectRegion_pr));
   region_alloc((region*)(&lineRegion_pr));
+  region_alloc((region*)(&customRegion_pr));
 
   headRegion = &headRegion_pr;
   footRegion[0] = &(footRegion_pr[0]);
@@ -139,6 +142,7 @@ void render_init(void) {
   footRegion[3] = &(footRegion_pr[3]);
   //  selectRegion = &selectRegion_pr;
   lineRegion = &lineRegion_pr;
+  customRegion = &customRegion_pr;
 }
 
 // render text to scrolling buffer during boot procedure
@@ -169,6 +173,7 @@ void render_update(void) {
   region_update(footRegion[1]);
   region_update(footRegion[2]);
   region_update(footRegion[3]);
+  region_update(customRegion);
 
   //  app_resume();
 }
@@ -197,6 +202,19 @@ void render_set_scroll(scroll* scr) {
   pageScrollRegion = scr->reg;
   pageScrollRegion->dirty = 1;
 }
+
+// set current custom region
+void render_set_custom_region(region* reg) {
+  customRegion = reg;
+  customRegion->dirty = 1;
+}
+
+// set current custom region
+void render_reset_custom_region(void) {
+  customRegion = &headRegion_pr;
+  customRegion->dirty = 1;
+}
+
 
 //----- stupid string lib replacements.. 
 // all act on static string buffer in render.c

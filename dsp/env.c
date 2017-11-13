@@ -296,7 +296,7 @@ static fract32 env_next_atk_neg(env_asr* env) {
     env_asr_sustain(env);
   } else {
   //  env->y = mult_fr1x32x32(env->y, env->aUp);
-    env->y = (fract32)( fix16_mul( (fix16)(env->y >> 16), env->aUp) << 16);
+    env->y = (fract32)( fix16_mul_fract( (fix16)(env->y >> 16), env->aUp) << 16);
     env->x = add_fr1x32(env->x, (fract32)env->rUp);
     if ( env->x < 0 ) {
       env->x = FR32_MAX;
@@ -334,7 +334,7 @@ static fract32 env_next_rel_neg(env_asr* env) {
   // inverted growth
   env->x = sub_fr1x32(env->x, (fract32)env->rDn);
   //  env->y = mult_fr1x32x32(env->y, env->aDn );
-  env->y = (fract32)( fix16_mul( (fix16)(env->y >> 16), env->aDn) << 16);
+  env->y = (fract32)( fix16_mul_fract( (fix16)(env->y >> 16), env->aDn) << 16);
   // interpolate for curve
   return add_fr1x32( // invert x:
 		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->y), env->cDn ),

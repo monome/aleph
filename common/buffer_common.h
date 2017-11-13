@@ -1,7 +1,8 @@
 
-/* buffer_common.h
+/* 
+   buffer_common.h
    aleph-common
- 
+
    declare common buffer data types.
    basically, simple descriptors.
 
@@ -12,7 +13,6 @@
 
 #include "fix.h"
 #include "types.h"
-
 
 
 // descriptor

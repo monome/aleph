@@ -13,10 +13,25 @@ typedef struct op_cascades_struct {
   // inputs: mode, focus, step
   volatile io_t focus;
   volatile io_t size;
+  volatile io_t dummy;
   volatile io_t* in_val[3];
   // outputs: a,b,c,d
   op_out_t outs[8];
   // internal:
+  s8 positions[8];
+  s8 points[8];
+  s8 points_save[8];
+  u8 triggers[8];
+  u8 trig_dests[8];
+  u8 rules[8];
+  u8 rule_dests[8];
+
+  u8 edit_row;
+  u8 key_count;
+  u8 mode;
+  u8 prev_mode;
+
+  u8 XSIZE;
 
 } op_cascades_t;
 

@@ -6,15 +6,17 @@
 #include "op_math.h"
 #include "types.h"
 
-//--- op_monome_grid_raw : monome grid as a simple bank of switches 
+//--- op_monome_grid_raw : monome grid as a simple bank of switches
 typedef struct op_mgrid_raw_struct {
   op_t super;
   op_monome_t monome;
-  // inputs: toggle mode, focus
   volatile io_t focus;
-  volatile io_t tog;
-  volatile io_t mono;
-  volatile io_t* in_val[3];
+  volatile io_t x;
+  volatile io_t y;
+  volatile io_t ledVal;
+  volatile io_t ledOn;
+  // inputs: toggle mode, focus
+  volatile io_t* in_val[5];
   // outputs: x , y, z
   op_out_t outs[3];
   // internal:

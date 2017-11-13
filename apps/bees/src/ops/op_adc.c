@@ -160,13 +160,13 @@ void op_adc_sys_input(op_adc_t* adc, u8 ch, u16 val) {
   if(adc->mode) {
     u8 i = val > 1000;    // thresh around 2.5v ?
     if(adc->prev[ch] != i) {
-      net_activate(adc->outs[ch], i, &(adc->super));
+      net_activate(adc, ch, i);
       adc->prev[ch] = i;
     }
   }
   else {
     adc->val[ch] = val;
 
-    net_activate(adc->outs[ch], val, &(adc->super));
+    net_activate(adc, ch, val);
   }
 }

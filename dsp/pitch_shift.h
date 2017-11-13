@@ -22,6 +22,7 @@ typedef struct _pitchShift {
   echoTap tapRd0;
   echoTap tapRd1;
   bufferTapN tapWr;
+  u8 pitchDetect;
   // flag to toggle writing of new data
   //u8 write;
   // level of existing data to mix with new data

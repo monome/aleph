@@ -12,10 +12,13 @@ typedef struct op_random_struct {
   volatile io_t min;
   volatile io_t max;
   volatile io_t trig;
-  volatile io_t * in_val[3]; // min, max, trig
+  volatile io_t seed;
+  volatile io_t * in_val[4]; // min, max, trig, seed
   op_out_t outs[1];
 
   u32 a,c,x;
+  u16 range;
+  u8 bitShift;
 } op_random_t;
 void op_random_init(void* mem);
 

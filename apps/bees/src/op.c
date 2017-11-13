@@ -34,17 +34,27 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpDivr,
   eOpFade,
   eOpGate,
-  eOpMonomeGridRaw, // "grid"
+  eOpMonomeGridClassic, // "grid"
+  eOpMonomeGridRaw, // "gridraw"
+  eOpHarry,
   eOpHid,
   eOpHistory,
   eOpIs,
-  eOpLife,
+  eOpIter,
+  eOpKria,
+  eOpLifeClassic,
+  eOpLifeRaw,
   eOpList2,
   eOpList8,
   eOpList16,
   eOpLogic,
+  eOpMaginc,
+  eOpMem0d,
+  eOpMem1d,
+  eOpMem2d,
   eOpMetro,
   eOpMidiCC,
+  eOpMidiProg,
   eOpMidiNote,
   eOpMidiOutCC,
   eOpMidiOutNote,
@@ -52,6 +62,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpCascades, // "mp"
   eOpMul,
   eOpParam,
+  eOpPoly,
   eOpRandom,
   eOpRoute,
   eOpRoute8,
@@ -103,9 +114,9 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = NULL
   }, {
     .name = "GRID",
-    .size = sizeof(op_mgrid_raw_t),
-    .init = &op_mgrid_raw_init,
-    .deinit = &op_mgrid_raw_deinit
+    .size = sizeof(op_mgrid_classic_t),
+    .init = &op_mgrid_classic_init,
+    .deinit = &op_mgrid_classic_deinit
   }, {
     .name = "MIDINOTE",
     .size = sizeof(op_midi_note_t),
@@ -198,9 +209,9 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = NULL    
   }, {
     .name = "LIFE",
-    .size = sizeof(op_life_t),
-    .init = &op_life_init,
-    .deinit = &op_life_deinit
+    .size = sizeof(op_life_classic_t),
+    .init = &op_life_classic_init,
+    .deinit = &op_life_classic_deinit
   }, {
     .name = "HISTORY",
     .size = sizeof(op_history_t),
@@ -331,6 +342,61 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_param_t),
     .init = &op_param_init,
     .deinit = NULL
+  }, {
+    .name = "MEM0D",
+    .size = sizeof(op_mem0d_t),
+    .init = &op_mem0d_init,
+    .deinit = NULL
+  }, {
+    .name = "MEM1D",
+    .size = sizeof(op_mem1d_t),
+    .init = &op_mem1d_init,
+    .deinit = NULL
+  }, {
+    .name = "MEM2D",
+    .size = sizeof(op_mem2d_t),
+    .init = &op_mem2d_init,
+    .deinit = NULL
+  }, {
+    .name = "ITER",
+    .size = sizeof(op_iter_t),
+    .init = &op_iter_init,
+    .deinit = NULL
+  }, {
+    .name = "GRIDRAW",
+    .size = sizeof(op_mgrid_raw_t),
+    .init = &op_mgrid_raw_init,
+    .deinit = &op_mgrid_raw_deinit
+  }, {
+    .name = "LIFERAW",
+    .size = sizeof(op_life_raw_t),
+    .init = &op_life_raw_init,
+    .deinit = NULL
+  }, {
+    .name = "MAGINC",
+    .size = sizeof(op_maginc_t),
+    .init = &op_maginc_init,
+    .deinit = NULL
+  }, {
+    .name = "KRIA",
+    .size = sizeof(op_kria_t),
+    .init = &op_kria_init,
+    .deinit = &op_kria_deinit
+  }, {
+    .name = "HARRY",
+    .size = sizeof(op_harry_t),
+    .init = &op_harry_init,
+    .deinit = NULL
+  }, {
+    .name = "POLY",
+    .size = sizeof(op_poly_t),
+    .init = &op_poly_init,
+    .deinit = NULL
+  }, {
+    .name = "MIDIPROG",
+    .size = sizeof(op_midi_prog_t),
+    .init = &op_midi_prog_init,
+    .deinit = NULL
   }
 };
 
@@ -351,9 +417,13 @@ s16 op_init(op_t* op, op_id_t opId) {
   // set function pointers to NULL
   op->pickle = NULL;
   op->unpickle = NULL;
-
-  // Zero all the memory for new op for extra paranoia
   int i;
+  for(i=0; i < MAX_PLAY_OUTS; i++) {
+    op->playOuts[i] = 0;
+  }
+
+  // Zero all the memory for new op for extra paranoia (makes the
+  // above redundant I guess)
   u8* mem = (u8*)op;
   for (i=0; i < op_registry[opId].size; i++) {
     *(mem + i) = 0;

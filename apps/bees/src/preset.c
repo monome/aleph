@@ -110,6 +110,9 @@ void preset_store(u32 preIdx) {
       presets[preIdx].ins[i].value = net_get_in_value(i);
       presets[preIdx].ins[i].enabled = 1;
     }
+    else {
+      presets[preIdx].ins[i].enabled = 0;
+    }
   }
   // outs
   for(i=0; i<net_num_outs(); ++i) {
@@ -117,12 +120,18 @@ void preset_store(u32 preIdx) {
       presets[preIdx].outs[i].target = net_get_target(i);
       presets[preIdx].outs[i].enabled = 1;
     }
+    else {
+      presets[preIdx].outs[i].enabled = 0;
+    }
   }
   // params
   /* for(i=0; i<net_num_params(); ++i) { */
   /*   if(get_param_preset(i)) { */
   /*     presets[preIdx].params[i].value =  get_param_value( i ); */
   /*     presets[preIdx].params[i].enabled = 1; */
+  /*   } */
+  /*   else { */
+  /*     presets[preIdx].params[i].enabled = 0; */
   /*   } */
   /* } */
   select = preIdx;

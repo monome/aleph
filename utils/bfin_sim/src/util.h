@@ -1,5 +1,6 @@
 #ifndef _ALEPH_BFIN_UTIL_
 #define _ALEPH_BFIN_UTIL_
+#include "types.h"
 
 // some bitfield and bit-array macros
 //#define BITS_PER_BYTE	8

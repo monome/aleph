@@ -125,7 +125,7 @@ static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
       num = (data & 0x00ff0000) >> 16;
       if(num == op->num) {
 	val = (data & 0x0000ff00) >> 8;
-	net_activate(op->outs[0], val, op);
+	net_activate(op, 0, val);
       }
     } else {
       // check channel: status low nib
@@ -136,7 +136,7 @@ static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
 	if(num == op->num) {
 	  // send value: data 2
 	  val = (data & 0x0000ff00) >> 8;
-	  net_activate(op->outs[0], val, op);
+	  net_activate(op, 0, val);
 	}
       }
     }

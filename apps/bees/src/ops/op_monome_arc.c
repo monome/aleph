@@ -55,7 +55,7 @@ void op_marc_init(void* mem) {
 
   //--- monome
   op->monome.handler = (monome_handler_t)&op_marc_handler;
-  op->monome.op = op;
+  net_monome_init(&op->monome, op);
 
   // superclass state
 
@@ -73,6 +73,7 @@ void op_marc_init(void* mem) {
   op->super.outString = op_marc_outstring;
 
   op->in_val[0] = &(op->focus);
+  op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->loop);  
   op->in_val[2] = &(op->ring);
   op->in_val[3] = &(op->pos);
@@ -93,7 +94,9 @@ void op_marc_init(void* mem) {
   op->vals[2] = 0;
   op->vals[3] = 0;
 
-  net_monome_set_focus(&(op->monome), 1);
+  if(!recallingScene) {
+    net_monome_set_focus(&(op->monome), 1);
+  }
 }
 
 // de-init
@@ -158,8 +161,8 @@ static void op_marc_handler(op_monome_t* op_monome, u32 data) {
   print_dbg("; v: 0x");
   print_dbg_hex(v);
 
-  net_activate(op->outs[0], (io_t)n, op);
-  net_activate(op->outs[1], (io_t)v, op);
+  net_activate(op, 0, (io_t)n);
+  net_activate(op, 1, (io_t)v);
 
     if(op->loop) {
     a = op->vals[n] + v;
@@ -169,7 +172,7 @@ static void op_marc_handler(op_monome_t* op_monome, u32 data) {
     monome_arc_led_set(n, op->vals[n]/4, 0);
     op->vals[n] = a;
     monome_arc_led_set(n, op->vals[n]/4, 15);
-    net_activate(op->outs[2], (io_t)op->vals[n], op);
+    net_activate(op, 2, (io_t)op->vals[n]);
   }
 }
 
@@ -184,6 +187,8 @@ u8* op_marc_pickle(op_marc_t* marc, u8* dst) {
 const u8* op_marc_unpickle(op_marc_t* marc, const u8* src) {
   src = unpickle_io(src, (u32*)&(marc->focus));
   src = unpickle_io(src, (u32*)&(marc->loop));
-  net_monome_set_focus( &(marc->monome), marc->focus > 0);
+  if (marc->focus > 0) {
+    net_monome_set_focus( &(marc->monome), 1);
+  }
   return src;
 }

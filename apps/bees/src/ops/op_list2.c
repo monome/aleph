@@ -69,7 +69,7 @@ static void op_list2_in_index(op_list2_t* list2, const io_t val) {
       break;
   }
 
-  net_activate(list2->outs[0], list2->val, list2);
+  net_activate(list2, 0, list2->val);
 }
 
 static void op_list2_in_i0(op_list2_t* list2, const io_t val) {
