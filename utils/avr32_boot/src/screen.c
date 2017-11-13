@@ -16,8 +16,7 @@
 // #include "print_funcs.h"
 #include "spi.h"
 // aleph
-#include "aleph_board.h"
-//#include "conf_aleph.h"
+#include "conf_board.h"
 #include "fix.h"
 #include "font.h"
 #include "global.h"

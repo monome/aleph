@@ -92,8 +92,6 @@ typedef struct _dirList {
 static dirList_t dspList;
 static dirList_t appList;
 
-/// data for a single hex record
-
 //----------------------------------
 //---- static functions
 
@@ -101,8 +99,6 @@ static dirList_t appList;
 static void list_scan(dirList_t* list, const char* path);
 // get name at idx
 const char* list_get_name(dirList_t* list, u8 idx);
-// get file pointer if found (caller must close)
-//static void* list_open_file_name(dirList_t * list, const char* name, const char* mode);
 // ugly, set size by pointer
 static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
 
@@ -165,29 +161,6 @@ void files_load_dsp_name(const char* name) {
 }
 
 
-/* // store .ldr as default in internal flash */
-/* void files_store_default_dsp(u8 idx) { */
-/*   const char* name; */
-/*   void* fp;	   */
-/*   u32 size; */
-
-/*   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY); */
-/*   cpu_irq_disable_level(UI_IRQ_PRIORITY); */
-
-/*   name = (const char*)files_get_dsp_name(idx); */
-/*   fp = list_open_file_name(&dspList, name, "r", &size); */
-
-/*   if( fp != NULL) { */
-/*     bfinLdrSize = size; */
-/*     fl_fread((void*)bfinLdrData, 1, size, fp); */
-/*     flash_write_ldr(); */
-/*     fl_fclose(fp); */
-/*   } */
-
-/*   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY); */
-/*   cpu_irq_enable_level(UI_IRQ_PRIORITY); */
-/* } */
-
 // return count of dsp files
 u8 files_get_dsp_count(void) {
   return dspList.num;
@@ -228,13 +201,13 @@ void files_write_firmware_name(const char* name) {
     for(fIdx = 0; fIdx<size; fIdx++) {
       ch = fl_fgetc(fp);
       if(ch == ':') {
-	// beginning of a record;
-	// send the last record if there was one
-	if(hIdx > 0) {
-	  flash_write_hex_record(hexRecordData);
-	}
-	// reset hex byte index for next record
-	hIdx = 0;
+		// beginning of a record;
+		// send the last record if there was one
+		if(hIdx > 0) {
+		  flash_write_hex_record(hexRecordData);
+		}
+		// reset hex byte index for next record
+		hIdx = 0;
       }
 
       hexRecordData[hIdx] = (u8)ch;
@@ -242,21 +215,11 @@ void files_write_firmware_name(const char* name) {
 
       ///// show progress
       if( (fIdx % 0x200) == 0) {
-	show_progress(ch);
+		show_progress(ch);
       }
     }
 
-    /// raw binary (not good)
-    /* while( */
-    /* ch = fl_getc(fp); */
-    /* if(ch == EOF) { */
-    /* } else  */
-    /////
-
     fl_fclose(fp);
-    //    // print_dbg("finished writing.\r\n");
-    //    // print_dbg("rebooting now.");
-
     // clear firstrun field
     flash_clear_firstrun();
 
@@ -288,8 +251,8 @@ void list_scan(dirList_t* list, const char* path) {
   if( fl_opendir(path, &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	strcpy((char*)list->nameBuf + (list->num * DIR_LIST_NAME_LEN), dirent.filename);
-	list->num++;
+		strcpy((char*)list->nameBuf + (list->num * DIR_LIST_NAME_LEN), dirent.filename);
+		list->num++;
       }
     }
   }
@@ -307,14 +270,14 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   if(fl_opendir(path, &dirstat)) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if (strcmp(dirent.filename, name) == 0) {
-	strncat(path, dirent.filename, 58);
+		strncat(path, dirent.filename, 58);
 
-	fp = fl_fopen(path, mode);
-	*size = dirent.size;
-	break;
+		fp = fl_fopen(path, mode);
+		*size = dirent.size;
+		break;
       } else { // no match
-	*size = 0;
-	fp = NULL;
+		*size = 0;
+		fp = NULL;
       }
     } // end loop
   } else { // dir error

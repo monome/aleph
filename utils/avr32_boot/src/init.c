@@ -19,8 +19,7 @@
 #include "spi.h"
 #include "tc.h"
 // aleph
-//#include "conf_aleph.h"
-#include "aleph_board.h"
+#include "conf_board.h"
 #include "filesystem.h"
 #include "init.h"
 

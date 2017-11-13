@@ -4,7 +4,8 @@
 #include "flashc.h"
 //#include "print_funcs.h"
 #include "power_clocks_lib.h"
-#include "wdt.h"
+//#include "wdt.h"
+
 // aleph-bees
 // aleph-avr32
 #include "bfin.h"

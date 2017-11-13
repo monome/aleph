@@ -6,9 +6,8 @@
 #include "sd_mmc_spi.h"
 #include "tc.h"
 // aleph
-#include "aleph_board.h"
+#include "conf_board.h"
 #include "bfin.h"
-//#include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"
