@@ -43,7 +43,6 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpIter,
   eOpKria,
   eOpLifeClassic,
-  eOpLifeRaw,
   eOpList2,
   eOpList8,
   eOpList16,
@@ -368,11 +367,6 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_mgrid_raw_t),
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
-  }, {
-    .name = "LIFERAW",
-    .size = sizeof(op_life_raw_t),
-    .init = &op_life_raw_init,
-    .deinit = NULL
   }, {
     .name = "MAGINC",
     .size = sizeof(op_maginc_t),

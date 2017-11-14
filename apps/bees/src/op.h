@@ -21,7 +21,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 59
+#define NUM_USER_OP_TYPES numOpClasses
 
 EXTERN_C_BEGIN
     
@@ -99,7 +99,6 @@ typedef enum {
   eOpMem2d,
   eOpIter,
   eOpMonomeGridRaw,
-  eOpLifeRaw,
   eOpMaginc,
   eOpKria,
   eOpHarry,
