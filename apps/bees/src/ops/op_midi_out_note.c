@@ -157,12 +157,7 @@ void op_midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   pack[1] = (u8)(mout->num);
   pack[2] = (u8)(mout->vel);
 
-  print_dbg("\r\n midi_out_note_send_packet; data: ");
-  print_dbg_char_hex(pack[0]);    print_dbg(" ");
-  print_dbg_char_hex(pack[1]);    print_dbg(" ");
-  print_dbg_char_hex(pack[2]);    print_dbg(" ");
-
-  midi_write_test(mout->chan);
+  midi_write_packet(0, pack);
 }
 
 // pickle / unpickle
