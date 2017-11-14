@@ -87,7 +87,7 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
   } else {
     if(dev == eDeviceGrid) {
       monome_grid_key_handler = (monome_handler_t)&dummyHandler;
-      monomeLedBuffer = dummyLedBuffer;
+      monomeLedBuffer = defaultLedBuffer;
     } else if(dev == eDeviceArc) {
       monome_ring_enc_handler = (monome_handler_t)&dummyHandler;
     } else {
