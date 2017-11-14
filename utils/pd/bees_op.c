@@ -216,7 +216,7 @@ void bees_op_setup(void) {
   monome_testbang();
   for(i=0; i<16; i++) {
     for(j=0; j<8; j++) {
-      dummyLedBuffer[i+j*16] = 15-(i/2 + j);
+      defaultLedBuffer[i+j*16] = 15-(i/2 + j);
     }
   }
   monome_update_128_grid(NULL);
