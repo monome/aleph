@@ -16,15 +16,19 @@ typedef struct op_midi_out_note_struct {
   // operator base class
   op_t super;
   // input: chan, vel, num 
-  volatile io_t* in_val[3];
+  volatile io_t* in_val[5];
   // outputs: none
   op_out_t outs[0];
+  // midi 'cable number' for midi interfaces w/ multiple cables
+  volatile io_t cable;
   // output channel (-1 == all channels)
   volatile io_t chan;
   // output note num
   volatile io_t num;
   // output velocity
   volatile io_t vel;
+  // output velocity
+  volatile io_t pitch;
 } op_midi_out_note_t;
 
 // init

@@ -11,7 +11,7 @@
 
 //---- descriptor strings
 static const char* op_midi_note_instring = "CHAN\0   ";
-static const char* op_midi_note_outstring = "NUM\0    VELON\0  VELOFF\0  ";
+static const char* op_midi_note_outstring = "NUM\0    VELON\0  PITCH\0  ";
 static const char* op_midi_note_opstring = "MIDINOTE";
 
 //-------------------------------------------------
@@ -29,6 +29,7 @@ static const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src);
 
 /// midi event handler
 static void op_midi_note_handler(op_midi_note_t* op, u8 ch, u8 num, u8 vel);
+static void op_midi_pitch_bend_handler(op_midi_note_t* op, u8 ch, u16 pitch);
 
 // input func pointer array
 static op_in_fn op_midi_note_in_fn[1] = {
@@ -53,11 +54,11 @@ void op_midi_note_init(void* mem) {
   net_midi_init(&(op->midi));
   op->midi.handler.note_on = (net_midi_note_on_t)&op_midi_note_handler;
   op->midi.handler.note_off = (net_midi_note_off_t)&op_midi_note_handler;
+  op->midi.handler.pitch_bend = (net_midi_pitch_bend_t)&op_midi_pitch_bend_handler;
   // superclass state
   op->midi.sub = op;
 
   op->midi.handler.channel_pressure = NULL; //add channel pressure & pitch bend maybe???
-  op->midi.handler.pitch_bend = NULL;
 
   op->super.type = eOpMidiNote;
   op->super.flags |= (1 << eOpFlagMidiIn);
@@ -75,7 +76,7 @@ void op_midi_note_init(void* mem) {
   op->in_val[0] = &(op->chanIo);
   op->outs[0] = -1;
   op->outs[1] = -1;
-  op->outs[1] = -1;
+  op->outs[2] = 0;
 
   op->chan = -1;
   op->chanIo = OP_NEG_ONE;
@@ -110,6 +111,13 @@ static void op_midi_note_handler(op_midi_note_t* op, u8 ch, u8 num, u8 vel) {
   if(op->chan == -1 || op->chan == ch) {
     net_activate(op, 0, num);
     net_activate(op, 1, vel);
+  }
+}
+
+static void op_midi_pitch_bend_handler(op_midi_note_t* op, u8 ch, u16 pitch) {
+  // check status byte
+  if(op->chan == -1 || op->chan == ch) {
+    net_activate(op, 2, pitch - MIDI_BEND_ZERO);
   }
 }
 
