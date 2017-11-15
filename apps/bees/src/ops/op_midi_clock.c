@@ -9,14 +9,15 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_clock_instring =  "";
+static const char* op_midi_clock_instring =  "DUMMY\0  ";
 static const char* op_midi_clock_outstring = "TICK\0   START\0  CONT\0   STOP\0   ";
-static const char* op_midi_clock_opstring = "MIDICLOCK";
+static const char* op_midi_clock_opstring = "MIDICLK";
 
 //-------------------------------------------------
 //----- static function declaration
 
 //---- input functions
+static void op_midi_clock_in_dummy(op_midi_note_t* op, const io_t v);
 
 //// network inputs: 
 
@@ -29,9 +30,9 @@ static void op_midi_clock_clock_tick_handler(op_midi_clock_t *op);
 static void op_midi_clock_seq_start_handler(op_midi_clock_t *op);
 static void op_midi_clock_seq_stop_handler(op_midi_clock_t *op);
 static void op_midi_clock_seq_continue_handler(op_midi_clock_t *op);
-
 // input func pointer array
-static op_in_fn op_midi_clock_in_fn[0] = {
+static op_in_fn op_midi_clock_in_fn[1] = {
+  (op_in_fn)&op_midi_clock_in_dummy,
 };
 
 //-------------------------------------------------
@@ -59,7 +60,7 @@ void op_midi_clock_init(void* mem) {
   op->super.type = eOpMidiClock;
   op->super.flags |= (1 << eOpFlagMidiIn);
 
-  op->super.numInputs = 0;
+  op->super.numInputs = 1;
   op->super.numOutputs = 4;
 
   op->super.in_val = op->in_val;
@@ -69,6 +70,7 @@ void op_midi_clock_init(void* mem) {
   op->super.inString = op_midi_clock_instring;
   op->super.outString = op_midi_clock_outstring;
 
+  op->in_val[0] = &(op->dummy);
   op->outs[0] = 0;
   op->outs[1] = 0;
   op->outs[2] = 0;
@@ -80,12 +82,16 @@ void op_midi_clock_init(void* mem) {
 // de-init
 void op_midi_clock_deinit(void* op) {
   // remove from list
-  net_midi_real_time_unsubscribe( &(((op_midi_note_t*)op)->midi) );
+  print_dbg("\r\ndeinit...\r\n");
+  net_midi_real_time_unsubscribe( &(((op_midi_clock_t*)op)->midi) );
+  print_dbg("\r\ndeinit-ed...\r\n");
 }
 
 //-------------------------------------------------
 //----- static function definition
-
+static void op_midi_clock_in_dummy(op_midi_note_t* op, const io_t v) {
+  // nothing to see here...
+}
 // midi event handler
 static void op_midi_clock_clock_tick_handler(op_midi_clock_t *op) {
   net_activate(op, 0, 1);

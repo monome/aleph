@@ -10,8 +10,8 @@
 
 //---- descriptor strings
 static const char* op_midi_out_clock_instring =  "CABLE\0  TICK\0   START\0  CONT\0   STOP\0   ";
-static const char* op_midi_out_clock_outstring = "";
-static const char* op_midi_out_clock_opstring = "MOUT_CLOCK";
+static const char* op_midi_out_clock_outstring = "DUMMY\0  ";
+static const char* op_midi_out_clock_opstring = "MOUT_CLK";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -57,7 +57,7 @@ void op_midi_out_clock_init(void* mem) {
   //  op->super.flags |= (1 << eOpFlagMidiIn);
 
   op->super.numInputs = 5;
-  op->super.numOutputs = 0;
+  op->super.numOutputs = 1;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -71,6 +71,8 @@ void op_midi_out_clock_init(void* mem) {
   op->in_val[2] = &(op->start);
   op->in_val[3] = &(op->cont);
   op->in_val[4] = &(op->stop);
+  op->outs[0] = 0;
+
   op->tick = 0;
   op->start = 0;
   op->cont = 0;

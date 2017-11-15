@@ -17,8 +17,8 @@ typedef struct op_midi_out_clock_struct {
   op_t super;
   // input: chan, vel, num 
   volatile io_t* in_val[5];
-  // outputs: none
-  op_out_t outs[0];
+  // outputs: dummy only
+  op_out_t outs[1];
   // output midi cable
   volatile io_t cable;
   volatile io_t tick;

@@ -11,10 +11,11 @@ typedef struct op_midi_clock_struct {
   op_t super;
   // midi operator abstract class
   op_midi_t midi;  
-  // input: channel, control num
-  volatile io_t* in_val[0];
+  // input: dummy only!
+  volatile io_t* in_val[1];
   // outputs: value
   op_out_t outs[4];
+  volatile io_t dummy;
 } op_midi_clock_t;
 
 // init
