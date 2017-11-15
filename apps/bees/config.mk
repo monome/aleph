@@ -78,6 +78,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_midi_prog.c \
 	$(APP_DIR)/src/ops/op_midi_clock.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
+	$(APP_DIR)/src/ops/op_midi_out_clock.c \
 	$(APP_DIR)/src/ops/op_midi_out_cc.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mod.c \

@@ -58,6 +58,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMidiProg,
   eOpMidiOutCC,
   eOpMidiOutNote,
+  eOpMidiOutClock,
   eOpMod,
   eOpCascades, // "mp"
   eOpMul,
@@ -391,11 +392,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "MIDIPROG",
     .size = sizeof(op_midi_prog_t),
     .init = &op_midi_prog_init,
-    .deinit = NULL
+    .deinit = &op_midi_prog_deinit
   }, {
     .name = "MIDICLK",
     .size = sizeof(op_midi_clock_t),
     .init = &op_midi_clock_init,
+    .deinit = &op_midi_clock_deinit
+  }, {
+    .name = "MOUT_CLK",
+    .size = sizeof(op_midi_out_clock_t),
+    .init = &op_midi_out_clock_init,
     .deinit = NULL
   }
 };
