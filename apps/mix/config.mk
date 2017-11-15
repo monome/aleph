@@ -9,10 +9,6 @@ APP = mix
 # baudrate! can override in make invocation
 BAUD = 115200
 
-# boilerplate avr32 configuration
-# include ../../avr32_lib/avr32_lib_config.mk
-# boilerplate avr32 sources
-# include ../../avr32_lib/avr32_lib_src.mk
 # avr32 configuration
 include ../aleph_avr32_config.mk
 # avr32 sources

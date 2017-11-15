@@ -62,7 +62,7 @@ fuses:
 	avr32program writefuses -f internal@80000000 gp=0xfff7ffff
 
 # Path to top level ASF directory relative to this project directory.
-PRJ_PATH = ../../avr32_lib/asf-3.7.3
+PRJ_PATH = ../../libavr32/asf
 
 # Include the common Makefile, which will also include the project specific
 # config.mk file.

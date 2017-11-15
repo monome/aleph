@@ -105,10 +105,6 @@ extern void init_tc(void) {
     /// this gives me most accurate results with current testing proto..
     tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 126336));
 
-    ///// FIXME: kludge because the timing is slow somehow... ?
-    ///// this constant is experimentally determined...
-    //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
-
     // configure the timer interrupt
     tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
     // Start the timer/counter.

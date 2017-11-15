@@ -21,7 +21,6 @@
 #include "sd_mmc_spi.h"
 #include "smc.h"
 #include "sysclk.h"
-#include "wdt.h"
 
 //// aleph
 // bees
@@ -35,7 +34,7 @@
 #include "types.h"
 #include "util.h"
 // avr32
-#include "aleph_board.h"
+#include "conf_board.h"
 #include "app_timers.h"
 #include "bfin.h"
 #include "encoders.h"
@@ -104,33 +103,18 @@ static void init_avr32(void) {
   init_oled();
   // enable interrupts
   cpu_irq_enable();
-
-  // // print_dbg("\r\n avr32 init done ");
 }
 
 // control / network / logic init
 static void init_ctl(void) {
   // disable interrupts
-    cpu_irq_disable();
+  cpu_irq_disable();
 
-  // intialize the event queue
   init_events();
-  // // print_dbg("\r\n init_events");
-
-  // intialize encoders
   init_encoders();
-  // // print_dbg("\r\n init_encoders");
-
-  //memory manager
   init_mem();  
-  // // print_dbg("\r\n init_mem");
-  // start application timers
   init_app_timers();
-
-  // // print_dbg("\r\n init_timers");
   menu_init();
-
-  // // print_dbg("\r\n menu_init");
 
   // enable interrupts
   cpu_irq_enable();
@@ -143,91 +127,48 @@ static void check_events(void) {
   if( get_next_event(&e) ) {
 
     
-      switch(e.eventType) {
+	switch(e.eventType) {
 
-      case kEventRefresh:
-	screen_refresh();
-	break;
-	//----- function switches
-      case kEventSwitchDown0: 
-	menu_handleKey(eKeyFnDownA, e.eventData);
-	break;
-      case kEventSwitchUp0:
-	menu_handleKey(eKeyFnUpA, e.eventData);
-	break;
- //      case kEventSwitchDown1:
-	// menu_handleKey(eKeyFnDownB, e.eventData);
-	// break;
- //      case kEventSwitchUp1:
-	// menu_handleKey(eKeyFnUpB, e.eventData);
-	// break;
- //      case kEventSwitchUp2:
-	// menu_handleKey(eKeyFnUpC, e.eventData);
-	// break;
+	case kEventRefresh:
+	  screen_refresh();
+	  break;
+	  //----- function switches
+	case kEventSwitchDown0: 
+	  menu_handleKey(eKeyFnDownA, e.eventData);
+	  break;
+	case kEventSwitchUp0:
+	  menu_handleKey(eKeyFnUpA, e.eventData);
+	  break;
 
-	// // mode switch
- //      case kEventSwitchDown4:
-	// // mode ^= 1;
-	// // if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
-	// // else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-	// menu_handleKey(eKeyMode, e.eventData);
-	// break;
-	// // power switch
- //      case kEventSwitchDown5:
-	// //	screen_line(0, 0, "powering down!", 0x3f);
-	// //	// print_dbg("\r\n AVR32 received power down switch event");
-	// // screen_refresh();
-	// gpio_clr_gpio_pin(POWER_CTL_PIN);
-	// break;
- //      case kEventEncoder0:
-	// 		// // print_dbg("\r\n encoder 0");
- //      	if(e.eventData > 0) {
- //      	  menu_handleKey(eKeyEncUpD, e.eventData);
- //      	} else {
- //      	  menu_handleKey(eKeyEncDownD, e.eventData);
- //      	}
- //      	break;
- //      case kEventEncoder1:
-	// // // print_dbg("\r\n encoder 1");
-	// if(e.eventData > 0) {
-	//   menu_handleKey(eKeyEncUpC, e.eventData);
-	// } else {
-	//   menu_handleKey(eKeyEncDownC, e.eventData);
-	// }
-	// break;
-      case kEventEncoder2:
-	// // print_dbg("\r\n encoder 2");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpB, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownB, e.eventData);
-	}
-	break;
-      case kEventEncoder3:
-	// // print_dbg("\r\n encoder 3");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpA, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownA, e.eventData);
-	}
-	break;
+	case kEventEncoder2:
+	  if(e.eventData > 0) {
+		menu_handleKey(eKeyEncUpB, e.eventData);
+	  } else {
+		menu_handleKey(eKeyEncDownB, e.eventData);
+	  }
+	  break;
+	case kEventEncoder3:
+	  // // print_dbg("\r\n encoder 3");
+	  if(e.eventData > 0) {
+		menu_handleKey(eKeyEncUpA, e.eventData);
+	  } else {
+		menu_handleKey(eKeyEncDownA, e.eventData);
+	  }
+	  break;
 
 
     } // if event
   } // if !startup
 }
 
-//int main(void) {
 ////main function
 int main (void) {
-  wdt_disable();
 
+  wdt_disable();
+  
   u8 isFirstRun = 0;
   u8 isSwDown = 0;
   
-  /// trying this...
-  //  wdt_clear();
-  //  wdt_disable();
 
   /// check pin and jump out
   gpio_enable_pin_pull_up(SW_MODE_PIN);
@@ -237,25 +178,21 @@ int main (void) {
   if(!isSwDown) {
     /// hardcoded jump to runtime code location
     asm volatile (
-    		  " mov   r0,LO(0x80008000)\n\t"
-    		  " orh   r0,HI(0x80008000)\n\t"
-    		  " mov   pc,r0"
-    		  );
+				  " mov   r0,LO(0x80008000)\n\t"
+				  " orh   r0,HI(0x80008000)\n\t"
+				  " mov   pc,r0"
+				  );
   } else {
     // set up avr32 hardware and peripherals
     init_avr32();
 
     // wait for sd card
-    // screen_line(0, 0, "ALEPH BOOTLOADER", 0x3f);
-    // screen_refresh();
-  
-    //    // print_dbg("\r\n SD check... ");
     if (!sd_mmc_spi_mem_check()) {
       screen_line(0, 1, "no SD card found.", 0x3f);
       screen_line(0, 2, "resetting...", 0x3f);
       screen_refresh();
       delay_ms(1000);
-      watchdog_reset();
+	  watchdog_reset();
       
     }
     // initialize higher-level program stuff

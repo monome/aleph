@@ -58,8 +58,8 @@ static void read_serial_dummy(void) { return; }
 u8 monomeFrameDirty = 0;
 // a buffer big enough to hold all l data for 256 or arc4
 // each led gets a full byte
-u8 dummyLedBuffer[MONOME_MAX_LED_BYTES];
-u8 *monomeLedBuffer = dummyLedBuffer;
+u8 defaultLedBuffer[MONOME_MAX_LED_BYTES];
+u8 *monomeLedBuffer = defaultLedBuffer;
 
 // global pointers to send functions.
 read_serial_t monome_read_serial = &read_serial_dummy;

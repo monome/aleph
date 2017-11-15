@@ -169,9 +169,6 @@ static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventMonomeRefresh] = &handler_MonomeRefresh;
     app_event_handlers[kEventMonomeGridKey] = &dummy_handler;
     app_event_handlers[kEventMonomeRingEnc] = &dummy_handler;
-		// no longer supported by current monome hardware
-	//    app_event_handlers[kEventMonomeGridTilt] = &dummy_handler;
-	//    app_event_handlers[kEventMonomeRingKey] = &dummy_handler;
     app_event_handlers[kEventMidiConnect] = &handler_MidiConnect;
     app_event_handlers[kEventMidiDisconnect] = &dummy_handler;
     app_event_handlers[kEventMidiPacket] = &dummy_handler;
@@ -353,10 +350,6 @@ int main(void) {
     // set up avr32 hardware and peripherals
     init_avr32();
 
-    // show the startup screen
-    //// FIXME: rewrite this somewhere else (not in screen driver)
-    //    screen_startup();
-
     // memory manager
     init_mem();
     print_dbg("\r\n init_mem");
@@ -375,8 +368,6 @@ int main(void) {
 
     // initialize flash
     firstrun = init_flash();
-    // print_dbg("r\n init flash, firstrun: ");
-    // print_dbg_ulong(firstrun);
 
     // check sw2 and force firstrun if held
     if (gpio_get_pin_value(SW2_PIN)) {
