@@ -16,9 +16,11 @@ typedef struct op_midi_out_cc_struct {
   // operator base class
   op_t super;
   // input: chan, vel, num 
-  volatile io_t* in_val[3];
+  volatile io_t* in_val[4];
   // outputs: none
   op_out_t outs[0];
+  // output midi cable
+  volatile io_t cable;
   // output channel (-1 == all channels)
   volatile io_t chan;
   // output cc num
