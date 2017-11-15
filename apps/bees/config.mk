@@ -151,3 +151,4 @@ ASFLAGS +=
 
 # debug:
 # OPTIMIZATION = -Og
+OPTIMIZATION = -Os
