@@ -11,7 +11,7 @@
 //---- descriptor strings
 static const char* op_midi_out_note_instring =  "CABLE\0  CHAN\0   NUM\0    VEL\0    PITCH\0  ";
 static const char* op_midi_out_note_outstring = "";
-static const char* op_midi_out_note_opstring = "MOUT_N";
+static const char* op_midi_out_note_opstring = "MOUTNO";
 
 //-------------------------------------------------
 //----- static function declaration

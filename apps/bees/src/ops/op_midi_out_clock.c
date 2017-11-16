@@ -11,7 +11,7 @@
 //---- descriptor strings
 static const char* op_midi_out_clock_instring =  "CABLE\0  TICK\0   START\0  CONT\0   STOP\0   ";
 static const char* op_midi_out_clock_outstring = "DUMMY\0  ";
-static const char* op_midi_out_clock_opstring = "MOUT_CLK";
+static const char* op_midi_out_clock_opstring = "MOUTCK";
 
 //-------------------------------------------------
 //----- static function declaration
