@@ -53,7 +53,6 @@ src += \
 	$(bees)/src/ops/op_is.c \
 	$(bees)/src/ops/op_kria.c \
 	$(bees)/src/ops/op_iter.c \
-	$(bees)/src/ops/op_life_raw.c \
 	$(bees)/src/ops/op_life_classic.c \
 	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
@@ -65,9 +64,12 @@ src += \
 	$(bees)/src/ops/op_mem2d.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
+	$(bees)/src/ops/op_midi_prog.c \
 	$(bees)/src/ops/op_midi_note.c \
+	$(bees)/src/ops/op_midi_clock.c \
 	$(bees)/src/ops/op_midi_out_cc.c \
 	$(bees)/src/ops/op_midi_out_note.c \
+	$(bees)/src/ops/op_midi_out_clock.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_monome_grid_classic.c \

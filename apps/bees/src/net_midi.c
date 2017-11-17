@@ -48,7 +48,9 @@ static midi_behavior_t net_midi_behaviour = {
 };
 
 void net_handle_midi_packet(u32 data) {
+#ifndef BEEKEEP
   midi_packet_parse(&net_midi_behaviour, data);
+#endif
 }
 
 static void net_midi_subscribe (op_midi_t *newSubscriber, op_midi_t **list) {

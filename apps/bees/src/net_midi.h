@@ -12,10 +12,8 @@
 
 #include "types.h"
 #include "util.h"
-#ifndef BEEKEEP
 #include "midi.h"
 #include "midi_common.h"
-#endif
 
 EXTERN_C_BEGIN
 

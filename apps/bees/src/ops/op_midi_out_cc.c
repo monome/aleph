@@ -136,7 +136,9 @@ void op_midi_out_cc_send_packet( op_midi_out_cc_t* mout ) {
   pack[1] = (u8)(mout->num);
   pack[2] = (u8)(mout->val);
 
+#ifndef BEEKEEP
   midi_write_packet(mout->cable, pack);
+#endif
 }
 
 // pickle / unpickle

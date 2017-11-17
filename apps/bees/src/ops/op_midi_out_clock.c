@@ -107,7 +107,9 @@ static void op_midi_out_clock_in_tick(op_midi_out_clock_t* mout, const io_t val)
     0,
     0
   };
+#ifndef BEEKEEP
   midi_write_packet(mout->cable, pack);
+#endif
 }
 
 static void op_midi_out_clock_in_start(op_midi_out_clock_t* mout, const io_t val) {
@@ -116,7 +118,9 @@ static void op_midi_out_clock_in_start(op_midi_out_clock_t* mout, const io_t val
     0,
     0
   };
+#ifndef BEEKEEP
   midi_write_packet(mout->cable, pack);
+#endif
 }
 
 static void op_midi_out_clock_in_cont(op_midi_out_clock_t* mout, const io_t val) {
@@ -125,7 +129,9 @@ static void op_midi_out_clock_in_cont(op_midi_out_clock_t* mout, const io_t val)
     0,
     0
   };
+#ifndef BEEKEEP
   midi_write_packet(mout->cable, pack);
+#endif
 }
 
 static void op_midi_out_clock_in_stop(op_midi_out_clock_t* mout, const io_t val) {
@@ -134,7 +140,9 @@ static void op_midi_out_clock_in_stop(op_midi_out_clock_t* mout, const io_t val)
     0,
     0
   };
+#ifndef BEEKEEP
   midi_write_packet(mout->cable, pack);
+#endif
 }
 
 // pickle / unpickle

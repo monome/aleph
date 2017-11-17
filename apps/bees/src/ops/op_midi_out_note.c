@@ -147,7 +147,9 @@ static void op_midi_out_note_in_pitch(op_midi_out_note_t* op, const io_t v) {
   pack[0] |= (u8)(op->chan & 0x0f);
   pack[1] = 0x7f & midi_pitch; // bits 0 - 7
   pack[2] = 0x7f & (midi_pitch >> 7); // bits 8 - 14
+#ifndef BEEKEEP
   midi_write_packet(op->cable, pack);
+#endif
 }
 
 // build and send a midi serial packet
@@ -163,7 +165,9 @@ void op_midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   pack[1] = (u8)(mout->num);
   pack[2] = (u8)(mout->vel);
 
+#ifndef BEEKEEP
   midi_write_packet(mout->cable, pack);
+#endif
 }
 
 // pickle / unpickle
