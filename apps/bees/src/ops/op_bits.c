@@ -96,7 +96,7 @@ static void op_bits_in_index(op_bits_t* bits, const io_t val) {
   
 
   for(u8 i=0;i<8;i++) {
-    net_activate(bits, i, !!(bits->index & (1<<i)));    // !! turns num into 0 or 1
+    net_activate(bits, i+1, (bits->index >> i) & 1);
   }
 }
 

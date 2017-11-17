@@ -94,7 +94,7 @@ io_t scaler_integrator_short_in(void* scaler, s32 x) {
   // value table is monotonic, can binary search
   s32 jl = 0;
   s32 ju = tabSize - 1;
-  s32 jm;
+  s32 jm = 0;
 
   print_dbg("\r\n scaler_integrator_short_in, x: 0x");
   print_dbg_hex(x);

@@ -43,7 +43,6 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpIter,
   eOpKria,
   eOpLifeClassic,
-  eOpLifeRaw,
   eOpList2,
   eOpList8,
   eOpList16,
@@ -54,10 +53,12 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMem2d,
   eOpMetro,
   eOpMidiCC,
-  eOpMidiProg,
+  eOpMidiClock,
   eOpMidiNote,
+  eOpMidiProg,
   eOpMidiOutCC,
   eOpMidiOutNote,
+  eOpMidiOutClock,
   eOpMod,
   eOpCascades, // "mp"
   eOpMul,
@@ -368,10 +369,10 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
   }, {
-    .name = "LIFERAW",
-    .size = sizeof(op_life_raw_t),
-    .init = &op_life_raw_init,
-    .deinit = NULL
+    .name = "MIDICLK",
+    .size = sizeof(op_midi_clock_t),
+    .init = &op_midi_clock_init,
+    .deinit = &op_midi_clock_deinit
   }, {
     .name = "MAGINC",
     .size = sizeof(op_maginc_t),
@@ -396,6 +397,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "MIDIPROG",
     .size = sizeof(op_midi_prog_t),
     .init = &op_midi_prog_init,
+    .deinit = &op_midi_prog_deinit
+  }, {
+    .name = "MOUT_CLK",
+    .size = sizeof(op_midi_out_clock_t),
+    .init = &op_midi_out_clock_init,
     .deinit = NULL
   }
 };

@@ -26,7 +26,7 @@ static u8* op_midi_prog_pickle(op_midi_prog_t* mprog, u8* dst);
 static const u8* op_midi_prog_unpickle(op_midi_prog_t* mprog, const u8* src);
 
 /// midi event handler
-static void op_midi_prog_handler(op_midi_t* op_midi, u32 data);
+static void op_midi_prog_handler(op_midi_prog_t *op, u8 ch, u8 num);
 
 // input func pointer array
 static op_in_fn op_midi_prog_in_fn[1] = {
@@ -47,7 +47,7 @@ void op_midi_prog_init(void* mem) {
   op->super.unpickle = (op_unpickle_fn) (&op_midi_prog_unpickle);
 
   //--- midi
-  op->midi.handler = (midi_handler_t)&op_midi_prog_handler;
+  op->midi.handler.program_change = (net_midi_program_change_t)&op_midi_prog_handler;
   op->midi.sub = op;
 
   // superclass state
@@ -70,13 +70,13 @@ void op_midi_prog_init(void* mem) {
 
   op->chan = op_from_int(-1);
 
-  net_midi_list_push(&(op->midi));
+  net_midi_program_change_subscribe(&(op->midi));
 }
 
 // de-init
 void op_midi_prog_deinit(void* op) {
   // remove from list
-  net_midi_list_remove( &(((op_midi_note_t*)op)->midi) );
+  net_midi_program_change_unsubscribe( &(((op_midi_note_t*)op)->midi) );
 }
 
 //-------------------------------------------------
@@ -91,31 +91,11 @@ static void op_midi_prog_in_chan(op_midi_prog_t* op, const io_t v) {
 }
 
 // midi event handler
-static void op_midi_prog_handler(op_midi_t* op_midi, u32 data) {
-  static u8 com;
-  static io_t ch, val;
-  op_midi_prog_t* op = (op_midi_prog_t*)(op_midi->sub);
-
-  // check command: status high nib
-  com = (data & 0xf0000000) >> 28; 
-  if (com == 0xc) { // program change
-    if(op->chan < 0) {
-      // take all channels
-      val = (data & 0x00ff0000) >> 16;
-      /* val = (data & 0x0000ff00) >> 8; */
-      net_activate(op, 0, val);
-    } else {
-      // check channel: status low nib
-      ch = (data & 0x0f000000) >> 24;
-      if(ch == op->chan) {
-	val = (data & 0x00ff0000) >> 16;
-	/* val = (data & 0x0000ff00) >> 8; */
-	net_activate(op, 0, val);
-      }
-    }
+static void op_midi_prog_handler(op_midi_prog_t *op, u8 ch, u8 num) {
+  if(op->chan == -1 || op->chan == ch) {
+    net_activate(op, 0, num);
   }
 }
-
 // pickle / unpickle
 u8* op_midi_prog_pickle(op_midi_prog_t* mprog, u8* dst) {
   dst = pickle_io(mprog->chan, dst);

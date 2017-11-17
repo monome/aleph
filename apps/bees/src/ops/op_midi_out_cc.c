@@ -9,9 +9,9 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_out_cc_instring =  "CHAN\0   NUM\0    VAL\0    ";
+static const char* op_midi_out_cc_instring =  "CABLE\0  CHAN\0   NUM\0    VAL\0    ";
 static const char* op_midi_out_cc_outstring = "";
-static const char* op_midi_out_cc_opstring = "MOUT_CC";
+static const char* op_midi_out_cc_opstring = "MOUTCC";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -19,6 +19,7 @@ static const char* op_midi_out_cc_opstring = "MOUT_CC";
 //---- input functions
 
 //// network inputs: 
+static void op_midi_out_cc_in_cable(op_midi_out_cc_t* mout, const io_t val);
 static void op_midi_out_cc_in_chan(op_midi_out_cc_t* mout, const io_t val);
 static void op_midi_out_cc_in_val(op_midi_out_cc_t* mout, const io_t val);
 static void op_midi_out_cc_in_num(op_midi_out_cc_t* mout, const io_t val);
@@ -31,7 +32,8 @@ static const u8* op_midi_out_cc_unpickle(op_midi_out_cc_t* mout, const u8* src);
 static void op_midi_out_cc_send_packet( op_midi_out_cc_t* mout );
 
 // input func pointer array
-static op_in_fn op_midi_out_cc_in_fn[3] = {
+static op_in_fn op_midi_out_cc_in_fn[4] = {
+  (op_in_fn)&op_midi_out_cc_in_cable,
   (op_in_fn)&op_midi_out_cc_in_chan,
   (op_in_fn)&op_midi_out_cc_in_num,
   (op_in_fn)&op_midi_out_cc_in_val,
@@ -55,7 +57,7 @@ void op_midi_out_cc_init(void* mem) {
   op->super.type = eOpMidiOutCC;
   //  op->super.flags |= (1 << eOpFlagMidiIn);
 
-  op->super.numInputs = 3;
+  op->super.numInputs = 4;
   op->super.numOutputs = 0;
 
   op->super.in_val = op->in_val;
@@ -65,9 +67,10 @@ void op_midi_out_cc_init(void* mem) {
   op->super.inString = op_midi_out_cc_instring;
   op->super.outString = op_midi_out_cc_outstring;
 
-  op->in_val[0] = &(op->chan);
-  op->in_val[1] = &(op->num);
-  op->in_val[2] = &(op->val);
+  op->in_val[0] = &(op->cable);
+  op->in_val[1] = &(op->chan);
+  op->in_val[2] = &(op->num);
+  op->in_val[3] = &(op->val);
 
   op->chan = OP_ONE;
   op->num = 0;
@@ -84,13 +87,25 @@ void op_midi_out_cc_deinit(void* op) {
 //----- static function definition
 
 //--- network input functions
+static void op_midi_out_cc_in_cable(op_midi_out_cc_t* op, const io_t v) {
+  // FIXME:: these checks should use io_t specific macros
+  if(v < 0) {
+    op->cable = 0;
+  }
+  else if(v > 16) {
+    op->cable = 16;
+  }
+  else {
+    op->cable = v;
+  }
+}
+
 static void op_midi_out_cc_in_chan(op_midi_out_cc_t* op, const io_t v) {
   // FIXME:: these checks should use io_t specific macros
   if(v < -1) { op->chan = -1;  }
   else if(v > 15) { op->chan = 15; } 
   else { op->chan = v; }
 }
-
 
 static void op_midi_out_cc_in_num(op_midi_out_cc_t* op, const io_t v) {
   // FIXME:: these checks should use io_t specific macros
@@ -121,24 +136,22 @@ void op_midi_out_cc_send_packet( op_midi_out_cc_t* mout ) {
   pack[1] = (u8)(mout->num);
   pack[2] = (u8)(mout->val);
 
-  /* print_dbg("\r\n midi_out_cc_send_packet; data: "); */
-  /* print_dbg_char_hex(pack[0]);    print_dbg(" "); */
-  /* print_dbg_char_hex(pack[1]);    print_dbg(" "); */
-  /* print_dbg_char_hex(pack[2]);    print_dbg(" "); */
-
-  midi_write(pack, 3);
-
+#ifndef BEEKEEP
+  midi_write_packet(mout->cable, pack);
+#endif
 }
 
 // pickle / unpickle
 u8* op_midi_out_cc_pickle(op_midi_out_cc_t* op, u8* dst) {
+  dst = pickle_io(op->cable, dst);
   dst = pickle_io(op->chan, dst);
   dst = pickle_io(op->num, dst);
   return dst;
 }
 
 const u8* op_midi_out_cc_unpickle(op_midi_out_cc_t* op, const u8* src) {
-  src = unpickle_io(src, (u32*)&(op->chan));
+  src = unpickle_io(src, (u32*)&(op->cable));
+  src = unpickle_io(src, (u32*)&(op->num));
   src = unpickle_io(src, (u32*)&(op->num));
   op->chan = op_to_int(op->chan);
   op->num = op_to_int(op->num);

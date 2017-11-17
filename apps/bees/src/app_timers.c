@@ -164,7 +164,7 @@ void init_app_timers(void) {
 
 // monome: start polling
 void timers_set_monome(void) {
-  timer_add(&monomePollTimer, 	 5, &monome_poll_timer_callback, NULL );
+  timer_add(&monomePollTimer, 	 1, &monome_poll_timer_callback, NULL );
   timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback, NULL );
 }
 
@@ -177,7 +177,7 @@ void timers_unset_monome(void) {
 // midi : start polling
 void timers_set_midi(void) {
   /// FIXME: where should default periods be defined...
-  timer_add( &midiPollTimer, 5, &midi_poll_timer_callback, NULL );
+  timer_add( &midiPollTimer, 1, &midi_poll_timer_callback, NULL );
   // TODO??
   //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, NULL, 1);
 }

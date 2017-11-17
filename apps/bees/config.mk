@@ -65,7 +65,6 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_iter.c \
 	$(APP_DIR)/src/ops/op_kria.c \
 	$(APP_DIR)/src/ops/op_life_classic.c \
-	$(APP_DIR)/src/ops/op_life_raw.c \
 	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_list16.c \
@@ -77,7 +76,9 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
 	$(APP_DIR)/src/ops/op_midi_prog.c \
+	$(APP_DIR)/src/ops/op_midi_clock.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
+	$(APP_DIR)/src/ops/op_midi_out_clock.c \
 	$(APP_DIR)/src/ops/op_midi_out_cc.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mod.c \
@@ -151,3 +152,4 @@ ASFLAGS +=
 
 # debug:
 # OPTIMIZATION = -Og
+OPTIMIZATION = -O2
