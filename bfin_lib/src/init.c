@@ -12,15 +12,10 @@ volatile s32 iRxBuf[4];
 //----- function definitions
 // initialize clocks
 void init_clocks(void) {
-
-  // set MSEL = 20 for core clock of 108Mhz
-  //  *pPLL_CTL = 0x2800;
-  /////// changing to 533Mhz part
   /// MSEL = 19
   //// VCO = 19 * CLKIN = 513
   *pPLL_CTL = 0x2600;
-  ssync();
-  
+  ssync();  
 }
 
 // initialize EBI
@@ -30,10 +25,6 @@ void init_EBIU(void) {
   *pEBIU_AMBCTL1 = 0xFFFFFF02;
   ssync();
   
-  // -- not sure why there is a read here, possibly anomaly 05000157?
-  //temp = *pEBIU_AMBCTL1;
-  //temp++;
-  
   *pEBIU_AMGCTL = 0x00FF;
   ssync();
   
@@ -42,17 +33,15 @@ void init_EBIU(void) {
     return;
   }
   
-  //SDRAM Refresh Rate Control Register
-  //  *pEBIU_SDRRC = 0x01A0;
+  // SDRAM Refresh Rate Control Register
   // for 108Mhz system clock:
   *pEBIU_SDRRC = 835;
   
-  //SDRAM Memory Bank Control Register
+  // SDRAM Memory Bank Control Register
   *pEBIU_SDBCTL = 0x0025; //1.7	64 MB bank size
-  //	*pEBIU_SDBCTL = 0x0013;	//1.6 and below 32 MB
   
-  //SDRAM Memory Global Control Register
-  *pEBIU_SDGCTL = 0x0091998d;//0x998D0491;
+  // SDRAM Memory Global Control Register
+  *pEBIU_SDGCTL = 0x0091998d;
   ssync();
 }
 
@@ -86,10 +75,7 @@ void init_spi_slave(void) {
   *pSPI_STAT |= 0x10;  
   *pSPI_STAT |= 0x10;  
   // slave mode, 16 bit transfers, MSB first, non-dma rx mode, overwrite (interrupt when SPI_RDBR is full) 
-  // phase: seems crazy but i think bfin and avr32 have opposite definitions of clock phase! oh lordy
-  //  *pSPI_CTL = CPHA | SIZE | GM;
   // actually need 8 bits to be compatible with SPI-boot
-  //----->>>>>  *pSPI_CTL = CPHA | GM;
   *pSPI_CTL = CPHA | GM | SZ;
   // enable transmit on MISO
   *pSPI_CTL |= EMISO;
@@ -118,31 +104,20 @@ void init_sport0(void)
 }
 
 // CONFIGURE sport1  [ drive 1x AD5686 from DTSEC ]
-void init_sport1(void) {
-  //----- note: edge selection is for *driving* the pins, sampled opposite
-  //// TFS/clk driven w/ rising edge : TCKFE  = 0
-  //// early frame sync              : LATFS  = 0
-  //// TFS active high               : LTFS   = 0
-  //// data-dependent TFS            : DITFS  = 0
-  //// internal clock                : ITCLK  = 1
-  //// internal TFS                  : ITFS   = 1
-  //// frame sync required           : TFSR  = 1
-  //// no companding                 : TDTYPE = 00
-  //// MSB first                     : TLSBIT = 0  
-  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
- 
-  //// normal mode             : TSFSE = 0
-  //// secondary side enabled : TXSE  = 1
-  ///// 24-bit word length
-  //     *pSPORT1_TCR2 = 23 | TXSE ;
-  //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE ;
+void init_sport1(void) {  
+  // NB: edge selection is for *driving* the pins, sampled opposite
+  // internal clock, internal frame sync, required frame sync,
+  // late frame sync, active low, driven on rising edge
+  *pSPORT1_TCR1 =  ITCLK | ITFS | TFSR | LTFS | LATFS;
+  // normal mode, not stereo : TSFSE = 0
+  // secondary data enabled  : TXSE  = 1
+  // 24-bit word length
+  *pSPORT1_TCR2 = 23 | TXSE ;
+  
   // tclk = sclk / ( 2 x (div + 1)
-  /// DAC datasheet indicates we can go up to 50Mhz
-  // here's 27 Mhz?
-  /// this works fine in the triangle test
-  *pSPORT1_TCLKDIV = 1;
-
+  // we want < 25Mhz
+  // sclk = 108M, so:
+   *pSPORT1_TCLKDIV = 2; // = 18 Mhz
 }
 
 
@@ -178,19 +153,15 @@ void init_DMA(void) {
 
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
-  // configure DMA4
-  /// no interrupt on completion
-  *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
-  //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
+  // 32-bit transfers, autobuffer, no interrupt
+  *pDMA4_CONFIG = WDSIZE_32; // no autobuffer!
   // Start address of data buffer
   *pDMA4_START_ADDR = (void *)(&cvTxBuf);
   // DMA inner loop count
   /// primary tx data is dummy!
   *pDMA4_X_COUNT = 1;
-  // Inner loop address increment
+  // inner loop address increment
   *pDMA4_X_MODIFY = 4;
-
-
 }
 
 // enable sport0 DMA
@@ -206,20 +177,15 @@ void enable_DMA_sport0(void) {
 
 // begin transfers with sport1 and dma4
 void enable_DMA_sport1(void) {
-  // enable DMAs
-  *pDMA4_CONFIG	= (*pDMA4_CONFIG | DMAEN);
   // enable sport1 tx
   *pSPORT1_TCR1 	= (*pSPORT1_TCR1 | TSPEN);
-  //  *pSPORT1_RCR1 	= (*pSPORT1_RCR1 | RSPEN); 
+    // enable DMA4
+  *pDMA4_CONFIG	= (*pDMA4_CONFIG | DMAEN);
 }
 
 
-// initialize programmable flags for button input
+// initialize programmable flags
 void init_flags(void) {
-  // inputs 
-  //// no gpio input
-  //  *pFIO_INEN = PF_IN;
-
   // outputs
   *pFIO_DIR = 0;
   *pFIO_DIR |= CODEC_RESET_UNMASK;
@@ -229,43 +195,50 @@ void init_flags(void) {
   *pFIO_DIR |= READY_UNMASK;
   *pFIO_DIR |= LED3_UNMASK;
   *pFIO_DIR |= LED4_UNMASK;
-
-  /* // edge-sensitive */
-  /* *pFIO_EDGE = 0x0f00; */
-  /* // both rise and fall */
-  /* *pFIO_BOTH = 0x0f00; */
-  /* // set interrupt mask */
-  /* *pFIO_MASKA_D = 0x0f00; */
 }
 
 // assign interrupts
 void init_interrupts(void) {
   int i=0;
-  
-  // assign peripheral interrupts to core IDs
-  *pSIC_IAR0 = 0xffffffff;
-  // sport0 rx (dma1) -> ID4 = IVG11
-  // spi rx           -> ID2 = IVG9
-  // sport1 tx        -> ID3 = IVG10
-  //  *pSIC_IAR1 = 0xff32ff2f;
-  //  *pSIC_IAR2 = 0xffffffff;
-
-
+#if 1
   // by default:
   // sport0 rx (dma1) -> ID2 = IVG9
   // sport1 tx        -> ID2 = IVG9
   // spi rx           -> ID3 = IVG10
 
   // assign ISRs to interrupt vectors:
-  //// ok, this ISR will serve both sports if enabled..
+  // NB: if we enable sport1 tx ISR without reassignment,
+  // this ISR will handle both sports...
   *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
-
-  //  *pEVT10 = sport1_tx_isr;
 
   // unmask in the core event processor
   asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 
   // unmask peripheral interrupts
-  *pSIC_IMASK = 0x00003200; 
+  *pSIC_IMASK = 0x00003200;
+  
+#else
+  // if we wanted to get sport1 tx interrupts (e.g. to daisy-chain DAC channels)
+  // assign sport1 tx -> ID4 = IVG11
+  // leave all others at default
+  *pSIC_IAR1 = 0x33342221;
+  
+  // assign ISRs to interrupt vectors:
+  *pEVT9 = sport0_rx_isr;
+  *pEVT10 = spi_rx_isr;
+  *pEVT11 = sport1_tx_isr;
+
+  // unmask in the core event processor
+  asm volatile ("cli %0; "
+				"bitset(%0, 9); "
+				"bitset(%0, 10); "
+				"bitset(%0, 11); "
+				"sti %0; "
+				"csync; " : "+d"(i));
+  // unmask peripheral interrupts
+  *pSIC_IMASK = 0x0000361f;
+  //// BTW: i don't know why we need to unmask IVG12 and IVG13...
+  /// if we leave the flags zeroed nothing ever happens!
+#endif
 }

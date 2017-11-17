@@ -14,9 +14,7 @@
 //fract32 in0, in1, in2, in3;
 fract32 in[4] = { 0, 0, 0, 0 };
 // 4 channels of output to ad1836
-//fract32 out0, out1, out2, out3;
 fract32 out[4] = { 0, 0, 0, 0 };
-
 
 // audio processing flag
 volatile u8 processAudio = 0;
@@ -49,31 +47,21 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R1] = out[3] >> 8;
 
   // module-defined frame processing function
+  module_process_frame();
 
-  module_process_frame();  
-
-  /* //// TEST: wire */
-  /* out0 = in0; */
-  /* out1 = in1; */
-  /* out2 = in2; */
-  /* out3 = in3; */
-
-  /* //// TEST: wire */
-  /* iTxBuf[0] = iRxBuf[0]; */
-  /* iTxBuf[1] = iRxBuf[1]; */
-  /* iTxBuf[2] = iRxBuf[2]; */
-  /* iTxBuf[3] = iRxBuf[3]; */
-
+  // inform the world we're ready to receive param changes
   READY_HI;
+  
   /// if this interrupt came from DMA1, clear it and continue(W1C)
   if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
 
 }
 
 // ISR on sport1 tx completion
+static int sport1_tx_isr_count = 0;
 void sport1_tx_isr() {
-  // clear the interrupt flag, leave enabled
-  *pDMA4_IRQ_STATUS = 0x0001;
+  // not actually using this 
+  *pDMA4_IRQ_STATUS = 0x0001;  
 }
 
 

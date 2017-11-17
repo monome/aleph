@@ -2,7 +2,6 @@
 #define _ALEPH_BFIN_UTIL_
 
 // some bitfield and bit-array macros
-//#define BITS_PER_BYTE	8
 #define BIT(x) (1 << (x))
 #define BITMASK(b) (1 << ((b) % 8))
 #define BITSLOT(b) ((b) >> 3)
