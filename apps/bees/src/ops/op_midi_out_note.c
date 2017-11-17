@@ -9,8 +9,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_out_note_instring =  "CABLE\0  CHAN\0   NUM\0    VEL\0    PITCH\0  ";
-static const char* op_midi_out_note_outstring = "";
+static const char* op_midi_out_note_instring =  "CABLE\0  CHAN\0   NUM\0    VEL\0    PITCH\0  PROG\0    ";
+static const char* op_midi_out_note_outstring = "DUMMY\0  ";
 static const char* op_midi_out_note_opstring = "MOUTNO";
 
 //-------------------------------------------------
@@ -24,6 +24,7 @@ static void op_midi_out_note_in_chan(op_midi_out_note_t* mout, const io_t val);
 static void op_midi_out_note_in_vel(op_midi_out_note_t* mout, const io_t val);
 static void op_midi_out_note_in_num(op_midi_out_note_t* mout, const io_t val);
 static void op_midi_out_note_in_pitch(op_midi_out_note_t* mout, const io_t val);
+static void op_midi_out_note_in_prog(op_midi_out_note_t* mout, const io_t val);
 
 // pickles
 static u8* op_midi_out_note_pickle(op_midi_out_note_t* mout, u8* dst);
@@ -33,12 +34,13 @@ static const u8* op_midi_out_note_unpickle(op_midi_out_note_t* mout, const u8* s
 static void op_midi_out_note_send_packet( op_midi_out_note_t* mout );
 
 // input func pointer array
-static op_in_fn op_midi_out_note_in_fn[5] = {
+static op_in_fn op_midi_out_note_in_fn[6] = {
   (op_in_fn)&op_midi_out_note_in_cable,
   (op_in_fn)&op_midi_out_note_in_chan,
   (op_in_fn)&op_midi_out_note_in_num,
   (op_in_fn)&op_midi_out_note_in_vel,
   (op_in_fn)&op_midi_out_note_in_pitch,
+  (op_in_fn)&op_midi_out_note_in_prog,
 };
 
 //-------------------------------------------------
@@ -59,8 +61,8 @@ void op_midi_out_note_init(void* mem) {
   op->super.type = eOpMidiOutNote;
   //  op->super.flags |= (1 << eOpFlagMidiIn);
 
-  op->super.numInputs = 5;
-  op->super.numOutputs = 0;
+  op->super.numInputs = 6;
+  op->super.numOutputs = 1;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -74,12 +76,14 @@ void op_midi_out_note_init(void* mem) {
   op->in_val[2] = &(op->num);
   op->in_val[3] = &(op->vel);
   op->in_val[4] = &(op->pitch);
+  op->in_val[5] = &(op->prog);
 
   op->cable = 0;
   op->chan = OP_ONE;
   op->num = 0;
   op->vel = 0;
   op->pitch = 0;
+  op->prog = 0;
 
 }
 
@@ -147,6 +151,22 @@ static void op_midi_out_note_in_pitch(op_midi_out_note_t* op, const io_t v) {
   pack[0] |= (u8)(op->chan & 0x0f);
   pack[1] = 0x7f & midi_pitch; // bits 0 - 7
   pack[2] = 0x7f & (midi_pitch >> 7); // bits 8 - 14
+#ifndef BEEKEEP
+  midi_write_packet(op->cable, pack);
+#endif
+}
+
+static void op_midi_out_note_in_prog(op_midi_out_note_t* op, const io_t v) {
+  // FIXME:: these checks should use io_t specific macros
+  if(v < 0) { op->prog = 0; }
+  else if (v > 127) { op->prog = 127; }
+  else { op->prog = v; }
+
+  u8 pack[3];
+  pack[0] = 0xc0;
+  pack[0] |= (u8)(op->chan & 0x0f);
+  pack[1] = (u8)(op->prog);
+  pack[2] = 0;
 #ifndef BEEKEEP
   midi_write_packet(op->cable, pack);
 #endif
