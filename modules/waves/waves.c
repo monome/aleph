@@ -439,14 +439,10 @@ static long int ledCount = 0;
   // something to do with access modifiers and the compiler?
   // process the current channel
   // do nothing if the value is stable
-  if( filter_1p_sync( &(cvSlew[cvChan]) ) ) {
-    ;;
-  } else {
-    // update the slew filter and store the value
-      cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-      // send the value to the cv driver
-      cv_update( cvChan, cvVal[cvChan] );
-  }
+  // update the slew filter and store the value
+  cvVal[cvChan] = filter_1p_lo_norm_next(&(cvSlew[cvChan]));
+  // send the value to the cv driver
+  cv_update( cvChan, cvVal[cvChan] );
 
   // update the channel to be processed
   if(++cvChan == 4) {
