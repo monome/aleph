@@ -36,7 +36,6 @@ extern volatile s32 iTxBuf[];
 
 extern volatile u32 cvTxBuf;
 
-
 // audio processing flag
 extern volatile u8 processAudio;
 

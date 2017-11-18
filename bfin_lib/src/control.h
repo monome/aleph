@@ -45,18 +45,6 @@ typedef struct _ctlEvent {
   ParamValue val;
 } ctlEvent_t;
 
-//---------------------------------------------
-//---- variables
-
-
-//-----------------------
-//----- functions
-
-/* // check dirty flag */
-/* inline u8 get_param_dirty(u32 idx) { */
-/*   return BITTEST(paramsDirty, idx); */
-/* } */
-
 
 // add param change to buffer
 extern u8 ctl_param_change(u32 param, u32 value);

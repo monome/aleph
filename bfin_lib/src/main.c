@@ -58,7 +58,7 @@ int main(void) {
   // initialize the codec
   init_1939();
 
-  // leds on
+  // leds
   LED3_HI;
   LED4_HI;
 
@@ -76,8 +76,5 @@ int main(void) {
     instead, we are asking avr32 to hold off sending params 
     for as long as the ready-pin is deasserted by frame or control change processing.
     */
-    /// while frame processing 
-    //    ctl_next_frame();	
-    //    ctl_perform_last_change();			
   }
 }

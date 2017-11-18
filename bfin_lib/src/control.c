@@ -8,9 +8,8 @@
 /*
   there is no buffer or separate task for control changes.
   they are set directly from the SPI ISR!
-  very bad.
+  not so great.
  */
-
 #if 0
 
 // ordered set of param changes
@@ -22,11 +21,7 @@ static s32 evCount = 0;
 // audio frames since last update
 static u32 frameCount = 0;
 
-// get dirty flag for param idx (inlined in header)
-//extern u8 get_param_dirty(u32 idx);
-
 static inline u8 get_param_dirty(u32 idx) {
-  //return BITTEST(paramsDirty, idx);
   return paramsDirty[idx] > 0;
 }
 static void set_param_dirty(u32 idx) {
@@ -38,10 +33,6 @@ static void set_param_dirty(u32 idx) {
 static void clear_param_dirty(u32 idx) {
   paramsDirty[idx] = 0;
 }
-// clear all dirty flags
-/* static void clear_all_param_dirty(void) { */
-/*   memset(paramsDirty, 0, NUM_PARAMS); */
-/* } */
 
 // request a parameter change.
 extern u8 ctl_param_change(u32 idx, u32 val) {
