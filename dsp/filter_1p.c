@@ -70,6 +70,16 @@ fract32 filter_1p_lo_next(filter_1p_lo* f) {
   return f->y;
 }
 
+fract32 filter_1p_lo_norm_next(filter_1p_lo* f) {
+  fract32 difference = sub_fr1x32(f->y, f->x);
+  fract32 radix = norm_fr1x32(difference);
+  f->y = add_fr1x32( f->x,
+		     shr_fr1x32(mult_fr1x32x32(f->c,
+					       shl_fr1x32(difference, radix)),
+				radix));
+  return f->y;
+}
+
 
 
 // compare target/value
