@@ -118,7 +118,13 @@ void op_metro_in_period (op_metro_t* metro, const io_t v) {
   } else {
     metro->period = v;
   }
-  metro->timer.ticks = op_to_int(metro->period);
+  // XXX hack alert! the reported time (in milliseconds) seem to be
+  // always off a bit.  Measured them & adding this correction
+  metro->timer.ticks = metro->period;
+  metro->timer.ticks = metro->timer.ticks << 1;
+  metro->timer.ticks -= metro->timer.ticks >> 7;
+  metro->timer.ticks -= metro->timer.ticks >> 8;
+  metro->timer.ticks -= metro->timer.ticks >> 9;
 }
 
 
