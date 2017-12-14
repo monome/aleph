@@ -336,6 +336,29 @@ void module_init(void) {
   param_setup( 	eParam_del1_del0,		0 );
   param_setup( 	eParam_del1_del1,		0 );
 
+  param_setup(eParam_adc0_del0, PARAM_AMP_6);
+  param_setup(eParam_adc0_del1, PARAM_AMP_6);
+  param_setup(eParam_adc1_del0, 0);
+  param_setup(eParam_adc1_del1, 0);
+  param_setup(eParam_adc2_del0, 0);
+  param_setup(eParam_adc2_del1, 0);
+  param_setup(eParam_adc3_del0, 0);
+  param_setup(eParam_adc3_del1, 0);
+
+  param_setup(eParam_del0_dac0, PARAM_AMP_6);
+  param_setup(eParam_del0_dac1, 0);
+  param_setup(eParam_del0_dac2, 0);
+  param_setup(eParam_del0_dac3, 0);
+  param_setup(eParam_del1_dac0, 0);
+  param_setup(eParam_del1_dac1, PARAM_AMP_6);
+  param_setup(eParam_del1_dac2, 0);
+  param_setup(eParam_del1_dac3, 0);
+
+  param_setup( 	eParam_del1_dac0,		PARAM_AMP_12 );
+  param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );
+  param_setup( 	eParam_del1_dac2,		PARAM_AMP_12 );
+  param_setup( 	eParam_del1_dac3,		PARAM_AMP_6 );
+
   param_setup( 	eParam_adc0_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac1,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac2,		PARAM_AMP_12 );
