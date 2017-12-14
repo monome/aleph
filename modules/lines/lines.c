@@ -300,7 +300,7 @@ void module_init(void) {
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
 
-  param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
+  param_setup( 	eParam_loop0,		10000 );
   param_setup( 	eParam_rMul0,		0x10000 );
   param_setup( 	eParam_rDiv0,		0x10000 );
   param_setup( 	eParam_write0,		FRACT32_MAX );
@@ -308,12 +308,12 @@ void module_init(void) {
   param_setup( 	eParam_pos_write0,		0 );
   param_setup( 	eParam_pos_read0,		0 );
 
-  param_setup( 	eParam_delay0,		0x4000 );
+  param_setup( 	eParam_delay0, 1000 );
 
   param_setup( 	eParam_run_read0, 1 );
   param_setup( 	eParam_run_write0, 1 );
 
-  param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX );
+  param_setup( 	eParam_loop1,		10000 );
   param_setup( 	eParam_rMul1,		0x10000 );
   param_setup( 	eParam_rDiv1,		0x10000 );
   param_setup( 	eParam_write1,		FRACT32_MAX );
@@ -321,7 +321,7 @@ void module_init(void) {
   param_setup( 	eParam_pos_write1,		0 );
   param_setup( 	eParam_pos_read1,		0 );
 
-  param_setup( 	eParam_delay1,		0x4000 );
+  param_setup( 	eParam_delay1, 500);
 
   param_setup( 	eParam_run_read1, 1 );
   param_setup( 	eParam_run_write1, 1 );
@@ -330,6 +330,11 @@ void module_init(void) {
   param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );
   param_setup( 	eParam_del1_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_del1_dac3,		PARAM_AMP_6 );
+
+  param_setup( 	eParam_del0_del0,		0 );
+  param_setup( 	eParam_del0_del1,		0 );
+  param_setup( 	eParam_del1_del0,		0 );
+  param_setup( 	eParam_del1_del1,		0 );
 
   param_setup( 	eParam_adc0_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac1,		PARAM_AMP_12 );
