@@ -96,7 +96,11 @@ void op_delay_in_time (op_delay_t* delay, const io_t v) {
   } else {
     delay->ms = v;
   }
-  delay->timer.ticks = op_to_int(delay->ms);
+  delay->timer.ticks = delay->ms;
+  delay->timer.ticks = delay->timer.ticks << 1;
+  delay->timer.ticks -= delay->timer.ticks >> 7;
+  delay->timer.ticks -= delay->timer.ticks >> 8;
+  delay->timer.ticks -= delay->timer.ticks >> 9;
 }
 
 
