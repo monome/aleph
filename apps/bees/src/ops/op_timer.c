@@ -8,6 +8,7 @@
 #include "net_protected.h"
 #include "pickle.h"
 #include "op_timer.h"
+#include "app_timers.h"
 
 //-------------------------------------------------
 //----- descriptor
@@ -74,30 +75,11 @@ static void op_timer_in_event(op_timer_t* timer, const io_t v) {
   /// FIXME: should check for overflow here...
   timer->interval = tcTicks - timer->ticks;
   timer->ticks = tcTicks;
-  // calculate output value for timer from interval
 
-  //  output will ultimately be connected to a time param
-  // time is specified in seconds, fixed-width, arbitrary radix
-  // for example, from aleph-lines:
-  // seconds in 16.16
-  // #define PARAM_SECONDS_MAX 0x003c0000
-  // #define PARAM_SECONDS_RADIX 6
+  // calculate output value in 2ms convention from libavr32_ticks
+  timer->interval = timers_libavr32_tick_to_2ms_tick(timer->interval);
+  net_activate(timer, 0, timer->interval);
 
-  /// FIXME:
-
-  /// unfortunately, timer ticks are in ms.
-  /// it would be nice if they were some 2^(-N) multiple of seconds.
-  /// however, it would make it more painful for the METRO operator.
-  /// for now let's pretend timer interval is 1/1024
-  /// reported intervals will be fast by a ratio of 1.024,
-  /// in the example above.
-
-  // XXX hack alert! the reported time (in milliseconds) seem to be
-  // always off a bit.  Measured them & adding this correction
-  timer->interval += timer->interval >> 7;
-  timer->interval += timer->interval >> 8;
-  timer->interval += timer->interval >> 9;
-  net_activate(timer, 0, timer->interval >> 1);
 }
 
 

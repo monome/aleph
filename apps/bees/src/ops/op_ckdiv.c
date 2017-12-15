@@ -121,15 +121,7 @@ void op_ckdiv_in_enable	(op_ckdiv_t* ckdiv, const io_t v) {
   }
 }
 void op_ckdiv_calculate_timings(op_ckdiv_t* ckdiv) {
-  ckdiv->ticklength = ckdiv->period;
-  ckdiv->ticklength = ckdiv->ticklength << 1;// BEES ticks are 2ms now, not 1
-
-
-  // XXX hack alert! the reported time (in milliseconds) seem to be
-  // always off a bit.  Measured them & adding this correction
-  ckdiv->ticklength -= ckdiv->ticklength >> 7;
-  ckdiv->ticklength -= ckdiv->ticklength >> 8;
-  ckdiv->ticklength -= ckdiv->ticklength >> 9;
+  ckdiv->ticklength = timers_2ms_tick_to_libavr32_tick(ckdiv->period);
 
   // recalculate cached division remainder
   ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
@@ -177,7 +169,7 @@ void op_ckdiv_in_divide (op_ckdiv_t* ckdiv, const io_t v) {
 
 // poll event handler
 void op_ckdiv_poll_handler(void* op) {
-  printf("polled!\n");
+  /* printf("polled!\n"); */
   op_ckdiv_t* ckdiv = (op_ckdiv_t*)op;
   ckdiv->tocks += ckdiv->timer.ticks;
   ckdiv->tockremainder += ckdiv->cacheRemainder;
@@ -188,7 +180,7 @@ void op_ckdiv_poll_handler(void* op) {
     ckdiv->timer.ticks += 1;
     roundup = 1;
   }
-  printf("%d tocks, ticklength = %d, roundup = %d\n", ckdiv->tocks, ckdiv->ticklength, roundup);
+  /* printf("%d tocks, ticklength = %d, roundup = %d\n", ckdiv->tocks, ckdiv->ticklength, roundup); */
   if(ckdiv->tocks + roundup >= ckdiv->ticklength) {
     /* printf("tick\n"); */
     ckdiv->tockremainder = 0;
