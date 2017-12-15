@@ -229,19 +229,17 @@ void timers_set_custom(softTimer_t* timer, u32 period, void* obj) {
 
 // XXX hack alert!
 
-// a) we define the time units for BEES to be 2ms, allowing up to a
-// minute or so of audio to be indexed using 16bit number.
-
-// b) the timing of libavr32 (in milliseconds) seems always off a bit.
+// a) the timing of libavr32 (in milliseconds) seems always off a bit.
 // Measured timings & added a weird correction which is tested & gives
 // pretty tight timing on my aleph (RV)
 
-// c) obviously the two functions below are not mutually inverse maps,
+// b) obviously the two functions below are not mutually inverse maps,
 // but they should be close enough for general use!
 
+// rename this - we changed back to 1ms clock
 s32 timers_2ms_tick_to_libavr32_tick (s16 ticks_2ms) {
   s32 ret = ticks_2ms;
-  ret = ret << 1; // 2ms clock, not 1ms
+  /* ret = ret << 1; // 2ms clock, not 1ms */
 
   // timing fudge-factor
   ret -= ret >> 7;
@@ -255,7 +253,7 @@ s16 timers_libavr32_tick_to_2ms_tick (s32 ticks_libavr32) {
   ret += ret >> 7;
   ret += ret >> 8;
   ret += ret >> 9;
-  ret = ret >> 1;
+  /* ret = ret >> 1; */
 
   //clip to s16 for extra paranoia
   if (ret >= 32767) {
