@@ -27,7 +27,7 @@ static op_in_fn op_linlin_in_fn[5] = {
 static const char* op_linlin_instring  = "IN\0     IMIN\0   IMAX\0   OMIN\0   OMAX\0   ";
 static const char* op_linlin_outstring = "VAL\0    ";
 static const char* op_linlin_opstring  = "LINLIN";
-
+static void calculate_scale_factor(op_linlin_t *linlin);
 //-------------------------------------------------
 //----- external function definitions
 void op_linlin_init(void* mem) {
@@ -58,8 +58,7 @@ void op_linlin_init(void* mem) {
   linlin->imax = 1;
   linlin->omin = 0;
   linlin->omax = 1;
-  linlin->a = 1;
-  linlin->b = 0;
+  calculate_scale_factor(linlin);
 }
 
 //-------------------------------------------------
@@ -68,36 +67,35 @@ void op_linlin_init(void* mem) {
 static void op_linlin_in_in(op_linlin_t* linlin, const io_t v) {
   // out = (in - off) * a + b;
   linlin->in = v;
-  s32 out = linlin->a * (v - linlin->off);
-  out += linlin->b;
-  out = out >> 16;
+  s32 out = linlin->scale_factor * (v - linlin->imin);
+  out = out >> 15;
+  out += linlin->omin;
   net_activate(linlin, 0, out);
 }
-void calculate_a_and_b(op_linlin_t *linlin) {
-  linlin->b = linlin->omin;
-  linlin->off = linlin->imin;
+void calculate_scale_factor(op_linlin_t *linlin) {
   s32 mul = linlin->omax - linlin->omin;
   s32 div = linlin->imax - linlin->imin;
-  linlin->a = mul << 16;
+  linlin->scale_factor = mul << 15;
   if (div) {
-    linlin->a /= div;
+    linlin->scale_factor += div >> 1;
+    linlin->scale_factor /= div;
   }
 }
 static void op_linlin_in_imin(op_linlin_t* linlin, const io_t v) {
   linlin->imin = v;
-  calculate_a_and_b(linlin);
+  calculate_scale_factor(linlin);
 }
 static void op_linlin_in_imax(op_linlin_t* linlin, const io_t v) {
   linlin->imax = v;
-  calculate_a_and_b(linlin);
+  calculate_scale_factor(linlin);
 }
 static void op_linlin_in_omin(op_linlin_t* linlin, const io_t v) {
   linlin->omin = v;
-  calculate_a_and_b(linlin);
+  calculate_scale_factor(linlin);
 }
 static void op_linlin_in_omax(op_linlin_t* linlin, const io_t v) {
   linlin->omax = v;
-  calculate_a_and_b(linlin);
+  calculate_scale_factor(linlin);
 }
 
 // pickle / unpickle

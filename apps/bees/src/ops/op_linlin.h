@@ -15,9 +15,7 @@ typedef struct op_linlin_struct {
   volatile io_t omin;
   volatile io_t omax;
   volatile io_t* in_val[5];
-  s32 a;
-  s32 b;
-  s32 off;
+  s32 scale_factor;
   op_out_t outs[1];
 } op_linlin_t;
 
