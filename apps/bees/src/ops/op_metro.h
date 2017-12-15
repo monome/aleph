@@ -27,6 +27,8 @@ typedef struct op_metro_struct {
   u32 tocks;
   u32 tockremainder;
   u32 ticklength;
+  u16 cacheDivision;
+  u16 cacheRemainder;
   // timer data
   softTimer_t timer;
   // polled operator superclass

@@ -103,9 +103,10 @@ void op_metro_in_enable	(op_metro_t* metro, const io_t v) {
   if(v > 0) {
     if(metro->enable == 0) {
       metro->enable = OP_ONE;
+      metro->timer.ticks = metro->cacheDivision;
+      metro->tockremainder = metro->cacheRemainder;
       metro->tocks = 0;
       op_metro_set_timer(metro);
-      
     }
   } else {
     if(metro->enable > 0) {
@@ -135,8 +136,11 @@ void op_metro_in_period (op_metro_t* metro, const io_t v) {
   metro->ticklength -= metro->ticklength >> 8;
   metro->ticklength -= metro->ticklength >> 9;
 
-  metro->timer.ticks = metro->ticklength / metro->divide;
-  metro->tockremainder = metro->ticklength % metro->divide;
+  metro->cacheDivision = metro->ticklength / metro->divide;
+  metro->cacheRemainder = metro->ticklength % metro->divide;
+
+  metro->timer.ticks = metro->cacheDivision;
+  metro->tockremainder = metro->cacheRemainder;
   metro->tocks = 0;
 }
 
@@ -155,16 +159,15 @@ void op_metro_in_divide (op_metro_t* metro, const io_t v) {
   else {
     metro->divide = v;
   }
-  /* metro->timer.ticks = metro->ticklength / metro->divide; */
-  /* metro->tockremainder = metro->ticklength % metro->divide; */
-  /* metro->tocks = 0; */
+  metro->cacheDivision = metro->ticklength / metro->divide;
+  metro->cacheRemainder = metro->ticklength % metro->divide;
 }
 
 
 // poll event handler
 void op_metro_poll_handler(void* op) {
   op_metro_t* metro = (op_metro_t*)op;
-  metro->timer.ticks = metro->ticklength / metro->divide;
+  metro->timer.ticks = metro->cacheDivision;
   metro->tockremainder += metro->ticklength % metro->divide;
   if(metro->tockremainder >= metro->divide) {
     metro->tockremainder -= metro->divide;
