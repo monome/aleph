@@ -35,38 +35,38 @@ void module_set_param(u32 idx, ParamValue v) {
     // delay line params
   case eParam_delay0 :
     if( check_fade_rd(0) ) {
-      delayFadeN_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
+      delayFadeN_set_delay_ms(&(lines[0]), v >> 15,  fadeTargetRd[0]);
     }
     break;
   case eParam_delay1 :
     if(check_fade_rd(1)) {
-      delayFadeN_set_delay_sec(&(lines[1]), v,  fadeTargetRd[1]);
+      delayFadeN_set_delay_ms(&(lines[1]), v >> 15,  fadeTargetRd[1]);
     }
     break;
   case eParam_loop0 :
-    delayFadeN_set_loop_sec(&(lines[0]), v, 0);
-    delayFadeN_set_loop_sec(&(lines[0]), v, 1);
+    delayFadeN_set_loop_ms(&(lines[0]), v >> 15, 0);
+    delayFadeN_set_loop_ms(&(lines[0]), v >> 15, 1);
     break;
   case eParam_loop1 :
-    delayFadeN_set_loop_sec(&(lines[1]), v , 0);
-    delayFadeN_set_loop_sec(&(lines[1]), v , 1);
+    delayFadeN_set_loop_ms(&(lines[1]), v >> 15 , 0);
+    delayFadeN_set_loop_ms(&(lines[1]), v >> 15 , 1);
     break;
   case eParam_pos_write0 :
     // check_fade_wr(0);
-    delayFadeN_set_pos_write_sec(&(lines[0]), v,  fadeTargetWr[0]);
+    delayFadeN_set_pos_write_ms(&(lines[0]), v >> 15,  fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
     // check_fade_wr(1);
-    delayFadeN_set_pos_write_sec(&(lines[1]), v,  fadeTargetWr[1] );
+    delayFadeN_set_pos_write_ms(&(lines[1]), v >> 15,  fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
     if (check_fade_rd(0) ) {
-      delayFadeN_set_pos_read_sec(&(lines[0]), v,  fadeTargetRd[0]);
+      delayFadeN_set_pos_read_ms(&(lines[0]), v >> 15,  fadeTargetRd[0]);
     }
     break;
   case eParam_pos_read1 :
     if( check_fade_rd(1) ) {
-      delayFadeN_set_pos_read_sec(&(lines[1]), v,  fadeTargetRd[1]);
+      delayFadeN_set_pos_read_ms(&(lines[1]), v >> 15,  fadeTargetRd[1]);
     }
     break;
   case eParam_run_write0 :

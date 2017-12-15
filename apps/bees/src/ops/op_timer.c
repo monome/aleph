@@ -91,7 +91,13 @@ static void op_timer_in_event(op_timer_t* timer, const io_t v) {
   /// for now let's pretend timer interval is 1/1024
   /// reported intervals will be fast by a ratio of 1.024,
   /// in the example above.
-  net_activate(timer, 0, timer->interval);   
+
+  // XXX hack alert! the reported time (in milliseconds) seem to be
+  // always off a bit.  Measured them & adding this correction
+  timer->interval += timer->interval >> 7;
+  timer->interval += timer->interval >> 8;
+  timer->interval += timer->interval >> 9;
+  net_activate(timer, 0, timer->interval >> 1);
 }
 
 

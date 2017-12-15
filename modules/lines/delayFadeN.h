@@ -49,9 +49,11 @@ extern void delayFadeN_init(delayFadeN* dl, volatile fract32* bufData, u32 frame
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in);
 // set loop endpoint in seconds / samples
 extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec , u8 id );
+extern void delayFadeN_set_loop_ms(delayFadeN* dl, fract32 ms , u8 id );
 extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samp , u8 id );
 // set delayFadeN time in seconds / samples
 extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec, u8 id );
+extern void delayFadeN_set_delay_ms(delayFadeN* dl, fract32 ms, u8 id );
 extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp, u8 id ); 
 // set read head rate
 //extern void delayFadeN_set_rate(delayFadeN* dl, fix16 rate , u8 id );
@@ -63,9 +65,11 @@ extern void delayFadeN_set_write(delayFadeN* dl, u8 write);
 
 // set read pos in seconds / samples
 extern void delayFadeN_set_pos_read_sec(delayFadeN* dl, fix16 sec , u8 id );
+extern void delayFadeN_set_pos_read_ms(delayFadeN* dl, fract32 ms, u8 id );
 extern void delayFadeN_set_pos_read_samp(delayFadeN* dl, u32 samp , u8 id );
 // set write pos in seconds / samples
 extern void delayFadeN_set_pos_write_sec(delayFadeN* dl, fix16 sec , u8 id );
+extern void delayFadeN_set_pos_write_ms(delayFadeN* dl, fract32 ms , u8 id );
 extern void delayFadeN_set_pos_write_samp(delayFadeN* dl, u32 samp , u8 id );
 
 // set read run flag
