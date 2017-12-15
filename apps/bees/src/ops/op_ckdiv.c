@@ -40,6 +40,7 @@ static const u8* op_ckdiv_unpickle(op_ckdiv_t* ckdiv, const u8* src);
 // timer manipulation
 static inline void op_ckdiv_set_timer(op_ckdiv_t* ckdiv);
 static inline void op_ckdiv_unset_timer(op_ckdiv_t* ckdiv);
+static void op_ckdiv_calculate_timings(op_ckdiv_t* ckdiv);
 
 // polled-operator handler
 void op_ckdiv_poll_handler(void* op);
@@ -107,7 +108,7 @@ void op_ckdiv_in_enable	(op_ckdiv_t* ckdiv, const io_t v) {
     if(ckdiv->enable == 0) {
       ckdiv->enable = OP_ONE;
       ckdiv->timer.ticks = ckdiv->cacheDivision;
-      ckdiv->tockremainder = ckdiv->cacheRemainder;
+      ckdiv->tockremainder = 0;
       ckdiv->tocks = 0;
       op_ckdiv_set_timer(ckdiv);
       net_activate(ckdiv, 0, ckdiv->value);
@@ -119,7 +120,21 @@ void op_ckdiv_in_enable	(op_ckdiv_t* ckdiv, const io_t v) {
     }
   }
 }
+void op_ckdiv_calculate_timings(op_ckdiv_t* ckdiv) {
+  ckdiv->ticklength = ckdiv->period;
+  ckdiv->ticklength = ckdiv->ticklength << 1;// BEES ticks are 2ms now, not 1
 
+
+  // XXX hack alert! the reported time (in milliseconds) seem to be
+  // always off a bit.  Measured them & adding this correction
+  ckdiv->ticklength -= ckdiv->ticklength >> 7;
+  ckdiv->ticklength -= ckdiv->ticklength >> 8;
+  ckdiv->ticklength -= ckdiv->ticklength >> 9;
+
+  // recalculate cached division remainder
+  ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
+  ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
+}
 // input polling period
 void op_ckdiv_in_period (op_ckdiv_t* ckdiv, const io_t v) {
   if((v) < 5) {
@@ -130,27 +145,15 @@ void op_ckdiv_in_period (op_ckdiv_t* ckdiv, const io_t v) {
   op_ckdiv_in_divide(ckdiv, ckdiv->divide);// re-check divide value
 					   // doesn't overload network
 
-  // XXX hack alert! the reported time (in milliseconds) seem to be
-  // always off a bit.  Measured them & adding this correction
-
-  ckdiv->ticklength = ckdiv->period;
-
-  ckdiv->ticklength = ckdiv->ticklength << 1;
-  ckdiv->ticklength -= ckdiv->ticklength >> 7;
-  ckdiv->ticklength -= ckdiv->ticklength >> 8;
-  ckdiv->ticklength -= ckdiv->ticklength >> 9;
-
-  ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
-  ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
-
+  op_ckdiv_calculate_timings(ckdiv);
   ckdiv->timer.ticks = ckdiv->cacheDivision;
-  ckdiv->tockremainder = ckdiv->cacheRemainder;
+  ckdiv->tockremainder = 0;
   ckdiv->tocks = 0;
   if(ckdiv->enable) {
     op_ckdiv_unset_timer(ckdiv);
     op_ckdiv_set_timer(ckdiv);
+    net_activate(ckdiv, 0, ckdiv->value);
   }
-  net_activate(ckdiv, 0, ckdiv->value);
 }
 
 
@@ -168,30 +171,27 @@ void op_ckdiv_in_divide (op_ckdiv_t* ckdiv, const io_t v) {
   else {
     ckdiv->divide = v;
   }
-  ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
-  ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
-  ckdiv->tocks = 0;
-  if(ckdiv->enable) {
-    op_ckdiv_unset_timer(ckdiv);
-    op_ckdiv_set_timer(ckdiv);
-  }
-  net_activate(ckdiv, 0, ckdiv->value);
+  op_ckdiv_calculate_timings(ckdiv);
 }
 
 
 // poll event handler
 void op_ckdiv_poll_handler(void* op) {
+  printf("polled!\n");
   op_ckdiv_t* ckdiv = (op_ckdiv_t*)op;
+  ckdiv->tocks += ckdiv->timer.ticks;
+  ckdiv->tockremainder += ckdiv->cacheRemainder;
   ckdiv->timer.ticks = ckdiv->cacheDivision;
-  ckdiv->tockremainder += ckdiv->ticklength % ckdiv->divide;
+  int roundup = 0;
   if(ckdiv->tockremainder >= ckdiv->divide) {
     ckdiv->tockremainder -= ckdiv->divide;
     ckdiv->timer.ticks += 1;
+    roundup = 1;
   }
-  ckdiv->tocks += ckdiv->timer.ticks;
-  if(ckdiv->tocks >= ckdiv->ticklength) {
+  printf("%d tocks, ticklength = %d, roundup = %d\n", ckdiv->tocks, ckdiv->ticklength, roundup);
+  if(ckdiv->tocks + roundup >= ckdiv->ticklength) {
     /* printf("tick\n"); */
-    ckdiv->tockremainder = ckdiv->ticklength % ckdiv->divide;
+    ckdiv->tockremainder = 0;
     ckdiv->tocks = 0;
     net_activate(ckdiv, 0, ckdiv->value);
   } else {
@@ -217,11 +217,13 @@ const u8* op_ckdiv_unpickle(op_ckdiv_t* ckdiv, const u8* src) {
   src = unpickle_io(src, &(ckdiv->value));
   src = unpickle_io(src, &(ckdiv->divide));
 
-  // this op has a bunch of state in non-input state variables, so
-  // recrank the handles...
-  op_ckdiv_in_period(ckdiv, ckdiv->period);
-  op_ckdiv_in_divide(ckdiv, ckdiv->divide);
-  op_ckdiv_enable(ckdiv, ckdiv->enable);
+  if(ckdiv->enable) {
+    op_ckdiv_set_timer(ckdiv);
+  }
+  if (ckdiv->divide) {
+    ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
+    ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
+  }
   return src;
 }
 
@@ -229,7 +231,7 @@ const u8* op_ckdiv_unpickle(op_ckdiv_t* ckdiv, const u8* src) {
 static inline void op_ckdiv_set_timer(op_ckdiv_t* ckdiv) {
   //  timer_add(&(ckdiv->timer), op_to_int(ckdiv->period), &op_ckdiv_callback, (void*)ckdiv);
   /* timer_add(&(ckdiv->timer), op_to_int(ckdiv->period), &app_custom_event_callback, ckdiv); */
-  timers_set_custom(&(ckdiv->timer), op_to_int(ckdiv->period), &(ckdiv->op_poll) );
+  timers_set_custom(&(ckdiv->timer), op_to_int(ckdiv->cacheDivision), &(ckdiv->op_poll) );
   
   //  print_dbg("\r\n op_ckdiv add timer, return value: ");
   //  print_dbg(ret ? "1" : "0");
