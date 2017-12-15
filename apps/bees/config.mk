@@ -66,6 +66,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_iter.c \
 	$(APP_DIR)/src/ops/op_kria.c \
 	$(APP_DIR)/src/ops/op_life_classic.c \
+	$(APP_DIR)/src/ops/op_linlin.c \
 	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_list16.c \

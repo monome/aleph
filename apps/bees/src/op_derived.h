@@ -33,6 +33,7 @@
 #include "ops/op_is.h"
 #include "ops/op_iter.h"
 #include "ops/op_life_classic.h"
+#include "ops/op_linlin.h"
 #include "ops/op_kria.h"
 #include "ops/op_list2.h"
 #include "ops/op_list8.h"

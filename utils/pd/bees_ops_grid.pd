@@ -112,6 +112,13 @@
 -1 -1;
 #X obj 1224 322 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
+#X obj 1112 456 BEES_LINLIN _______;
+#X floatatom 1092 389 5 0 0 0 - - -, f 5;
+#X floatatom 1137 391 5 0 0 0 - - -, f 5;
+#X floatatom 1187 392 5 0 0 0 - - -, f 5;
+#X floatatom 1229 391 5 0 0 0 - - -, f 5;
+#X floatatom 1272 387 5 0 0 0 - - -, f 5;
+#X floatatom 1116 513 5 0 0 0 - - -, f 5;
 #X connect 2 0 7 0;
 #X connect 2 1 8 0;
 #X connect 2 2 9 0;
@@ -222,11 +229,12 @@
 #X connect 91 0 89 2;
 #X connect 93 0 89 3;
 #X connect 94 0 102 0;
-#X connect 94 1 103 0;
 #X connect 95 0 94 1;
 #X connect 96 0 94 2;
 #X connect 97 0 94 3;
-#X connect 98 0 94 4;
-#X connect 99 0 94 4;
-#X connect 100 0 94 4;
-#X connect 101 0 94 4;
+#X connect 104 0 110 0;
+#X connect 105 0 104 1;
+#X connect 106 0 104 2;
+#X connect 107 0 104 3;
+#X connect 108 0 104 4;
+#X connect 109 0 104 5;
