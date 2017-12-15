@@ -13,8 +13,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_metro_instring	= "ENABLE\0 PERIOD\0 VAL\0    DIV\0    ";
-static const char* op_metro_outstring	= "TICK\0   TOCK\0   ";
+static const char* op_metro_instring	= "ENABLE\0 PERIOD\0 VAL\0    ";
+static const char* op_metro_outstring	= "TICK\0   ";
 static const char* op_metro_opstring	= "METRO";
 
 //-------------------------------------------------
@@ -22,14 +22,12 @@ static const char* op_metro_opstring	= "METRO";
 static void op_metro_in_enable	(op_metro_t* metro, const io_t v);
 static void op_metro_in_period	(op_metro_t* metro, const io_t v);
 static void op_metro_in_value	(op_metro_t* metro, const io_t v);
-static void op_metro_in_divide	(op_metro_t* metro, const io_t v);
 
 // array of input functions
-static op_in_fn op_metro_in_fn[4] = {
+static op_in_fn op_metro_in_fn[3] = {
   (op_in_fn)&op_metro_in_enable,
   (op_in_fn)&op_metro_in_period,
   (op_in_fn)&op_metro_in_value,
-  (op_in_fn)&op_metro_in_divide,
 };
 
 
@@ -51,10 +49,9 @@ void op_metro_poll_handler(void* op);
 void op_metro_init(void* op) {
   op_metro_t* metro = (op_metro_t*)op;
   // operator superclass
-  metro->super.numInputs = 4;
-  metro->super.numOutputs = 2;
+  metro->super.numInputs = 3;
+  metro->super.numOutputs = 1;
   metro->outs[0] = -1;
-  metro->outs[1] = -1;
   // polled operator superclass
   metro->op_poll.handler = (poll_handler_t)(&op_metro_poll_handler);
   metro->op_poll.op = metro;
@@ -64,7 +61,6 @@ void op_metro_init(void* op) {
   metro->in_val[0] = &(metro->enable);
   metro->in_val[1] = &(metro->period);
   metro->in_val[2] = &(metro->value);
-  metro->in_val[3] = &(metro->divide);
 
   // pickles
   metro->super.pickle = (op_pickle_fn)(&op_metro_pickle);
@@ -81,7 +77,6 @@ void op_metro_init(void* op) {
   metro->period = op_from_int(125);
   metro->enable = 0;
   metro->value = OP_ONE;
-  metro->divide = OP_ONE;
   // timer (unlinked)
   metro->timer.next = NULL;
 }
@@ -100,15 +95,15 @@ void op_metro_in_enable	(op_metro_t* metro, const io_t v) {
   //  print_dbg("\r\n op_metro_in_enable: 0x");
   //  print_dbg_hex((u32)(v));
 
-  if(v > 0) {
+  if((v) > 0) {
+    //    print_dbg(" (input value high) ");
     if(metro->enable == 0) {
       metro->enable = OP_ONE;
-      metro->timer.ticks = metro->cacheDivision;
-      metro->tockremainder = metro->cacheRemainder;
-      metro->tocks = 0;
       op_metro_set_timer(metro);
+      
     }
   } else {
+    //    print_dbg(" (input value low) ");
     if(metro->enable > 0) {
       metro->enable = 0;
       op_metro_unset_timer(metro);
@@ -123,25 +118,13 @@ void op_metro_in_period (op_metro_t* metro, const io_t v) {
   } else {
     metro->period = v;
   }
-  op_metro_in_divide(metro, metro->divide);// re-check divide value
-					   // doesn't overload network
-
   // XXX hack alert! the reported time (in milliseconds) seem to be
   // always off a bit.  Measured them & adding this correction
-
-  metro->ticklength = metro->period;
-
-  metro->ticklength = metro->ticklength << 1;
-  metro->ticklength -= metro->ticklength >> 7;
-  metro->ticklength -= metro->ticklength >> 8;
-  metro->ticklength -= metro->ticklength >> 9;
-
-  metro->cacheDivision = metro->ticklength / metro->divide;
-  metro->cacheRemainder = metro->ticklength % metro->divide;
-
-  metro->timer.ticks = metro->cacheDivision;
-  metro->tockremainder = metro->cacheRemainder;
-  metro->tocks = 0;
+  metro->timer.ticks = metro->period;
+  metro->timer.ticks = metro->timer.ticks << 1;
+  metro->timer.ticks -= metro->timer.ticks >> 7;
+  metro->timer.ticks -= metro->timer.ticks >> 8;
+  metro->timer.ticks -= metro->timer.ticks >> 9;
 }
 
 
@@ -150,39 +133,13 @@ void op_metro_in_value (op_metro_t* metro, const io_t v) {
   metro->value = v;
 }
 
-void op_metro_in_divide (op_metro_t* metro, const io_t v) {
-  if(v < 1) {
-    metro->divide = 1;
-  } else if (v * 5 > metro->period) {
-    // do nothing, so the last effective value is retained
-  }
-  else {
-    metro->divide = v;
-  }
-  metro->cacheDivision = metro->ticklength / metro->divide;
-  metro->cacheRemainder = metro->ticklength % metro->divide;
-}
-
 
 // poll event handler
 void op_metro_poll_handler(void* op) {
   op_metro_t* metro = (op_metro_t*)op;
-  metro->timer.ticks = metro->cacheDivision;
-  metro->tockremainder += metro->ticklength % metro->divide;
-  if(metro->tockremainder >= metro->divide) {
-    metro->tockremainder -= metro->divide;
-    metro->timer.ticks += 1;
-  }
-  metro->tocks += metro->timer.ticks;
-  if(metro->tocks >= metro->ticklength) {
-    /* printf("tick\n"); */
-    metro->tockremainder = metro->ticklength % metro->divide;
-    metro->tocks = 0;
-    net_activate(metro, 0, metro->value);
-  } else {
-    /* printf("tock\n"); */
-    net_activate(metro, 1, metro->value);
-  }
+  //  print_dbg("\r\n op_metro timer callback, value: 0x");
+  //  print_dbg_hex((u32)(metro->value));
+  net_activate(metro, 0, metro->value);
 }
 
 
@@ -192,7 +149,6 @@ u8* op_metro_pickle(op_metro_t* metro, u8* dst) {
   dst = pickle_io(metro->enable, dst);
   dst = pickle_io(metro->period, dst);
   dst = pickle_io(metro->value, dst);
-  dst = pickle_io(metro->divide, dst);
   return dst;
 }
 
@@ -200,7 +156,6 @@ const u8* op_metro_unpickle(op_metro_t* metro, const u8* src) {
   src = unpickle_io(src, &(metro->enable));
   src = unpickle_io(src, &(metro->period));
   src = unpickle_io(src, &(metro->value));
-  src = unpickle_io(src, &(metro->divide));
   if(metro->enable) {
     op_metro_set_timer(metro);
   }

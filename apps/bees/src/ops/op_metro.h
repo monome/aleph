@@ -16,19 +16,13 @@ typedef struct op_metro_struct {
   op_t super;
   // input pointers
   // enable, period, value
-  volatile io_t* in_val[4];
+  volatile io_t* in_val[3];
   // state variables
   volatile io_t enable;
   volatile io_t period;
   volatile io_t value;
-  volatile io_t divide;
   // outputs
-  op_out_t outs[2];
-  u32 tocks;
-  u32 tockremainder;
-  u32 ticklength;
-  u16 cacheDivision;
-  u16 cacheRemainder;
+  op_out_t outs[1];
   // timer data
   softTimer_t timer;
   // polled operator superclass
