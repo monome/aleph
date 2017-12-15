@@ -41,6 +41,7 @@ src += \
 	$(bees)/src/ops/op_bits.c \
 	$(bees)/src/ops/op_cascades.c \
 	$(bees)/src/ops/op_change.c \
+	$(bees)/src/ops/op_ckdiv.c \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_divr.c \

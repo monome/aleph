@@ -106,6 +106,7 @@ typedef enum {
   eOpPoly,
   eOpMidiProg,
   eOpMidiOutClock,
+  eOpCkdiv,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 

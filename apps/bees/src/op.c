@@ -29,6 +29,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpBignum,
   eOpBits,
   eOpChange,
+  eOpCkdiv,
   eOpDelay,
   eOpDiv,
   eOpDivr,
@@ -403,6 +404,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_midi_out_clock_t),
     .init = &op_midi_out_clock_init,
     .deinit = NULL
+  }, {
+    .name = "CKDIV",
+    .size = sizeof(op_ckdiv_t),
+    .init = &op_ckdiv_init,
+    .deinit = &op_ckdiv_deinit
   }
 };
 
