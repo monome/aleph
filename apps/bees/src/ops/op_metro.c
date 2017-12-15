@@ -192,6 +192,7 @@ u8* op_metro_pickle(op_metro_t* metro, u8* dst) {
   dst = pickle_io(metro->enable, dst);
   dst = pickle_io(metro->period, dst);
   dst = pickle_io(metro->value, dst);
+  dst = pickle_io(metro->divide, dst);
   return dst;
 }
 
@@ -199,6 +200,7 @@ const u8* op_metro_unpickle(op_metro_t* metro, const u8* src) {
   src = unpickle_io(src, &(metro->enable));
   src = unpickle_io(src, &(metro->period));
   src = unpickle_io(src, &(metro->value));
+  src = unpickle_io(src, &(metro->divide));
   if(metro->enable) {
     op_metro_set_timer(metro);
   }
