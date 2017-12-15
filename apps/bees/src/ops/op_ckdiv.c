@@ -82,6 +82,9 @@ void op_ckdiv_init(void* op) {
   ckdiv->enable = 0;
   ckdiv->value = OP_ONE;
   ckdiv->divide = OP_ONE;
+  ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
+  ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
+
   // timer (unlinked)
   ckdiv->timer.next = NULL;
 }
@@ -107,6 +110,7 @@ void op_ckdiv_in_enable	(op_ckdiv_t* ckdiv, const io_t v) {
       ckdiv->tockremainder = ckdiv->cacheRemainder;
       ckdiv->tocks = 0;
       op_ckdiv_set_timer(ckdiv);
+      net_activate(ckdiv, 0, ckdiv->value);
     }
   } else {
     if(ckdiv->enable > 0) {
@@ -142,6 +146,11 @@ void op_ckdiv_in_period (op_ckdiv_t* ckdiv, const io_t v) {
   ckdiv->timer.ticks = ckdiv->cacheDivision;
   ckdiv->tockremainder = ckdiv->cacheRemainder;
   ckdiv->tocks = 0;
+  if(ckdiv->enable) {
+    op_ckdiv_unset_timer(ckdiv);
+    op_ckdiv_set_timer(ckdiv);
+  }
+  net_activate(ckdiv, 0, ckdiv->value);
 }
 
 
@@ -161,6 +170,12 @@ void op_ckdiv_in_divide (op_ckdiv_t* ckdiv, const io_t v) {
   }
   ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
   ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
+  ckdiv->tocks = 0;
+  if(ckdiv->enable) {
+    op_ckdiv_unset_timer(ckdiv);
+    op_ckdiv_set_timer(ckdiv);
+  }
+  net_activate(ckdiv, 0, ckdiv->value);
 }
 
 
@@ -201,9 +216,12 @@ const u8* op_ckdiv_unpickle(op_ckdiv_t* ckdiv, const u8* src) {
   src = unpickle_io(src, &(ckdiv->period));
   src = unpickle_io(src, &(ckdiv->value));
   src = unpickle_io(src, &(ckdiv->divide));
-  if(ckdiv->enable) {
-    op_ckdiv_set_timer(ckdiv);
-  }
+
+  // this op has a bunch of state in non-input state variables, so
+  // recrank the handles...
+  op_ckdiv_in_period(ckdiv, ckdiv->period);
+  op_ckdiv_in_divide(ckdiv, ckdiv->divide);
+  op_ckdiv_enable(ckdiv, ckdiv->enable);
   return src;
 }
 
