@@ -260,8 +260,9 @@ s32 calc_ms(s16 ticks, s16 ticklength) {
   // calc_ms(0x7FFF, 0x4000) should return
   // calc_ms(1, 0x4000) should return 4
   s32 ret = ticks * ticklength;
-  /* ret = add_fr1x32(ret, shr_fr1x32(ticklength, 2)); */
+  ret = add_fr1x32(ret, shr_fr1x32(ticklength, 2));
   ret = shr_fr1x32(ret, 12);
+  return ret;
 }
 
 void module_init(void) {
@@ -271,7 +272,8 @@ void module_init(void) {
   /* printf("calc_ms(1, 1.0) = %d\n", calc_ms(1, 1 << 12)); */
   /* printf("calc_ms(4, 1.0) = %d\n", calc_ms(4, 1 << 12)); */
   /* printf("calc_ms(4, 2.0) = %d\n", calc_ms(4, 2 << 12)); */
-  /* printf("calc_ms(30000, 1.5) = %d\n", calc_ms(30000, (1 << 12) + (1 << 11))); */
+  /* printf("calc_ms(5, 1.75) = %d\n", calc_ms(5, (1 << 12) + (1 << 11) + (1 << 10))); */
+  /* printf("calc_ms(5, 1.25) = %d\n", calc_ms(5, (1 << 12) + (1 << 10))); */
   // init module/params
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
@@ -313,6 +315,8 @@ void module_init(void) {
   filter_1p_lo_init( &(cvSlew[3]), 0xf );
 
   /// setup params with intial values
+
+  param_setup(eParamTimescale,  1 << 16);
 
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
@@ -428,7 +432,6 @@ void module_init(void) {
   param_setup(  eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
   param_setup(  eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
 
-  param_setup(eParamTimescale,  1 << 28);
 }
 
 // de-init

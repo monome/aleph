@@ -623,10 +623,10 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParamFade1].radix = PARAM_FADE_RADIX;
 
   strcpy(desc[eParamTimescale].label, "timescale");
-  desc[eParamFade1].type = eParamTypeFix;
-  desc[eParamFade1].min = 0;
-  desc[eParamFade1].max = 0x4000000;
-  desc[eParamFade1].radix = 12;
+  desc[eParamTimescale].type = eParamTypeFix;
+  desc[eParamTimescale].min = 0;
+  desc[eParamTimescale].max = 0x00040000;
+  desc[eParamTimescale].radix = 4;
 
 }
 
