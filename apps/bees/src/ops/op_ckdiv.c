@@ -121,7 +121,7 @@ void op_ckdiv_in_enable	(op_ckdiv_t* ckdiv, const io_t v) {
   }
 }
 void op_ckdiv_calculate_timings(op_ckdiv_t* ckdiv) {
-  ckdiv->ticklength = timers_2ms_tick_to_libavr32_tick(ckdiv->period);
+  ckdiv->ticklength = timers_ms_tick_to_libavr32_tick(ckdiv->period);
 
   // recalculate cached division remainder
   ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;

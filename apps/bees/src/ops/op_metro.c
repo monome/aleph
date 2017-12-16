@@ -118,7 +118,7 @@ void op_metro_in_period (op_metro_t* metro, const io_t v) {
   } else {
     metro->period = v;
   }
-  metro->timer.ticks = timers_2ms_tick_to_libavr32_tick(v);
+  metro->timer.ticks = timers_ms_tick_to_libavr32_tick(v);
 }
 
 

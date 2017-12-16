@@ -76,8 +76,8 @@ static void op_timer_in_event(op_timer_t* timer, const io_t v) {
   timer->interval = tcTicks - timer->ticks;
   timer->ticks = tcTicks;
 
-  // calculate output value in 2ms convention from libavr32_ticks
-  timer->interval = timers_libavr32_tick_to_2ms_tick(timer->interval);
+  // calculate output value in ms convention from libavr32_ticks
+  timer->interval = timers_libavr32_tick_to_ms_tick(timer->interval);
   net_activate(timer, 0, timer->interval);
 
 }

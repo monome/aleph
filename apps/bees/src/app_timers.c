@@ -237,10 +237,8 @@ void timers_set_custom(softTimer_t* timer, u32 period, void* obj) {
 // but they should be close enough for general use!
 
 // rename this - we changed back to 1ms clock
-s32 timers_2ms_tick_to_libavr32_tick (s16 ticks_2ms) {
-  s32 ret = ticks_2ms;
-  /* ret = ret << 1; // 2ms clock, not 1ms */
-
+s32 timers_ms_tick_to_libavr32_tick (s16 ticks_ms) {
+  s32 ret = ticks_ms;
   // timing fudge-factor
   ret -= ret >> 7;
   ret -= ret >> 8;
@@ -248,12 +246,11 @@ s32 timers_2ms_tick_to_libavr32_tick (s16 ticks_2ms) {
   return ret;
 }
 
-s16 timers_libavr32_tick_to_2ms_tick (s32 ticks_libavr32) {
+s16 timers_libavr32_tick_to_ms_tick (s32 ticks_libavr32) {
   s32 ret = ticks_libavr32;
   ret += ret >> 7;
   ret += ret >> 8;
   ret += ret >> 9;
-  /* ret = ret >> 1; */
 
   //clip to s16 for extra paranoia
   if (ret >= 32767) {
