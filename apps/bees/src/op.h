@@ -21,7 +21,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES numOpClasses
+#define NUM_USER_OP_TYPES (numOpClasses - 4)
 
 EXTERN_C_BEGIN
     
