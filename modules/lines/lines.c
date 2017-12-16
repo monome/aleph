@@ -40,12 +40,13 @@
 //------ static variables
 
 // total SDRAM is 64M
-// each line 60ish seconds for now
-#define LINES_BUF_FRAMES 0x2bf200
-// try...
-//#define LINES_BUF_FRAMES 0x600000
-//#define LINES_BUF_FRAMES 0x1000000
-//#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
+// each line 4 * FR16_MAX * 48 samples
+// = 0x5FFF40 ... because:
+// time idx is 48 samples (1ms)
+// time param is 16 bit
+// max time multipler is 4.0
+#define LINES_BUF_FRAMES 0x5FFF40
+
 #define NLINES 2
 
 
@@ -252,9 +253,25 @@ static void mix_outputs(void) {
 //----------------------
 //----- external functions
 
+// time scaler in 3.12 fixed-point
+s16 globalTimescale;
+s32 calc_ms(s16 ticks, s16 ticklength) {
+  // ticks are signed 0.15, ticklength is signed 3.12
+  // calc_ms(0x7FFF, 0x4000) should return
+  // calc_ms(1, 0x4000) should return 4
+  s32 ret = ticks * ticklength;
+  /* ret = add_fr1x32(ret, shr_fr1x32(ticklength, 2)); */
+  ret = shr_fr1x32(ret, 12);
+}
+
 void module_init(void) {
   u8 i;
   u32 j;
+  /* printf("calc_ms(0x7FFF, 4.0) = %x\n", calc_ms(0x7FFF, 0x4000)); */
+  /* printf("calc_ms(1, 1.0) = %d\n", calc_ms(1, 1 << 12)); */
+  /* printf("calc_ms(4, 1.0) = %d\n", calc_ms(4, 1 << 12)); */
+  /* printf("calc_ms(4, 2.0) = %d\n", calc_ms(4, 2 << 12)); */
+  /* printf("calc_ms(30000, 1.5) = %d\n", calc_ms(30000, (1 << 12) + (1 << 11))); */
   // init module/params
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
@@ -411,6 +428,7 @@ void module_init(void) {
   param_setup(  eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
   param_setup(  eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
 
+  param_setup(eParamTimescale,  1 << 28);
 }
 
 // de-init

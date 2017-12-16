@@ -66,9 +66,10 @@ deploy: $(module_name).ldr
 
 sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	lines.c \
+	delayFadeN.c \
 	$(audio)/buffer.c \
+	$(audio)/ricks_tricks.c \
 	$(audio)/conversion.c \
-	$(audio)/delayFadeN.c \
 	$(audio)/filter_1p.c \
 	$(audio)/filter_ramp.c \
 	$(audio)/filter_svf.c \

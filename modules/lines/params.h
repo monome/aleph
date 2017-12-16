@@ -193,6 +193,8 @@ enum params {
   eParam_write0,	       
   eParam_delay0,	   
 
+  // global time scaler param
+  eParamTimescale,
   eParamNumParams
 };  
 
