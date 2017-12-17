@@ -79,32 +79,35 @@ void filter_ramp_tog_set_inc(filter_ramp_tog* f, fract32 inc) {
 }
 
 // set target value 
-void filter_ramp_tog_in(filter_ramp_tog* f, fract32 val) {
-  u8 on = (val > 0);
-  if(on) {
-    f->x = FR32_MAX;
-    if(f->y == FR32_MAX) { 
-      f->sinc = 0; 
-    } else {
-      f->sinc = f->inc;
-    }
-  } else {
+void filter_ramp_tog_in(filter_ramp_tog* f, u8 idx) {
+  if( idx == 0) {
     f->x = 0;
-    if(f->y == 0) { 
-      f->sinc = 0; 
-    } else {
-      f->sinc = negate_fr1x32( f->inc );
-    }
+    f->y = FR32_MAX;
+    f->sinc = negate_fr1x32( f->inc );
+    f->sync = 0;
+  } else {
+    f->x = FR32_MAX;
+    f->y = 0;
+    f->sinc = f->inc;
+    f->sync = 0;
   }
 }
  
 // get next filtered value
 fract32 filter_ramp_tog_next(filter_ramp_tog* f) {
   // gcc intrinsics are saturating  
-  f->y = add_fr1x32(f->y, f->sinc);
-  if(f->y < 0) { f->y = 0; }   /// fixme: slow
-  f->sync = (f->x == f->y);
-  f->sinc = f->sync ? 0 : f->sinc;
+  if(!f->sync) {
+    f->y = add_fr1x32(f->y, f->sinc);
+  }
+  if(f->y < 0) {
+    f->y = 0;
+  }
+  else if ( f->y > f->x) {
+    f->y = f->x;
+  }
+  if(f->y == f->x) {
+    f->sync = 1;
+  }
   return f->y;
 
   

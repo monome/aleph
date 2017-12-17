@@ -121,12 +121,6 @@ fract32 cvVal[4];
 filter_1p_lo cvSlew[4];
 u8 cvChan = 0;
 
-///////////////
-// try this out
-/// if set, param changes triggering fade will be ignored if a fade is in progress.
-static const u8 fadeIgnore = 1;
-////////////////
-
 // initial param set
 static inline void param_setup(u32 id, ParamValue v) {
   gModuleData->paramData[id].value = v;

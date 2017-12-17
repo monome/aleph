@@ -55,7 +55,7 @@ extern void filter_ramp_tog_init(filter_ramp_tog* f, fract32 in);
 // set increment directly
 void filter_ramp_tog_set_inc(filter_ramp_tog* f, fract32 slew);
 // set input value
-extern void filter_ramp_tog_in(filter_ramp_tog* f, fract32 val);
+extern void filter_ramp_tog_in(filter_ramp_tog* f, u8 idx);
 // get next filtered value
 extern fract32 filter_ramp_tog_next(filter_ramp_tog* f);
 
