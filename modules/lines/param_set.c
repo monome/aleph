@@ -1,16 +1,5 @@
 // this is its own file for pure convenience....
 
-// check crossfade status of target
-static u8 check_fade_rd(u8 id) {
-  if(lpFadeRd[id].sync) {
-    // fade not in progress
-    return 1;
-  } else {
-    // fade is in progress.
-    return 0;
-  }
-}
-
 static u8 start_fade_rd(u8 id) {
   u8 newTarget, oldTarget;
   //  u8 ret;
