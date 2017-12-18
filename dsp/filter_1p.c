@@ -17,7 +17,7 @@
 #endif
 
 // a little under -120db
-#define FR32_COMP_THRESH 0x800
+#define FR32_COMP_THRESH 0x4000
 
 //-----------------------
 //---- static functions
