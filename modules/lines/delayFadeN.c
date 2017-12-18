@@ -64,10 +64,13 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
   /// balanced mix given current pan  
-  readVal = equalPower_xfade( buffer_tapN_read( &(dl->tapRd[0]) ) ,
-			      buffer_tapN_read( &(dl->tapRd[1]) ) ,
-			      dl->fadeRd
-			      );
+  /* readVal = equalPower_xfade( buffer_tapN_read( &(dl->tapRd[0]) ) , */
+  /* 			      buffer_tapN_read( &(dl->tapRd[1]) ) , */
+  /* 			      dl->fadeRd); */
+  readVal = pan_lin_mix( buffer_tapN_read( &(dl->tapRd[0]) ) ,
+			 buffer_tapN_read( &(dl->tapRd[1]) ) ,
+			 dl->fadeRd);
+
 
   // get mix amounts for crossfaded write heads
   ///  pan_lin_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
