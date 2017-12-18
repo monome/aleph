@@ -390,7 +390,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamTimescale :
-    globalTimescale = v >> 4;
+    globalTimescale = v >> 5;// Huh, shouldn't this be >> 4?
     //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
 
