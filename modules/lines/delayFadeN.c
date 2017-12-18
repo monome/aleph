@@ -45,6 +45,14 @@ extern void delayFadeN_init(delayFadeN* dl, volatile fract32* data, u32 frames) 
   
   
 }
+static inline s32 equalPower_xfade (fract32 x, fract32 y, fract32 pos) {
+  fract32 pos_2 = mult_fr1x32x32(pos, pos);
+  fract32 amp_x = sub_fr1x32(FR32_MAX,  pos_2);
+  fract32 pos_bar = sub_fr1x32(FR32_MAX,  pos);
+  fract32 amp_y = sub_fr1x32(FR32_MAX,  mult_fr1x32x32(pos_bar, pos_bar));
+  return add_fr1x32(mult_fr1x32x32(amp_x, x),
+		    mult_fr1x32x32(amp_y, y));
+}
 
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   fract32 readVal;
@@ -56,10 +64,10 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
   /// balanced mix given current pan  
-  readVal = pan_lin_mix( buffer_tapN_read( &(dl->tapRd[0]) ) ,
-		     buffer_tapN_read( &(dl->tapRd[1]) ) ,
-		     dl->fadeRd
-		     );
+  readVal = equalPower_xfade( buffer_tapN_read( &(dl->tapRd[0]) ) ,
+			      buffer_tapN_read( &(dl->tapRd[1]) ) ,
+			      dl->fadeRd
+			      );
 
   // get mix amounts for crossfaded write heads
   ///  pan_lin_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
