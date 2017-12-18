@@ -141,23 +141,23 @@ void module_set_param(u32 idx, ParamValue v) {
     // filter params
   case eParam_freq0 :
     //    filter_svf_set_coeff(&(svf[0]), v );
-    filter_1p_lo_in(&(svfCutSlew[0]), v);
+    svfCutSlew[0].x = v;
     break;
   case eParam_freq1 :
     //    filter_svf_set_coeff(&(svf[1]), v );
-    filter_1p_lo_in(&(svfCutSlew[1]), v);
+    svfCutSlew[1].x = v;
     break;
   case eParam_rq0 :
     //    filter_svf_set_rq(&(svf[0]), v);
     // incoming param value is 16.16
     // target is 2.30xs
     //    filter_svf_set_rq(&(svf[0]), v << 14);
-    filter_1p_lo_in(&(svfRqSlew[0]), v << 14);
+    svfRqSlew[0].x = v;
     break;
   case eParam_rq1 :
     //    filter_svf_set_rq(&(svf[1]), v);
     //    filter_svf_set_rq(&(svf[1]), v << 14);
-    filter_1p_lo_in(&(svfRqSlew[1]), v << 14);
+    svfRqSlew[1].x = v;
     break;
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), v);
@@ -187,22 +187,22 @@ void module_set_param(u32 idx, ParamValue v) {
     // filter balance
   case eParam_fwet0 :
     /* mix_fwet[0] = v; */
-    filter_1p_lo_in(&(wetSlew[0]), v);
+    wetSlew[0].x = v;
     break;
 
   case eParam_fwet1 :
     /* mix_fwet[1] = v; */
-    filter_1p_lo_in(&(wetSlew[1]), v);
+    wetSlew[1].x = v;
     break;
 
   case eParam_fdry0 :
     /* mix_fdry[0] = v; */
-    filter_1p_lo_in(&(drySlew[0]), v);
+    drySlew[0].x = v;
     break;
 
   case eParam_fdry1 :
     /* mix_fdry[1] = v; */
-    filter_1p_lo_in(&(drySlew[1]), v);
+    drySlew[1].x = v;
     break;
 
     /// mix points
@@ -319,59 +319,59 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // param integrators
   case eParamCut0Slew :
-    filter_1p_lo_set_slew(&(svfCutSlew[0]), v);
+    svfCutSlew[0].c =  v;
     break;
   case eParamCut1Slew :
-    filter_1p_lo_set_slew(&(svfCutSlew[1]), v);
+    svfCutSlew[1].c =  v;
     break;
 
   case eParamRq0Slew :
-    filter_1p_lo_set_slew(&(svfRqSlew[0]), v);
+    svfRqSlew[0].c =  v;
     break;
   case eParamRq1Slew :
-    filter_1p_lo_set_slew(&(svfRqSlew[1]), v);
+    svfRqSlew[1].c =  v;
     break;
 
     // -- cv output
     // cv values
   case eParam_cvVal0 :
-    filter_1p_lo_in(&(cvSlew[0]), v) ;
+    cvSlew[0].x = v;
     break;
   case eParam_cvVal1 :
-    filter_1p_lo_in(&(cvSlew[1]), v) ;
+    cvSlew[1].x = v;
     break;
   case eParam_cvVal2 :
-    filter_1p_lo_in(&(cvSlew[2]), v) ;
+    cvSlew[2].x = v;
     break;
   case eParam_cvVal3 :
-    filter_1p_lo_in(&(cvSlew[3]), v) ;
+    cvSlew[3].x = v;
     break;
 
     // cv slew
   case eParam_cvSlew0 :
-    filter_1p_lo_set_slew(&(cvSlew[0]), v);
+    cvSlew[0].c = v;
     break;
   case eParam_cvSlew1 :
-    filter_1p_lo_set_slew(&(cvSlew[1]), v);
+    cvSlew[1].c = v;
     break;
   case eParam_cvSlew2 :
-    filter_1p_lo_set_slew(&(cvSlew[2]), v);
+    cvSlew[2].c = v;
     break;
   case eParam_cvSlew3 :
-    filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    cvSlew[3].c = v;
     break;
 
   case eParamDry0Slew :
-    filter_1p_lo_set_slew(&(drySlew[0]), v);
+    drySlew[0].c = v;
     break;
   case eParamWet0Slew :
-    filter_1p_lo_set_slew(&(wetSlew[0]), v);
+    wetSlew[0].c = v;
     break;
   case eParamDry1Slew :
-    filter_1p_lo_set_slew(&(drySlew[1]), v);
+    drySlew[1].c = v;
     break;
   case eParamWet1Slew :
-    filter_1p_lo_set_slew(&(wetSlew[1]), v);
+    wetSlew[1].c = v;
     break;
 
     // fade times
