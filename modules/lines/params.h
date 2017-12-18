@@ -90,6 +90,7 @@ enum params {
 
   // smoothing parameter for ALL mix values!
   ////////////////////////////////
+  eParamMixSlew,// unused for now but could come in handy later
 
   // delay input mix
   eParam_adc0_del0,		

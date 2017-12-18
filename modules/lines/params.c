@@ -445,6 +445,11 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_del1_dac3].radix = 1;
 
   // filter slew
+  strcpy(desc[eParamMixSlew].label, "mixSlew");
+  desc[eParamMixSlew].type = eParamTypeIntegrator;
+  desc[eParamMixSlew].min = SLEW_SECONDS_MIN;
+  desc[eParamMixSlew].max = SLEW_SECONDS_MAX;
+  desc[eParamMixSlew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamCut0Slew].label, "cut0Slew");
   desc[eParamCut0Slew].type = eParamTypeIntegrator;
