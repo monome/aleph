@@ -56,7 +56,8 @@ extern void timers_set_custom(softTimer_t* timer, u32 period, void* obj);
 
 //! unset metro timer
 extern void timers_unset_custom(softTimer_t* timer);
-
+extern s32 timers_ms_tick_to_libavr32_tick (s16 ticks_2ms);
+extern s16 timers_libavr32_tick_to_ms_tick (s32 ticks_libavr32);
 EXTERN_C_END
 
 #endif

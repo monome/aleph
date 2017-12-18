@@ -29,44 +29,43 @@ static void check_fade_wr(u8 id) {
   }
 } 
 */ 
-
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
     if( check_fade_rd(0) ) {
-      delayFadeN_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
+      delayFadeN_set_delay_ms(&(lines[0]), calc_ms(v >> 16, globalTimescale),  fadeTargetRd[0]);
     }
     break;
   case eParam_delay1 :
     if(check_fade_rd(1)) {
-      delayFadeN_set_delay_sec(&(lines[1]), v,  fadeTargetRd[1]);
+      delayFadeN_set_delay_ms(&(lines[1]), calc_ms(v >> 16, globalTimescale),  fadeTargetRd[1]);
     }
     break;
   case eParam_loop0 :
-    delayFadeN_set_loop_sec(&(lines[0]), v, 0);
-    delayFadeN_set_loop_sec(&(lines[0]), v, 1);
+    delayFadeN_set_loop_ms(&(lines[0]), calc_ms(calc_ms(v >> 16, globalTimescale), globalTimescale), 0);
+    delayFadeN_set_loop_ms(&(lines[0]), calc_ms(calc_ms(v >> 16, globalTimescale), globalTimescale), 1);
     break;
   case eParam_loop1 :
-    delayFadeN_set_loop_sec(&(lines[1]), v , 0);
-    delayFadeN_set_loop_sec(&(lines[1]), v , 1);
+    delayFadeN_set_loop_ms(&(lines[1]), calc_ms(v >> 16, globalTimescale) , 0);
+    delayFadeN_set_loop_ms(&(lines[1]), calc_ms(v >> 16, globalTimescale) , 1);
     break;
   case eParam_pos_write0 :
     // check_fade_wr(0);
-    delayFadeN_set_pos_write_sec(&(lines[0]), v,  fadeTargetWr[0]);
+    delayFadeN_set_pos_write_ms(&(lines[0]), calc_ms(v >> 16, globalTimescale),  fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
     // check_fade_wr(1);
-    delayFadeN_set_pos_write_sec(&(lines[1]), v,  fadeTargetWr[1] );
+    delayFadeN_set_pos_write_ms(&(lines[1]), calc_ms(v >> 16, globalTimescale),  fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
     if (check_fade_rd(0) ) {
-      delayFadeN_set_pos_read_sec(&(lines[0]), v,  fadeTargetRd[0]);
+      delayFadeN_set_pos_read_ms(&(lines[0]), calc_ms(v >> 16, globalTimescale),  fadeTargetRd[0]);
     }
     break;
   case eParam_pos_read1 :
     if( check_fade_rd(1) ) {
-      delayFadeN_set_pos_read_sec(&(lines[1]), v,  fadeTargetRd[1]);
+      delayFadeN_set_pos_read_ms(&(lines[1]), calc_ms(v >> 16, globalTimescale),  fadeTargetRd[1]);
     }
     break;
   case eParam_run_write0 :
@@ -359,6 +358,11 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParamFade1 :
     filter_ramp_tog_set_inc(&(lpFadeRd[1]), v );
+    //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
+    break;
+
+  case eParamTimescale :
+    globalTimescale = v >> 4;
     //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
 

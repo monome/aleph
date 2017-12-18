@@ -6,7 +6,7 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_tog_instring = "STATE\0  MUL\0    ";
+static const char* op_tog_instring = "BANG\0   MUL\0    ";
 static const char* op_tog_outstring = "VAL\0    ";
 static const char* op_tog_opstring = "TOG";
 

@@ -48,8 +48,8 @@
 
 // max time in seconds, 16.16
 //// revert until shit gets figured out
-#define PARAM_SECONDS_MAX 0x003c0000
-#define PARAM_SECONDS_RADIX 7
+#define PARAM_SECONDS_MAX 0x7FFFFFFF
+#define PARAM_SECONDS_RADIX 32
 
 /// smoother default
 // about 1ms?
@@ -62,6 +62,8 @@
 
 // enumerate parameters
 enum params {
+  // global time scaler param
+  eParamTimescale,
 
   // xfade time
   eParamFade0,

@@ -73,7 +73,7 @@
 #X obj 848 415 BEES_ADD;
 #X obj 866 379 BEES_MUL;
 #X msg 898 346 5;
-#X obj 204 326 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 204 326 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 610 908 BEES_POLY;
 #X floatatom 591 952 5 0 0 0 - - -, f 5;
@@ -100,6 +100,33 @@
 #X msg 117 489 16;
 #X floatatom 118 685 5 0 0 0 - - -, f 5;
 #X msg 185 519 1;
+#X msg 1183 198 1000;
+#X msg 1234 198 1;
+#X msg 1272 211 1;
+#X msg 1273 189 2;
+#X msg 1275 164 4;
+#X msg 1274 133 8;
+#X obj 1170 324 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 1224 322 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 1112 456 BEES_LINLIN _______;
+#X floatatom 1095 383 5 0 0 0 - - -, f 5;
+#X floatatom 1109 319 5 0 0 0 - - -, f 5;
+#X floatatom 1187 392 5 0 0 0 - - -, f 5;
+#X floatatom 1229 391 5 0 0 0 - - -, f 5;
+#X floatatom 1272 387 5 0 0 0 - - -, f 5;
+#X floatatom 1116 513 5 0 0 0 - - -, f 5;
+#X msg 1232 351 50;
+#X msg 1273 348 67;
+#X msg 1130 348 19;
+#X msg 1165 359 50;
+#X msg 1068 354 19;
+#X obj 1154 265 BEES_CKDIV;
+#X obj 1147 199 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj 1088 295 print tik;
+#X obj 1244 295 print tok;
 #X connect 2 0 7 0;
 #X connect 2 1 8 0;
 #X connect 2 2 9 0;
@@ -209,3 +236,25 @@
 #X connect 90 0 89 1;
 #X connect 91 0 89 2;
 #X connect 93 0 89 3;
+#X connect 94 0 114 2;
+#X connect 95 0 114 3;
+#X connect 96 0 114 4;
+#X connect 97 0 114 4;
+#X connect 98 0 114 4;
+#X connect 99 0 114 4;
+#X connect 102 0 108 0;
+#X connect 103 0 102 1;
+#X connect 104 0 102 2;
+#X connect 105 0 102 3;
+#X connect 106 0 102 4;
+#X connect 107 0 102 5;
+#X connect 109 0 102 4;
+#X connect 110 0 102 5;
+#X connect 111 0 102 2;
+#X connect 112 0 102 3;
+#X connect 113 0 102 1;
+#X connect 114 0 100 0;
+#X connect 114 0 116 0;
+#X connect 114 1 101 0;
+#X connect 114 1 117 0;
+#X connect 115 0 114 1;

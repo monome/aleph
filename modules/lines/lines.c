@@ -40,12 +40,13 @@
 //------ static variables
 
 // total SDRAM is 64M
-// each line 60ish seconds for now
-#define LINES_BUF_FRAMES 0x2bf200
-// try...
-//#define LINES_BUF_FRAMES 0x600000
-//#define LINES_BUF_FRAMES 0x1000000
-//#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
+// each line 4 * FR16_MAX * 48 samples
+// = 0x5FFF40 ... because:
+// time idx is 48 samples (1ms)
+// time param is 16 bit
+// max time multipler is 4.0
+#define LINES_BUF_FRAMES 0x5FFF40
+
 #define NLINES 2
 
 
@@ -252,9 +253,27 @@ static void mix_outputs(void) {
 //----------------------
 //----- external functions
 
+// time scaler in 3.12 fixed-point
+s16 globalTimescale;
+s32 calc_ms(s16 ticks, s16 ticklength) {
+  // ticks are signed 0.15, ticklength is signed 3.12
+  // calc_ms(0x7FFF, 0x4000) should return
+  // calc_ms(1, 0x4000) should return 4
+  s32 ret = ticks * ticklength;
+  ret = add_fr1x32(ret, shr_fr1x32(ticklength, 2));
+  ret = shr_fr1x32(ret, 12);
+  return ret;
+}
+
 void module_init(void) {
   u8 i;
   u32 j;
+  /* printf("calc_ms(0x7FFF, 4.0) = %x\n", calc_ms(0x7FFF, 0x4000)); */
+  /* printf("calc_ms(1, 1.0) = %d\n", calc_ms(1, 1 << 12)); */
+  /* printf("calc_ms(4, 1.0) = %d\n", calc_ms(4, 1 << 12)); */
+  /* printf("calc_ms(4, 2.0) = %d\n", calc_ms(4, 2 << 12)); */
+  /* printf("calc_ms(5, 1.75) = %d\n", calc_ms(5, (1 << 12) + (1 << 11) + (1 << 10))); */
+  /* printf("calc_ms(5, 1.25) = %d\n", calc_ms(5, (1 << 12) + (1 << 10))); */
   // init module/params
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
@@ -297,10 +316,12 @@ void module_init(void) {
 
   /// setup params with intial values
 
+  param_setup(eParamTimescale,  1 << 16);
+
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
 
-  param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
+  param_setup( 	eParam_loop0,		10000 << 16 );
   param_setup( 	eParam_rMul0,		0x10000 );
   param_setup( 	eParam_rDiv0,		0x10000 );
   param_setup( 	eParam_write0,		FRACT32_MAX );
@@ -308,12 +329,12 @@ void module_init(void) {
   param_setup( 	eParam_pos_write0,		0 );
   param_setup( 	eParam_pos_read0,		0 );
 
-  param_setup( 	eParam_delay0,		0x4000 );
+  param_setup( 	eParam_delay0, 1000 << 16);
 
   param_setup( 	eParam_run_read0, 1 );
   param_setup( 	eParam_run_write0, 1 );
 
-  param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX );
+  param_setup( 	eParam_loop1,		10000 << 16 );
   param_setup( 	eParam_rMul1,		0x10000 );
   param_setup( 	eParam_rDiv1,		0x10000 );
   param_setup( 	eParam_write1,		FRACT32_MAX );
@@ -321,10 +342,38 @@ void module_init(void) {
   param_setup( 	eParam_pos_write1,		0 );
   param_setup( 	eParam_pos_read1,		0 );
 
-  param_setup( 	eParam_delay1,		0x4000 );
+  param_setup( 	eParam_delay1, 500 << 16);
 
   param_setup( 	eParam_run_read1, 1 );
   param_setup( 	eParam_run_write1, 1 );
+
+  param_setup( 	eParam_del1_dac0,		PARAM_AMP_12 );
+  param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );
+  param_setup( 	eParam_del1_dac2,		PARAM_AMP_12 );
+  param_setup( 	eParam_del1_dac3,		PARAM_AMP_6 );
+
+  param_setup( 	eParam_del0_del0,		0 );
+  param_setup( 	eParam_del0_del1,		0 );
+  param_setup( 	eParam_del1_del0,		0 );
+  param_setup( 	eParam_del1_del1,		0 );
+
+  param_setup(eParam_adc0_del0, PARAM_AMP_6);
+  param_setup(eParam_adc0_del1, PARAM_AMP_6);
+  param_setup(eParam_adc1_del0, 0);
+  param_setup(eParam_adc1_del1, 0);
+  param_setup(eParam_adc2_del0, 0);
+  param_setup(eParam_adc2_del1, 0);
+  param_setup(eParam_adc3_del0, 0);
+  param_setup(eParam_adc3_del1, 0);
+
+  param_setup(eParam_del0_dac0, PARAM_AMP_6);
+  param_setup(eParam_del0_dac1, 0);
+  param_setup(eParam_del0_dac2, 0);
+  param_setup(eParam_del0_dac3, 0);
+  param_setup(eParam_del1_dac0, 0);
+  param_setup(eParam_del1_dac1, PARAM_AMP_6);
+  param_setup(eParam_del1_dac2, 0);
+  param_setup(eParam_del1_dac3, 0);
 
   param_setup( 	eParam_del1_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );

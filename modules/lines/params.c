@@ -622,6 +622,12 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParamFade1].max = PARAM_FADE_MAX;
   desc[eParamFade1].radix = PARAM_FADE_RADIX;
 
+  strcpy(desc[eParamTimescale].label, "timescale");
+  desc[eParamTimescale].type = eParamTypeFix;
+  desc[eParamTimescale].min = 0;
+  desc[eParamTimescale].max = 0x00040000;
+  desc[eParamTimescale].radix = 4;
+
 }
 
 // EOF

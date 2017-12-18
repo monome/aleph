@@ -227,6 +227,43 @@ void timers_set_custom(softTimer_t* timer, u32 period, void* obj) {
   timer_add(timer, period, &app_custom_event_callback, obj );
 }
 
+// XXX hack alert!
+
+// a) the timing of libavr32 (in milliseconds) seems always off a bit.
+// Measured timings & added a weird correction which is tested & gives
+// pretty tight timing on my aleph (RV)
+
+// b) obviously the two functions below are not mutually inverse maps,
+// but they should be close enough for general use!
+
+// rename this - we changed back to 1ms clock
+s32 timers_ms_tick_to_libavr32_tick (s16 ticks_ms) {
+  s32 ret = ticks_ms;
+  // timing fudge-factor
+  ret -= ret >> 7;
+  ret -= ret >> 8;
+  ret -= ret >> 9;
+  return ret;
+}
+
+s16 timers_libavr32_tick_to_ms_tick (s32 ticks_libavr32) {
+  s32 ret = ticks_libavr32;
+  ret += ret >> 7;
+  ret += ret >> 8;
+  ret += ret >> 9;
+
+  //clip to s16 for extra paranoia
+  if (ret >= 32767) {
+    return 32767;
+  }
+  else if (ret <= -32768) {
+    return -32768;
+  }
+  else {
+    return ret;
+  }
+}
+
 
 /* // unset metro callback */
 /* void timers_unset_custom(softTimer_t* timer) { */

@@ -96,7 +96,7 @@ void op_delay_in_time (op_delay_t* delay, const io_t v) {
   } else {
     delay->ms = v;
   }
-  delay->timer.ticks = op_to_int(delay->ms);
+  delay->timer.ticks = timers_ms_tick_to_libavr32_tick(delay->ms);
 }
 
 

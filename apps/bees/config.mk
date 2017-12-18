@@ -52,6 +52,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_cascades.c \
 	$(APP_DIR)/src/ops/op_change.c \
+	$(APP_DIR)/src/ops/op_ckdiv.c \
 	$(APP_DIR)/src/ops/op_delay.c \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_divr.c \
@@ -65,6 +66,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_iter.c \
 	$(APP_DIR)/src/ops/op_kria.c \
 	$(APP_DIR)/src/ops/op_life_classic.c \
+	$(APP_DIR)/src/ops/op_linlin.c \
 	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_list16.c \
