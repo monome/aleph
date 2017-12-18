@@ -46,38 +46,58 @@ void module_set_param(u32 idx, ParamValue v) {
     // delay line params
   case eParam_delay0 :
     if( start_fade_rd(0) ) {
-      delayFadeN_set_delay_ms(&(lines[0]), calc_ms(trunc_fr1x32(v), globalTimescale),  fadeTargetRd[0]);
+      delayFadeN_set_delay_ms(&(lines[0]),
+			      calc_ms(trunc_fr1x32(v), globalTimescale),
+			      fadeTargetRd[0]);
     }
     break;
   case eParam_delay1 :
     if(start_fade_rd(1)) {
-      delayFadeN_set_delay_ms(&(lines[1]), calc_ms(trunc_fr1x32(v), globalTimescale),  fadeTargetRd[1]);
+      delayFadeN_set_delay_ms(&(lines[1]),
+			      calc_ms(trunc_fr1x32(v), globalTimescale),
+			      fadeTargetRd[1]);
     }
     break;
   case eParam_loop0 :
-    delayFadeN_set_loop_ms(&(lines[0]), calc_ms(calc_ms(trunc_fr1x32(v), globalTimescale), globalTimescale), 0);
-    delayFadeN_set_loop_ms(&(lines[0]), calc_ms(calc_ms(trunc_fr1x32(v), globalTimescale), globalTimescale), 1);
+    delayFadeN_set_loop_ms(&(lines[0]),
+			   calc_ms(trunc_fr1x32(v), globalTimescale),
+			   0);
+    delayFadeN_set_loop_ms(&(lines[0]),
+			   calc_ms(trunc_fr1x32(v), globalTimescale),
+			   1);
     break;
   case eParam_loop1 :
-    delayFadeN_set_loop_ms(&(lines[1]), calc_ms(trunc_fr1x32(v), globalTimescale) , 0);
-    delayFadeN_set_loop_ms(&(lines[1]), calc_ms(trunc_fr1x32(v), globalTimescale) , 1);
+    delayFadeN_set_loop_ms(&(lines[1]),
+			   calc_ms(trunc_fr1x32(v), globalTimescale),
+			   0);
+    delayFadeN_set_loop_ms(&(lines[1]),
+			   calc_ms(trunc_fr1x32(v), globalTimescale),
+			   1);
     break;
   case eParam_pos_write0 :
     // check_fade_wr(0);
-    delayFadeN_set_pos_write_ms(&(lines[0]), calc_ms(trunc_fr1x32(v), globalTimescale),  fadeTargetWr[0]);
+    delayFadeN_set_pos_write_ms(&(lines[0]),
+				calc_ms(trunc_fr1x32(v), globalTimescale),
+				fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
     // check_fade_wr(1);
-    delayFadeN_set_pos_write_ms(&(lines[1]), calc_ms(trunc_fr1x32(v), globalTimescale),  fadeTargetWr[1] );
+    delayFadeN_set_pos_write_ms(&(lines[1]),
+				calc_ms(trunc_fr1x32(v), globalTimescale),
+				fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
     if (start_fade_rd(0) ) {
-      delayFadeN_set_pos_read_ms(&(lines[0]), calc_ms(trunc_fr1x32(v), globalTimescale),  fadeTargetRd[0]);
+      delayFadeN_set_pos_read_ms(&(lines[0]),
+				 calc_ms(trunc_fr1x32(v), globalTimescale),
+				 fadeTargetRd[0]);
     }
     break;
   case eParam_pos_read1 :
     if( start_fade_rd(1) ) {
-      delayFadeN_set_pos_read_ms(&(lines[1]), calc_ms(trunc_fr1x32(v), globalTimescale),  fadeTargetRd[1]);
+      delayFadeN_set_pos_read_ms(&(lines[1]),
+				 calc_ms(trunc_fr1x32(v), globalTimescale),
+				 fadeTargetRd[1]);
     }
     break;
   case eParam_run_write0 :
