@@ -129,7 +129,7 @@ static inline void param_setup(u32 id, ParamValue v) {
   module_set_param(id, v);
 }
 
-fract16 in16[4];
+static fract16 in16[4];
 static void truncate_ins(void) {
   int i;
   for(i=0; i < 4; i++) {
@@ -158,25 +158,20 @@ static void mix_del_inputs(void) {
 static void mix_outputs(void) {
   int i, j;
   fract16 out_del16[2];
-  fract16 out16[4];
-  for(i=0; i < 2; i++) {
+  for(i=0; i < 2; i++) {// delays
     out_del16[i] = trunc_fr1x32(out_del[i]);
   }
   for(i=0; i < 4; i++) {// dacs
-    out16[i] = 0;
     for(j=0; j < 2; j++) {// delays
-      out16[i] = add_fr1x16(out16[i],
-			    mult_fr1x16(out_del16[j],
-					mix_del_dac[j][i]));
+      out[i] = add_fr1x32(out[i],
+			  mult_fr1x32(out_del16[j],
+				      mix_del_dac[j][i]));
     }
     for(j=0; j < 4; j++) {// adcs
-      out16[i] = add_fr1x16(out16[i],
-			    mult_fr1x16(in16[j],
-					mix_adc_dac[j][i]));
+      out[i] = add_fr1x32(out[i],
+			  mult_fr1x32(in16[j],
+				      mix_adc_dac[j][i]));
     }
-  }
-  for(i=0; i < 4; i++) {
-    out[i] = shl_fr1x32(out16[i], 16);
   }
 }
 
