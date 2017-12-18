@@ -192,7 +192,6 @@ s32 calc_ms(s16 ticks, s16 ticklength) {
 
 void module_init(void) {
   u8 i;
-  u32 j;
   /* printf("calc_ms(0x7FFF, 4.0) = %x\n", calc_ms(0x7FFF, 0x4000)); */
   /* printf("calc_ms(1, 1.0) = %d\n", calc_ms(1, 1 << 12)); */
   /* printf("calc_ms(4, 1.0) = %d\n", calc_ms(4, 1 << 12)); */

@@ -41,7 +41,7 @@ typedef struct _bufferTap {
 // initialize a (mono) audio buffer at pre-allocated memory.
 // provide 2nd pointer for data,
 // so it can be placed in an arbitrarily separate memory region.
-extern void buffer_init(audioBuffer* buf, fract32* data, u32 frames);
+extern void buffer_init(audioBuffer* buf, volatile fract32* data, u32 frames);
 
 // intialize tap
 extern void buffer_tap_init(bufferTap* tap, audioBuffer* buf);

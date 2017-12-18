@@ -32,7 +32,7 @@
 // initialize a (mono) audio buffer at pre-allocated memory
 // give a separate contiguous chunk so we can use an arbitrary size
 // but keep it statically linked at SDRAM
-void buffer_init(audioBuffer *buf, fract32 *data, u32 frames) {
+void buffer_init(audioBuffer *buf, volatile fract32 *data, u32 frames) {
   //u32 i;
   buf->data = data;
   buf->frames = frames;

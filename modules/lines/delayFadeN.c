@@ -56,7 +56,6 @@ static inline s32 equalPower_xfade (fract32 x, fract32 y, fract32 pos) {
 
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   fract32 readVal;
-  fract32 pan[2] = { 0, 0 };
   fract32 valWr[2] = { 0, 0 };
 
   // get read value first.
@@ -124,9 +123,6 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 }
 
 // set loop endpoint in seconds
-extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec, u8 id) {
-  u32 samps = sec_to_frames_trunc(sec);
-}
 extern void delayFadeN_set_loop_ms(delayFadeN* dl, fract32 ms, u8 id) {
   u32 samps = ms * 48;
   buffer_tapN_set_loop(&(dl->tapRd[id]), samps - 1);
@@ -141,10 +137,6 @@ extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samps, u8 id) {
 
 }
 
-// set delayFadeN in seconds
-extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec, u8 id) {
-  u32 samp = sec_to_frames_trunc(sec);
-}
 extern void delayFadeN_set_delay_ms(delayFadeN* dl, fract32 ms, u8 id) {
   u32 samp = ms * 48;
   // FIXME (why?)
