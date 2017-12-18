@@ -224,9 +224,7 @@ void buffer_tapN_next(bufferTapN *tap) {
   if(tap->divCount >= tap->div) {
     tap->divCount = 0;
     tap->idx += tap->inc;
-    while(tap->idx >= tap->loop) {
-      tap->idx -= tap->loop;
-    }
+    tap->idx %= tap->loop;
   }
 }
 
@@ -244,8 +242,13 @@ void buffer_tapN_set_div(bufferTapN *tap, u32 div) {
 
 // set rate divisor
 void buffer_tapN_set_loop(bufferTapN *tap, u32 loop) {
-  while(loop > (tap->buf->frames - 1)) {loop -= tap->buf->frames; }
-  tap->loop = loop;
+  if(loop < 0) {
+    tap->loop =0;
+  } else if(loop > tap->buf->frames) {
+    tap->loop = tap->buf->frames;
+  } else {
+    tap->loop = loop;
+  }
 }
 
 // initialize tap with buffer descriptor
@@ -272,10 +275,7 @@ void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps) {
 
 // set tap position directly (wraps to loop)
 void buffer_tapN_set_pos(bufferTapN* tap, u32 samps) {
-  while(samps > tap->loop) {
-    samps -= tap->loop;
-  }
-  tap->idx = samps;
+  tap->idx = samps % tap->loop;
 }
 
 
