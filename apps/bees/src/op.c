@@ -44,7 +44,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpIter,
   eOpKria,
   eOpLifeClassic,
-  eOpLinlin,
+  eOpLinlin, // "LL"
   eOpList2,
   eOpList8,
   eOpList16,
