@@ -361,7 +361,7 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_set_slew(&(drySlew[1]), v);
     break;
   case eParamWet1Slew :
-    filter_1p_lo_set_slew(&(wetSlew[0]), v);
+    filter_1p_lo_set_slew(&(wetSlew[1]), v);
     break;
 
     // fade times
