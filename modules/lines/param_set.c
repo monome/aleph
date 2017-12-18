@@ -12,19 +12,20 @@ static u8 check_fade_rd(u8 id) {
 }
 
 static u8 start_fade_rd(u8 id) {
-  u8 newTarget, oldTarget = fadeTargetRd[id];
+  u8 newTarget, oldTarget;
   //  u8 ret;
 
   if(lpFadeRd[id].sync) {
+    /* printf("heading to %d,%d\n", fadeTargetRd[id], id); */
     // not fading right now, so pick different target and start crossfade
     oldTarget = fadeTargetRd[id];
-    newTarget = oldTarget ^ 1;
-    fadeTargetRd[id] = newTarget;
+    newTarget = !oldTarget;
     // copy all tap parameters to target
     buffer_tapN_copy( &(lines[id].tapRd[oldTarget]),
 		      &(lines[id].tapRd[newTarget]) );
+    fadeTargetRd[id] = newTarget;
     // start the fade
-    filter_ramp_tog_in(&(lpFadeRd[id]), newTarget);
+    filter_ramp_start(&(lpFadeRd[id]));
     return 1;
   } else {
     // fade is in progress.
@@ -39,7 +40,7 @@ static void check_fade_wr(u8 id) {
     fadeTargetWr[id] ^= 1;
     filter_1p_lo_in(&(lpFadeWr[id]), (fract32)((u32)(fadeTargetWr[id]) << 31) - 1);
   }
-} 
+}
 */ 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
@@ -388,13 +389,13 @@ void module_set_param(u32 idx, ParamValue v) {
     // FIXME: value is raw ramp increment per sample...
   case eParamFade0 :
     if (v > PARAM_FADE_MIN) { // max fade 5s
-      filter_ramp_tog_set_inc(&(lpFadeRd[0]), v );
+      filter_ramp_set_inc(&(lpFadeRd[0]), v );
     }
     //    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v );
     break;
   case eParamFade1 :
     if (v > PARAM_FADE_MIN) { // max fade 5s
-      filter_ramp_tog_set_inc(&(lpFadeRd[1]), v );
+      filter_ramp_set_inc(&(lpFadeRd[1]), v );
     }
     //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;

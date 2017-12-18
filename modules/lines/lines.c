@@ -115,8 +115,8 @@ u8 fadeTargetWr[2] = { 0, 0 };
 // crossfade integrators
 /* filter_1p_lo lpFadeRd[2]; */
 /* filter_1p_lo lpFadeWr[2]; */
-filter_ramp_tog lpFadeRd[2];
-filter_ramp_tog lpFadeWr[2];
+filter_ramp lpFadeRd[2];
+filter_ramp lpFadeWr[2];
 
 // 10v dac values (u16, but use fract32 and audio integrators, for now)
 fract32 cvVal[4];
@@ -222,8 +222,8 @@ void module_init(void) {
     filter_1p_lo_init(&(wetSlew[i]), 0x3fffffff);
     filter_1p_lo_init(&(drySlew[i]), 0x3fffffff);
 
-    filter_ramp_tog_init(&(lpFadeRd[i]), 0);
-    filter_ramp_tog_init(&(lpFadeWr[i]), 0);
+    filter_ramp_init(&(lpFadeRd[i]));
+    filter_ramp_init(&(lpFadeWr[i]));
 
 
     /* for(j=0; j<LINES_BUF_FRAMES; ++j) { */
@@ -391,7 +391,10 @@ void module_process_frame(void) {
   for(i=0; i<NLINES; i++) {
     // process fade integrator
     //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
-    lines[i].fadeRd = filter_ramp_tog_next(&(lpFadeRd[i]));
+    lines[i].fadeRd = filter_ramp_next(&(lpFadeRd[i]));
+    if(fadeTargetRd[i] == 0) {
+      lines[i].fadeRd = FR32_MAX - lines[i].fadeRd;
+    }
 
     // process delay line
     tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
