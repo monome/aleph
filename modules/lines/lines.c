@@ -89,8 +89,10 @@ fract32 mix_adc_dac[4][4] = { { 0, 0, 0, 0 },
 fract32 mix_del_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 
 // svf balance
-fract32 mix_fwet[NLINES] = { 0, 0 };
-fract32 mix_fdry[NLINES] = { 0, 0 };
+/* fract32 mix_fwet[NLINES] = { 0, 0 }; */
+/* fract32 mix_fdry[NLINES] = { 0, 0 }; */
+filter_1p_lo drySlew[2];
+filter_1p_lo wetSlew[2];
 
 // -- mixed inputs
 // delay 
@@ -283,6 +285,8 @@ void module_init(void) {
 
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
     filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
+    filter_1p_lo_init(&(wetSlew[i]), 0x3fffffff);
+    filter_1p_lo_init(&(drySlew[i]), 0x3fffffff);
 
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
@@ -463,9 +467,15 @@ void module_process_frame(void) {
     filter_svf_set_coeff( &(svf[i]), filter_1p_lo_norm_next(&(svfCutSlew[i])) );
     filter_svf_set_rq( &(svf[i]), filter_1p_lo_norm_next(&(svfRqSlew[i])) );
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
+
     // mix
-    tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
-    tmpDel = add_fr1x32(tmpDel, mult_fr1x32x32(tmpSvf, mix_fwet[i]) );
+    /* tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] ); */
+    /* tmpDel = add_fr1x32(tmpDel, mult_fr1x32x32(tmpSvf, mix_fwet[i]) ); */
+    tmpDel = mult_fr1x32x32(tmpDel,
+			    filter_1p_lo_norm_next(&(drySlew[i])));
+    tmpDel = add_fr1x32(tmpDel,
+			mult_fr1x32x32(tmpSvf,
+				       filter_1p_lo_norm_next(&(wetSlew[i]))));
 
     out_del[i] = tmpDel;
 

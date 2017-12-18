@@ -176,19 +176,23 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // filter balance
   case eParam_fwet0 :
-    mix_fwet[0] = v;
+    /* mix_fwet[0] = v; */
+    filter_1p_lo_in(&(wetSlew[0]), v);
     break;
 
   case eParam_fwet1 :
-    mix_fwet[1] = v;
+    /* mix_fwet[1] = v; */
+    filter_1p_lo_in(&(wetSlew[1]), v);
     break;
 
   case eParam_fdry0 :
-    mix_fdry[0] = v;
+    /* mix_fdry[0] = v; */
+    filter_1p_lo_in(&(drySlew[0]), v);
     break;
 
   case eParam_fdry1 :
-    mix_fdry[1] = v;
+    /* mix_fdry[1] = v; */
+    filter_1p_lo_in(&(drySlew[1]), v);
     break;
 
     /// mix points
@@ -345,6 +349,19 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_cvSlew3 :
     filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    break;
+
+  case eParamDry0Slew :
+    filter_1p_lo_set_slew(&(drySlew[0]), v);
+    break;
+  case eParamWet0Slew :
+    filter_1p_lo_set_slew(&(wetSlew[0]), v);
+    break;
+  case eParamDry1Slew :
+    filter_1p_lo_set_slew(&(drySlew[1]), v);
+    break;
+  case eParamWet1Slew :
+    filter_1p_lo_set_slew(&(wetSlew[0]), v);
     break;
 
     // fade times
