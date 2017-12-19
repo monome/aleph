@@ -46,7 +46,7 @@ static inline s32 equalPower_xfade (fract32 x, fract32 y, fract32 pos) {
 }
 
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
-  fract32 readVal;
+  fract32 readVal, writeVal;
 
   /// equal-power read-head crossfade
   /* readVal = equalPower_xfade( buffer_tapN_read( &(dl->tapRd[0]) ) , */
@@ -58,20 +58,22 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 			 buffer_tapN_read( &(dl->tapRd[1]) ) ,
 			 dl->fadeRd);
 
+  writeVal = mult_fr1x32x32(in, dl->fadeWr);
+
   if(dl->preLevel == 0) {
     if(dl->write) {
       // write and replace
-      buffer_tapN_write(&(dl->tapWr), in);
+      buffer_tapN_write(&(dl->tapWr), writeVal);
     }
   } else if(dl->preLevel < 0) { // consider <0 to be == 1
     if(dl->write) {
       // overdub
-      buffer_tapN_add(&(dl->tapWr), in);
+      buffer_tapN_add(&(dl->tapWr), writeVal);
     }
   } else { // prelevel is non-zero, non-full
     if(dl->write) {
       // write mix
-      buffer_tapN_mix(&(dl->tapWr), in, dl->preLevel);
+      buffer_tapN_mix(&(dl->tapWr), writeVal, dl->preLevel);
     }
   }
 
