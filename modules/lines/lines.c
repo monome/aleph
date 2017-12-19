@@ -385,9 +385,10 @@ void module_process_frame(void) {
   for(i=0; i<NLINES; i++) {
     // process fade integrator
     //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
-    lines[i].fadeRd = filter_ramp_next(&(lpFadeRd[i]));
     if(fadeTargetRd[i] == 0) {
-      lines[i].fadeRd = FR32_MAX - lines[i].fadeRd;
+      lines[i].fadeRd = FR32_MAX - filter_ramp_next(&(lpFadeRd[i]));
+    } else {
+      lines[i].fadeRd = filter_ramp_next(&(lpFadeRd[i]));
     }
 
     // process delay line
@@ -399,14 +400,14 @@ void module_process_frame(void) {
       filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
     /* } */
     /* if( !filter_1p_sync(&(svfRqSlew[i])) ) { */
-      filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
+      /* filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) ); */
     /* } */
 
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
 
     // mix
     /* if( !filter_1p_sync(&(drySlew[i])) ) { */
-    mix_fdry[i] = filter_1p_lo_next(&(drySlew[i]));
+    /* mix_fdry[i] = filter_1p_lo_next(&(drySlew[i])); */
     /* } */
 
     tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
@@ -428,7 +429,7 @@ void module_process_frame(void) {
   /* out[1] = in[1]; */
   /* out[2] = in[2]; */
   /* out[3] = in[3]; */
-  out[0] = out[1] = out[2] = out[3] = 0x00000000;
+  /* out[0] = out[1] = out[2] = out[3] = 0x00000000; */
   mix_outputs();
 
   /// do CV output

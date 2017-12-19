@@ -151,13 +151,13 @@ void module_set_param(u32 idx, ParamValue v) {
     //    filter_svf_set_rq(&(svf[0]), v);
     // incoming param value is 16.16
     // target is 2.30xs
-    //    filter_svf_set_rq(&(svf[0]), v << 14);
-    svfRqSlew[0].x = v << 14;
+       filter_svf_set_rq(&(svf[0]), v << 14);
+    /* svfRqSlew[0].x = v << 14; */
     break;
   case eParam_rq1 :
     //    filter_svf_set_rq(&(svf[1]), v);
-    //    filter_svf_set_rq(&(svf[1]), v << 14);
-    svfRqSlew[1].x = v << 14;
+       filter_svf_set_rq(&(svf[1]), v << 14);
+    /* svfRqSlew[1].x = v << 14; */
     break;
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), v);
@@ -196,13 +196,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_fdry0 :
-    /* mix_fdry[0] = v; */
-    drySlew[0].x = v;
+    mix_fdry[0] = v;
+    /* drySlew[0].x = v; */
     break;
 
   case eParam_fdry1 :
-    /* mix_fdry[1] = v; */
-    drySlew[1].x = v;
+    mix_fdry[1] = v;
+    /* drySlew[1].x = v; */
     break;
 
     /// mix points
@@ -326,10 +326,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamRq0Slew :
-    svfRqSlew[0].c =  v;
+    /* svfRqSlew[0].c =  v; */
     break;
   case eParamRq1Slew :
-    svfRqSlew[1].c =  v;
+    /* svfRqSlew[1].c =  v; */
     break;
 
     // -- cv output
