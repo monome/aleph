@@ -152,12 +152,12 @@ void module_set_param(u32 idx, ParamValue v) {
     // incoming param value is 16.16
     // target is 2.30xs
     //    filter_svf_set_rq(&(svf[0]), v << 14);
-    svfRqSlew[0].x = v;
+    svfRqSlew[0].x = v << 14;
     break;
   case eParam_rq1 :
     //    filter_svf_set_rq(&(svf[1]), v);
     //    filter_svf_set_rq(&(svf[1]), v << 14);
-    svfRqSlew[1].x = v;
+    svfRqSlew[1].x = v << 14;
     break;
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), v);
