@@ -28,44 +28,44 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_delay0 :
     if( start_fade_rd(0) ) {
       delayFadeN_set_delay_ms(&(lines[0]),
-			      calc_ms(trunc_fr1x32(v), globalTimescale),
+			      calc_ms(trunc_fr1x32(v)),
 			      fadeTargetRd[0]);
     }
     break;
   case eParam_delay1 :
     if(start_fade_rd(1)) {
       delayFadeN_set_delay_ms(&(lines[1]),
-			      calc_ms(trunc_fr1x32(v), globalTimescale),
+			      calc_ms(trunc_fr1x32(v)),
 			      fadeTargetRd[1]);
     }
     break;
   case eParam_loop0 :
     delayFadeN_set_loop_ms(&(lines[0]),
-			   calc_ms(trunc_fr1x32(v), globalTimescale));
+			   calc_ms(trunc_fr1x32(v)));
     break;
   case eParam_loop1 :
     delayFadeN_set_loop_ms(&(lines[1]),
-			   calc_ms(trunc_fr1x32(v), globalTimescale));
+			   calc_ms(trunc_fr1x32(v)));
     break;
   case eParam_pos_write0 :
     delayFadeN_set_pos_write_ms(&(lines[0]),
-				calc_ms(trunc_fr1x32(v), globalTimescale));
+				calc_ms(trunc_fr1x32(v)));
     break;
   case eParam_pos_write1 :
     delayFadeN_set_pos_write_ms(&(lines[1]),
-				calc_ms(trunc_fr1x32(v), globalTimescale));
+				calc_ms(trunc_fr1x32(v)));
     break;
   case eParam_pos_read0 :
     if (start_fade_rd(0) ) {
       delayFadeN_set_pos_read_ms(&(lines[0]),
-				 calc_ms(trunc_fr1x32(v), globalTimescale),
+				 calc_ms(trunc_fr1x32(v)),
 				 fadeTargetRd[0]);
     }
     break;
   case eParam_pos_read1 :
     if( start_fade_rd(1) ) {
       delayFadeN_set_pos_read_ms(&(lines[1]),
-				 calc_ms(trunc_fr1x32(v), globalTimescale),
+				 calc_ms(trunc_fr1x32(v)),
 				 fadeTargetRd[1]);
     }
     break;
@@ -369,7 +369,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamTimescale :
-    globalTimescale = v >> 5;// Huh, shouldn't this be >> 4?
+    globalTimescale = v >> 6;// Huh, shouldn't this be >> 4?
     //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
 

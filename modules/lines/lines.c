@@ -183,13 +183,13 @@ static void mix_outputs(void) {
 //----- external functions
 
 // time scaler in 3.12 fixed-point
-s16 globalTimescale;
-s32 calc_ms(s16 ticks, s16 ticklength) {
+static volatile s16 globalTimescale;
+s32 calc_ms(s16 ticks) {
   // ticks are signed 0.15, ticklength is signed 3.12
   // calc_ms(0x7FFF, 0x4000) should return
   // calc_ms(1, 0x4000) should return 4
-  s32 ret = mult_fr1x32(ticks, ticklength);
-  ret = add_fr1x32(ret, shr_fr1x32(ticklength, 2));
+  s32 ret = mult_fr1x32(ticks, globalTimescale);
+  ret = add_fr1x32(ret, shr_fr1x32(globalTimescale, 2));
   ret = shr_fr1x32(ret, 12);
   return ret;
 }
