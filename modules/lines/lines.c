@@ -225,7 +225,7 @@ void module_init(void) {
     /* } */
 
     // need to zero everything to avoid horrible noise at boot...
-    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract32));
+    memset((void*)pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract32));
     // however, it is causing crashes or hangs here, for some damn reason.
 
     // at least zero the end of the buffer
