@@ -158,6 +158,10 @@ static void mix_del_inputs(void) {
 static void mix_outputs(void) {
   int i, j;
   fract16 out_del16[2];
+
+  for(i=0; i < 4; i++) {// dacs
+    out[i] = 0;
+  }
   for(i=0; i < 2; i++) {// delays
     out_del16[i] = trunc_fr1x32(out_del[i]);
   }
@@ -423,13 +427,6 @@ void module_process_frame(void) {
 
   } // end lines loop 
 
-  // mix outputs to DACs
-  /// TEST
-  /* out[0] = in[0]; */
-  /* out[1] = in[1]; */
-  /* out[2] = in[2]; */
-  /* out[3] = in[3]; */
-  /* out[0] = out[1] = out[2] = out[3] = 0x00000000; */
   mix_outputs();
 
   /// do CV output
