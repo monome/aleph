@@ -22,15 +22,6 @@ static u8 start_fade_rd(u8 id) {
   }
 }
 
-/*
-static void check_fade_wr(u8 id) {
-  if(lpFadeWr[id].sync) {
-    // not fading right now, so pick different target and start crossfade
-    fadeTargetWr[id] ^= 1;
-    filter_1p_lo_in(&(lpFadeWr[id]), (fract32)((u32)(fadeTargetWr[id]) << 31) - 1);
-  }
-}
-*/ 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
@@ -50,31 +41,19 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_loop0 :
     delayFadeN_set_loop_ms(&(lines[0]),
-			   calc_ms(trunc_fr1x32(v), globalTimescale),
-			   0);
-    delayFadeN_set_loop_ms(&(lines[0]),
-			   calc_ms(trunc_fr1x32(v), globalTimescale),
-			   1);
+			   calc_ms(trunc_fr1x32(v), globalTimescale));
     break;
   case eParam_loop1 :
     delayFadeN_set_loop_ms(&(lines[1]),
-			   calc_ms(trunc_fr1x32(v), globalTimescale),
-			   0);
-    delayFadeN_set_loop_ms(&(lines[1]),
-			   calc_ms(trunc_fr1x32(v), globalTimescale),
-			   1);
+			   calc_ms(trunc_fr1x32(v), globalTimescale));
     break;
   case eParam_pos_write0 :
-    // check_fade_wr(0);
     delayFadeN_set_pos_write_ms(&(lines[0]),
-				calc_ms(trunc_fr1x32(v), globalTimescale),
-				fadeTargetWr[0]);
+				calc_ms(trunc_fr1x32(v), globalTimescale));
     break;
   case eParam_pos_write1 :
-    // check_fade_wr(1);
     delayFadeN_set_pos_write_ms(&(lines[1]),
-				calc_ms(trunc_fr1x32(v), globalTimescale),
-				fadeTargetWr[1] );
+				calc_ms(trunc_fr1x32(v), globalTimescale));
     break;
   case eParam_pos_read0 :
     if (start_fade_rd(0) ) {
@@ -103,16 +82,16 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_run_read(&(lines[1]), v);
     break;
   case eParam_rMul0 :
-    delayFadeN_set_mul(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    delayFadeN_set_mul(&(lines[0]), v >> 16);
     break;
   case eParam_rDiv0 :
-    delayFadeN_set_div(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    delayFadeN_set_div(&(lines[0]), v >> 16);
     break;
   case eParam_rMul1 :
-    delayFadeN_set_mul(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    delayFadeN_set_mul(&(lines[1]), v >> 16);
     break;
   case eParam_rDiv1 :
-    delayFadeN_set_div(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    delayFadeN_set_div(&(lines[1]), v >> 16);
     break;
   case eParam_write0 :
     /// FIXME: need write level...

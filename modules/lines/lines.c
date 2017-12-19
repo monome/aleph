@@ -188,7 +188,7 @@ s32 calc_ms(s16 ticks, s16 ticklength) {
   // ticks are signed 0.15, ticklength is signed 3.12
   // calc_ms(0x7FFF, 0x4000) should return
   // calc_ms(1, 0x4000) should return 4
-  s32 ret = ticks * ticklength;
+  s32 ret = mult_fr1x32(ticks, ticklength);
   ret = add_fr1x32(ret, shr_fr1x32(ticklength, 2));
   ret = shr_fr1x32(ret, 12);
   return ret;
