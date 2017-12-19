@@ -395,26 +395,26 @@ void module_process_frame(void) {
     // process filters
     // check integrators for filter params
 
-    if( !filter_1p_sync(&(svfCutSlew[i])) ) {
+    /* if( !filter_1p_sync(&(svfCutSlew[i])) ) { */
       filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
-    }
-    if( !filter_1p_sync(&(svfRqSlew[i])) ) {
+    /* } */
+    /* if( !filter_1p_sync(&(svfRqSlew[i])) ) { */
       filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
-    }
+    /* } */
 
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
 
     // mix
-    if( !filter_1p_sync(&(drySlew[i])) ) {
+    /* if( !filter_1p_sync(&(drySlew[i])) ) { */
     mix_fdry[i] = filter_1p_lo_next(&(drySlew[i]));
-    }
+    /* } */
 
     tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
 
 
-    if( !filter_1p_sync(&(wetSlew[i])) ) {
+    /* if( !filter_1p_sync(&(wetSlew[i])) ) { */
       mix_fwet[i] = filter_1p_lo_next(&(wetSlew[i]));
-    }
+    /* } */
     tmpDel = add_fr1x32(tmpDel,
 			mult_fr1x32x32(tmpSvf, mix_fwet[i]));
 
@@ -432,10 +432,10 @@ void module_process_frame(void) {
   mix_outputs();
 
   /// do CV output
-  if( !filter_1p_sync(&(cvSlew[cvChan])) ) {
-    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+  /* if( !filter_1p_sync(&(cvSlew[cvChan])) ) { */
+    cvVal[cvChan] = filter_1p_lo_norm_next(&(cvSlew[cvChan]));
     cv_update(cvChan, cvVal[cvChan]);
-  }
+  /* } */
   
   if(++cvChan == 4) {
     cvChan = 0;
