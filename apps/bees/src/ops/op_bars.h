@@ -37,7 +37,7 @@ typedef struct op_bars_struct {
   // pointers for external access
   volatile io_t* in_val[7];
   // no outputs
-  op_out_t outs[0];
+  op_out_t outs[1];
   // drawing region handler
   region reg;
   // drawing region data.

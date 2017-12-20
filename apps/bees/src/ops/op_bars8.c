@@ -18,7 +18,7 @@
 
 //-- descriptor
 static const char* op_bars8_instring = "ENABLE\0 PERIOD\0 MODE\0   A\0      B\0      C\0      D\0      E\0      F\0      G\0      H\0      ";
-static const char* op_bars8_outstring = "";
+static const char* op_bars8_outstring = "DUMMY\0  ";
 static const char* op_bars8_opstring = "BARS8";
 
 //-------------------------------------------------
@@ -82,7 +82,7 @@ void op_bars8_init(void* op) {
 
   // superclass val
   bars8->super.numInputs = 11;
-  bars8->super.numOutputs = 0;
+  bars8->super.numOutputs = 1;
  
   bars8->super.in_val = bars8->in_val;
   bars8->in_val[0] = &(bars8->enable);

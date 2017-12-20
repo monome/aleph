@@ -18,7 +18,7 @@ typedef struct op_midi_out_cc_struct {
   // input: chan, vel, num 
   volatile io_t* in_val[4];
   // outputs: none
-  op_out_t outs[0];
+  op_out_t outs[1];
   // output midi cable
   volatile io_t cable;
   // output channel (-1 == all channels)

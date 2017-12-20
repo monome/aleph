@@ -19,7 +19,7 @@
 
 //-- descriptor
 static const char* op_bignum_instring = "ENABLE\0 PERIOD\0 VAL\0    X\0      Y\0      ";
-static const char* op_bignum_outstring = "";
+static const char* op_bignum_outstring = "DUMMY\0  ";
 static const char* op_bignum_opstring = "BIGNUM";
 
 //-- temp
@@ -79,7 +79,7 @@ void op_bignum_init(void* op) {
 
   // superclass val
   bignum->super.numInputs = 5;
-  bignum->super.numOutputs = 0;
+  bignum->super.numOutputs = 1;
  
   bignum->super.in_val = bignum->in_val;
   bignum->in_val[0] = &(bignum->enable);

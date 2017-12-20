@@ -42,7 +42,7 @@ typedef struct op_screen_struct {
   // pointers for external access
   volatile io_t* in_val[6];
   // no outputs
-  op_out_t outs[0];
+  op_out_t outs[1];
   // drawing region handler
   region reg;
   // drawing region data.

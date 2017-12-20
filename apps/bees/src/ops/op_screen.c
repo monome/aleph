@@ -18,7 +18,7 @@
 
 //-- descriptor
 static const char* op_screen_instring = "ENABLE\0 PERIOD\0 VAL\0    FILL\0   X\0      Y\0      ";
-static const char* op_screen_outstring = "";
+static const char* op_screen_outstring = "DUMMY\0  ";
 static const char* op_screen_opstring = "SCREEN";
 
 //-------------------------------------------------
@@ -72,7 +72,7 @@ void op_screen_init(void* op) {
 
   // superclass val
   screen->super.numInputs = 6;
-  screen->super.numOutputs = 0;
+  screen->super.numOutputs = 1;
  
   screen->super.in_val = screen->in_val;
   screen->in_val[0] = &(screen->enable);
