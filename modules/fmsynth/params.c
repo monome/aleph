@@ -21,6 +21,12 @@ void param_desc_aux (ParamDesc* desc,int param_idx,
 #define param_desc_modMatrix(param_idx, desc_string)  param_desc_aux(desc, param_idx, desc_string, eParamTypeLabel, 0, 7, 1);
 
 extern void fill_param_desc(ParamDesc* desc) {
+  strcpy(desc[eParamDummy].label, "dummy");
+  desc[eParamDummy].type = eParamTypeBool;
+  desc[eParamDummy].min = 0;
+  desc[eParamDummy].max = 1;
+  desc[eParamDummy].radix = 2;
+
   strcpy(desc[eParam_cvVal0].label, "cv0");
   desc[eParam_cvVal0].type = eParamTypeFix;
   desc[eParam_cvVal0].min = 0x00000000;

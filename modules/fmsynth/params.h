@@ -35,6 +35,7 @@
 
 // enumerate parameters
 enum params {
+  eParamDummy,
   eParam_cvVal0,
   eParam_cvVal1,
   eParam_cvVal2,
