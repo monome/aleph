@@ -20,7 +20,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_kria_instring = "FOCUS\0  CLOCK\0  OCTAVE\0 TUNING\0 ";
+static const char* op_kria_instring = "FOCUS\0  CLOCK\0  OCTAVE\0 TUNING\0 PATTERN\0";
 static const char* op_kria_outstring ="TR0\0    NOTE0\0  TR1\0    NOTE1\0  ";
 static const char* op_kria_opstring = "KRIA";
 
@@ -34,6 +34,7 @@ static void op_kria_in_focus(op_kria_t* grid, const io_t val);
 static void op_kria_in_clock(op_kria_t* grid, const io_t val);
 static void op_kria_in_octave(op_kria_t* grid, const io_t val);
 static void op_kria_in_tuning(op_kria_t* grid, const io_t val);
+static void op_kria_in_pattern(op_kria_t* grid, const io_t val);
 
 // pickles
 static u8* op_kria_pickle(op_kria_t* enc, u8* dst);
@@ -51,11 +52,12 @@ static void op_kria_poll_handler(void* op);
 static void op_kria_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
-static op_in_fn op_kria_in_fn[4] = {
+static op_in_fn op_kria_in_fn[5] = {
   (op_in_fn)&op_kria_in_focus,
   (op_in_fn)&op_kria_in_clock,
   (op_in_fn)&op_kria_in_octave,
   (op_in_fn)&op_kria_in_tuning,
+  (op_in_fn)&op_kria_in_pattern,
 };
 
 #define L2 12
@@ -195,7 +197,7 @@ void op_kria_init(void* mem) {
   op->super.type = eOpKria;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
-  op->super.numInputs = 4;
+  op->super.numInputs = 5;
   op->super.numOutputs = 4;
 
   op->super.in_val = op->in_val;
@@ -210,6 +212,7 @@ void op_kria_init(void* mem) {
   op->in_val[1] = &(op->clk);
   op->in_val[2] = &(op->octave);
   op->in_val[3] = &(op->tuning);
+  op->in_val[4] = &(op->pattern);
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
@@ -219,6 +222,7 @@ void op_kria_init(void* mem) {
   op->clk = 0;
   op->octave = 12;
   op->tuning = 5;
+  op->pattern = 0;
 
   u8 c;
   // clear out some reasonable defaults
@@ -378,6 +382,13 @@ static void op_kria_in_octave(op_kria_t* op, const io_t v) {
 static void op_kria_in_tuning(op_kria_t* op, const io_t v) {
 #ifndef DISABLE_KRIA
   op->tuning = v;
+#endif
+}
+
+static void op_kria_in_pattern(op_kria_t* op, const io_t v) {
+  // FIXME add pattern-select feature
+#ifndef DISABLE_KRIA
+  op->pattern = v;
 #endif
 }
 
@@ -1228,6 +1239,7 @@ u8* op_kria_pickle(op_kria_t* kria, u8* dst) {
   dst = pickle_io(kria->focus, dst);
   dst = pickle_io(kria->octave, dst);
   dst = pickle_io(kria->tuning, dst);
+  dst = pickle_io(kria->pattern, dst);
 
   u32 *kria_state = (u32*)&(kria->k);
   while ((u8*)kria_state < ((u8*) &(kria->k)) + sizeof(kria_set)) {
@@ -1242,6 +1254,7 @@ const u8* op_kria_unpickle(op_kria_t* kria, const u8* src) {
   src = unpickle_io(src, (u32*)&(kria->focus));
   src = unpickle_io(src, (u32*)&(kria->octave));
   src = unpickle_io(src, (u32*)&(kria->tuning));
+  src = unpickle_io(src, (u32*)&(kria->pattern));
 
   u32 *kria_state = (u32*)&(kria->k);
   while ((u8*)kria_state < ((u8*) &(kria->k)) + sizeof(kria_set)) {
