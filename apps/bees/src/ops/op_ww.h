@@ -102,7 +102,9 @@ typedef struct op_ww_struct {
   volatile io_t focus;
   volatile io_t clk;
   volatile io_t param;
-  volatile io_t* in_val[3];
+  volatile io_t cut;
+  volatile io_t pattern;
+  volatile io_t* in_val[5];
   // outputs: a,b,c,d
   op_out_t outs[7];
   // internal:
