@@ -254,15 +254,6 @@ average.
 - AVG: average of the last 8 values.
 - O0-7: O0 is the input, O1 the previous, O2 … O7. a queue.
 
-# HISTORY2
-Stores a running list of the last 2 values input, provides the
-average.
-## Inputs
-- IN: the input.
-## Outputs
-- AVG: average of the last 8 values.
-- O0-1: O0 is the input, O1 the previous.
-
 # IS
 Comparisons. Equals, not equals, greater than, less than.
 ## Inputs
@@ -761,7 +752,7 @@ Outputs the time interval between the last two received events in milliseconds.
 # TOG
 Toggles between zero and a given number.
 ## Inputs
-- STATE: any positive input causes the state to change. <1 outputs 0.
+- BANG: any positive input causes the state to change. <1 outputs 0.
 - MUL: sets the value to be output when toggle is on.
 ## Outputs
 - VAL: outputs the current state of the toggle. ‘off’ outputs 0. ‘on’
@@ -778,3 +769,40 @@ White whale, for grid. see white whale
 - TR0-TR3: trigger or gate outputs from the sequencer; [0,1].
 - CVA-CVB: continuous outputs. for map mode MUL by 8 for CV
   output. For waves, MUL by 15, then DIV by 2.
+
+# Proposed Operators:
+
+TODO: add these operators!
+
+# ECA
+An elementary (1d binary) cellular automaton
+
+# GRIDCOL
+a monome grid operator for direct column manipulation.
+## Inputs
+- X
+- COL
+## Outputs
+- X
+- COL
+
+# HIST2
+Stores a running list of the last 2 values input, provides the
+average.
+## Inputs
+- IN: the input.
+## Outputs
+- AVG: average of the last 2 values.
+- O0-1: O0 is the input, O1 the previous.
+
+# HIST8:
+output the last 8 values in a circular buffer (8 outputs) - think this
+is the same as currently implemented HISTORY
+
+# HIST16:
+output the last 16 values in a circular buffer (16 outputs)
+
+# HIST:
+should be renamed to MEAN or AVG. or maybe HISTX should also have
+mean/median outputs. or should be rolled into more general STATS op.
+
