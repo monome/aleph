@@ -313,6 +313,8 @@ accent, duration, note, octave, transposition, scale.
   page would transpose by 7 semitones instead of 12.
 - TUNING: Sets the semitone jump between rows on the transpose page.
 Defaults to 5, like a bass guitar standard tuning.
+- PATTERN: currently not-implemented, feature scheduled for 0.8.1
+update
 ## Outputs:
 - TR0: Trigger output for Note 0 – sends 1 for ‘note on’, 2 for
   ‘accent’, 0 for ‘note off’
@@ -644,7 +646,8 @@ Send indexed pairs of numbers to host computer over USB serial
 - ADDR: param index
 - DATA: param value
 ## Outputs
-(None)
+- ADDR: currently not-implemented, feature scheduled for 0.8.1 update
+- DATA: currently not-implemented, feature scheduled for 0.8.1 update
 
 # SHL
  Left bit shift, mostly to use with BIT operator
@@ -778,6 +781,9 @@ White whale, for grid. see white whale
 - CLOCK: advances the step clock by 1. expects alternating 0/1 from a
   METRO op.
 - PARAM: input parameter for setting CV values; range [0,4095].
+- CUT: currently not-implemented, feature scheduled for 0.8.1 update
+- PATTERN: currently not-implemented, feature scheduled for 0.8.1
+  update
 ## Outputs
 - TR0-TR3: trigger or gate outputs from the sequencer; [0,1].
 - CVA-CVB: continuous outputs. for map mode MUL by 8 for CV
