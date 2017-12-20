@@ -67,6 +67,7 @@
 
 // enumerate parameters
 enum params {
+  eParamDummy,
   //CV params
   eParam_cvPatch1,
   eParam_cvPatch2,

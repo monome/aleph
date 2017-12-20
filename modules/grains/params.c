@@ -18,6 +18,7 @@ void param_desc_aux (ParamDesc* desc,int param_idx,
 #define param_desc_pan(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, PAN_TYPE, PAN_MIN, PAN_MAX, PAN_RADIX)
 
 extern void fill_param_desc(ParamDesc* desc) {
+  param_desc_aux(desc, eParamDummy, "dummy", eParamTypeBool, 0, 1, 2);
 
   //CV Sources
   param_desc_patch(eParam_cvPatch1, "source_cv1");
