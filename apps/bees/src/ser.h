@@ -16,7 +16,7 @@ typedef struct op_serial_struct {
   volatile io_t b;
   volatile io_t* in_val[2];
 
-  op_out_t outs[];
+  op_out_t outs[2];
 } op_serial_t;
 
 void serial_init(void);
