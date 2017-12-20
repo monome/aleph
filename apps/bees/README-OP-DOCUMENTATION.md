@@ -735,8 +735,9 @@ Sends input through 1st outlet if below threshold, 2nd if not .
 Outputs the time interval between the last two received events in milliseconds.
 ## Inputs
 - EVENT: causes output, then restarts timer at zero
+- RESET: restarts timer at zero without causing output
 ## Outputs
-- TIME: outputs time interval between last two received events
+- TIME: outputs time interval between timer restart-to-zero & event
 
 # TOG
 Toggles between zero and a given number.
