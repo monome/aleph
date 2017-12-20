@@ -334,6 +334,25 @@ Conway’s game of life. With monome grid support.
 - POP: total population
 - DELTA: change in population this round
 
+# LINLIN (LL)
+Makes a linear mapping from an input range to an output
+range. (replacing combinations of MUL/ADD/DIV in many situations)
+## Inputs
+- IN: input signal
+- IMIN: lower limit of input range
+- IMAX: upper limit of input range
+- OMIN: lower limit of desired output range
+- OMAX: upper limit of desired output range
+## Outputs
+- VAL: IN triggers the calculation:
+  (IN - IMIN) / (IMAX - IMIN) * (OMAX - OMIN) + OMIN
+
+## Inputs
+- INDEX: (0-1) get value at given index, sent to output
+- I0-I1: set input values to store
+## Outputs
+- VAL: the value at given index
+
 # LIST2
 Storage for two values, recallable by index. Good for use with a
 binary (0-1) input, for setting individual values.
