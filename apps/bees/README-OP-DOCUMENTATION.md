@@ -452,6 +452,17 @@ Receives MIDI note events from a USB connected device.
 ## Outputs
 - NUM: outputs the MIDI note number (0-127).
 - VEL: outputs the MIDI velocity (0-127, 0 is a release).
+- PITCH: outputs MIDI pitchbend messages
+
+# MIDICLK (MIDI Clock)
+Receives MIDI realtime messages aka midi clock
+## Inputs
+(None)
+## Outputs
+- TICK: output 1 on MIDI tick message
+- START: output 1 on MIDI start message
+- CONT: output 1 on MIDI continue message
+- STOP: output 1 on MIDI stop message
 
 # MIDIPROG
 Receives MIDI Program Change from a USB connected device
@@ -462,8 +473,9 @@ Inputs
 
 # MOUT_CC
  Sends MIDI CC to a USB connected device.
-
 ## Inputs: 
+- CABLE: the USB-midi 'cable number' to send to (for devices with only
+  1 USB-midi 'cable') leave this as 0.
 - CHAN: sets the MIDI channel to send to
 - NUM: CC number (0-127)
 - VAL: value associated to CC number (0-127)
@@ -473,11 +485,25 @@ Inputs
 # MOUT_NOTE (MOUT_N)
 Sends MIDI note events to a USB connected device.
 ## Inputs
+- CABLE: the USB-midi 'cable number' to send to (for devices with only
+  1 USB-midi 'cable') leave this as 0.
 - CHAN: sets the MIDI channel to send to
 - NUM: MIDI note number (0-127)
 - VEL: MIDI velocity (0-127, 0 is a release)
 ## Outputs
 (none)
+
+# MOUTCK (MIDI Clock Output)
+Sends MIDI realtime messages aka midi clock
+## Inputs
+- CABLE: the USB-midi 'cable number' to send to (for devices with only
+  1 USB-midi 'cable') leave this as 0.
+- TICK: sends MIDI tick message when banged
+- START: sends MIDI start message when banged
+- CONT: sends MIDI continue message when banged
+- STOP: sends MIDI stop message when banged
+## Outputs
+(None)
 
 # MOD
 Divides input A by input B, outputs the remainder.
