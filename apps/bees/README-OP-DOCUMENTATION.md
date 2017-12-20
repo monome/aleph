@@ -105,6 +105,19 @@ A gate that opens only when values change
 ## Outputs
 - VAL: input number if different from LAST
 
+# CKDIV (Clock-dividing METRO)
+A version of METRO (see METRO) which exactly subdivides the time of
+input PERIOD into DIV ticks.  Useful for subdividing clocks of known
+duration e.g taptempo based off timer
+## Inputs
+- ENABLE: turn CKDIV on/off & reset timer
+- PERIOD: set the duration (in ms) between TICKs
+- VAL: the value to send on TICK & TOCK
+- DIV: the number of TOCKs to output for each tick
+## Outputs
+- TICK: outputs VAL every PERIOD ms since last tick or ENABLE
+- TOCK: outputs VAL every PERIOD/DIV ms since last TICK or TOCK
+
 # CV-IN
 Receives control input from the CV input jacks.
 ## Inputs
