@@ -46,6 +46,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpLifeClassic,
   eOpLinlin, // "LL"
   eOpList2,
+  eOpList4,
   eOpList8,
   eOpList16,
   eOpLogic,
@@ -414,6 +415,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "LINLIN",
     .size = sizeof(op_linlin_t),
     .init = &op_linlin_init,
+    .deinit = NULL
+  }, {
+    .name = "LIST4",
+    .size = sizeof(op_list4_t),
+    .init = &op_list4_init,
     .deinit = NULL
   }
 };

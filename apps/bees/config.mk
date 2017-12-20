@@ -68,6 +68,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_life_classic.c \
 	$(APP_DIR)/src/ops/op_linlin.c \
 	$(APP_DIR)/src/ops/op_list2.c \
+	$(APP_DIR)/src/ops/op_list4.c \
 	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_list16.c \
 	$(APP_DIR)/src/ops/op_logic.c \

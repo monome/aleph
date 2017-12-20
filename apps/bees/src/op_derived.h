@@ -36,6 +36,7 @@
 #include "ops/op_linlin.h"
 #include "ops/op_kria.h"
 #include "ops/op_list2.h"
+#include "ops/op_list4.h"
 #include "ops/op_list8.h"
 #include "ops/op_list16.h"
 #include "ops/op_logic.h"
