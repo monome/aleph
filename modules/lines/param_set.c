@@ -1,17 +1,5 @@
 // this is its own file for pure convenience....
 
-static u8 start_fade_wr(u8 id, u8 start_stop) {
-  if(lpFadeWr[id].sync) {
-    // start the fade
-    fadeTargetWr[id] = start_stop;
-    filter_ramp_start(&(lpFadeWr[id]));
-    return 1;
-  } else {
-    // fade is in progress.
-    return 0;
-  }
-}
-
 static u8 start_fade_rd(u8 id) {
   u8 newTarget, oldTarget;
   //  u8 ret;
@@ -82,22 +70,10 @@ void module_set_param(u32 idx, ParamValue v) {
     }
     break;
   case eParam_run_write0 :
-    if(v > 0) {
-      if(start_fade_wr(0, 1)) {
-	lines[0].runWr = 1;
-      }
-    } else {
-      start_fade_wr(0, 0);
-    }
+    delayFadeN_set_run_write(&(lines[0]), v);
     break;
   case eParam_run_write1 :
-    if(v > 0) {
-      if(start_fade_wr(1, 1)) {
-	lines[1].runWr = 1;
-      }
-    } else {
-      start_fade_wr(1, 0);
-    }
+    delayFadeN_set_run_write(&(lines[1]), v);
     break;
   case eParam_run_read0 :
     delayFadeN_set_run_read(&(lines[0]), v);

@@ -222,7 +222,6 @@ void module_init(void) {
 
     filter_ramp_init(&(lpFadeRd[i]));
     filter_ramp_init(&(lpFadeWr[i]));
-    filter_ramp_set_inc(&(lpFadeWr[i]), FR32_MAX >> 8); // 256 samples = ~5ms
 
 
     /* for(j=0; j<LINES_BUF_FRAMES; ++j) { */
@@ -389,14 +388,7 @@ void module_process_frame(void) {
 
   for(i=0; i<NLINES; i++) {
     // process fade integrator
-    if(fadeTargetWr[i] == 0 && lpFadeWr[i].sync) {
-      lines[i].runWr =  0;
-    }
-    lines[i].fadeWr = filter_ramp_next(&(lpFadeWr[i]));
-    if(fadeTargetWr[i] == 0) {
-      lines[i].fadeWr = FR32_MAX - lines[i].fadeWr;
-    }
-
+    //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
     lines[i].fadeRd = filter_ramp_next(&(lpFadeRd[i]));
     if(fadeTargetRd[i] == 0) {
       lines[i].fadeRd = FR32_MAX - lines[i].fadeRd;
