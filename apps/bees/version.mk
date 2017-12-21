@@ -1,3 +1,3 @@
 maj = 0
-min = 7
-rev = 2
+min = 8
+rev = 0
