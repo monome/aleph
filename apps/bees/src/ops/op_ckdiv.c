@@ -209,12 +209,10 @@ const u8* op_ckdiv_unpickle(op_ckdiv_t* ckdiv, const u8* src) {
   src = unpickle_io(src, &(ckdiv->value));
   src = unpickle_io(src, &(ckdiv->divide));
 
+  op_ckdiv_calculate_timings(ckdiv);
   if(ckdiv->enable) {
-    op_ckdiv_set_timer(ckdiv);
-  }
-  if (ckdiv->divide) {
-    ckdiv->cacheDivision = ckdiv->ticklength / ckdiv->divide;
-    ckdiv->cacheRemainder = ckdiv->ticklength % ckdiv->divide;
+    ckdiv->enable = 0;
+    op_ckdiv_in_enable(ckdiv, 1);
   }
   return src;
 }

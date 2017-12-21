@@ -10,7 +10,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_ww_instring = "FOCUS\0  CLOCK\0  PARAM\0 ";
+static const char* op_ww_instring = "FOCUS\0  CLOCK\0  PARAM\0 CUT\0    PATTERN\0";
 static const char* op_ww_outstring ="TR0\0    TR1\0    TR2\0    TR3\0    CVA\0    CVB\0    POS\0    ";
 static const char* op_ww_opstring = "WW";
 
@@ -23,6 +23,8 @@ static const char* op_ww_opstring = "WW";
 static void op_ww_in_focus(op_ww_t* grid, const io_t val);
 static void op_ww_in_clock(op_ww_t* grid, const io_t val);
 static void op_ww_in_param(op_ww_t* grid, const io_t val);
+static void op_ww_in_cut(op_ww_t* grid, const io_t val);
+static void op_ww_in_pattern(op_ww_t* grid, const io_t val);
 
 // pickles
 static u8* op_ww_pickle(op_ww_t* enc, u8* dst);
@@ -44,10 +46,12 @@ static void op_ww_redraw(op_monome_t *op_monome);
 static u32 rnd(void);
 
 // input func pointer array
-static op_in_fn op_ww_in_fn[3] = {
+static op_in_fn op_ww_in_fn[5] = {
   (op_in_fn)&op_ww_in_focus,
   (op_in_fn)&op_ww_in_clock,
   (op_in_fn)&op_ww_in_param,
+  (op_in_fn)&op_ww_in_cut,
+  (op_in_fn)&op_ww_in_pattern,
 };
 
 static u32 a1 = 0x19660d;
@@ -125,7 +129,7 @@ void op_ww_init(void* mem) {
   op->super.type = eOpWW;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
-  op->super.numInputs = 3;
+  op->super.numInputs = 5;
   op->super.numOutputs = 7;
 
   op->super.in_val = op->in_val;
@@ -139,6 +143,8 @@ void op_ww_init(void* mem) {
   op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->clk);  
   op->in_val[2] = &(op->param);  
+  op->in_val[3] = &(op->cut);
+  op->in_val[4] = &(op->pattern);
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
@@ -151,6 +157,8 @@ void op_ww_init(void* mem) {
   op->focus = 0;
   op->clk = 0;
   op->param = 0;
+  op->cut = 0;
+  op->pattern = 0;
 
   op->x.re = &ww_refresh;
 
@@ -1569,6 +1577,14 @@ static void ww_refresh_mono(op_monome_t *op_monome) {
 
 
 
+static void op_ww_in_cut(op_ww_t* op, const io_t v) {
+  // FIXME add logic to cut to sequence step
+}
+
+static void op_ww_in_pattern(op_ww_t* op, const io_t v) {
+  // FIXME add logic to queue next sequence if cut is set to -1, then
+  // cut directly to first step of next pattern
+}
 
 
 

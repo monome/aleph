@@ -58,10 +58,9 @@ void sport0_rx_isr() {
 }
 
 // ISR on sport1 tx completion
-static int sport1_tx_isr_count = 0;
 void sport1_tx_isr() {
-  // not actually using this 
-  *pDMA4_IRQ_STATUS = 0x0001;  
+  // clear the interrupt flag, leave enabled
+  *pDMA4_IRQ_STATUS = 0x0001;
 }
 
 

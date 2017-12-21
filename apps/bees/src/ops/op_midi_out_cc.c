@@ -10,7 +10,7 @@
 
 //---- descriptor strings
 static const char* op_midi_out_cc_instring =  "CABLE\0  CHAN\0   NUM\0    VAL\0    ";
-static const char* op_midi_out_cc_outstring = "";
+static const char* op_midi_out_cc_outstring = "DUMMY\0  ";
 static const char* op_midi_out_cc_opstring = "MOUTCC";
 
 //-------------------------------------------------
@@ -58,7 +58,7 @@ void op_midi_out_cc_init(void* mem) {
   //  op->super.flags |= (1 << eOpFlagMidiIn);
 
   op->super.numInputs = 4;
-  op->super.numOutputs = 0;
+  op->super.numOutputs = 1;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;

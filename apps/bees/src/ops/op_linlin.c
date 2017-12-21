@@ -26,7 +26,7 @@ static op_in_fn op_linlin_in_fn[5] = {
 
 static const char* op_linlin_instring  = "IN\0     IMIN\0   IMAX\0   OMIN\0   OMAX\0   ";
 static const char* op_linlin_outstring = "VAL\0    ";
-static const char* op_linlin_opstring  = "LINLIN";
+static const char* op_linlin_opstring  = "LL";
 static void calculate_scale_factor(op_linlin_t *linlin);
 //-------------------------------------------------
 //----- external function definitions

@@ -12,13 +12,11 @@ typedef struct op_timer_struct {
   // ---- input state
   // event to be timed
   volatile io_t event;
+  volatile io_t reset;
   // ---- input access pointers
-  volatile io_t* in_val[1];
+  volatile io_t* in_val[2];
   // output: time
   op_out_t outs[1];
-  /// additional state variables
-  // interval since last event, in ticks
-  u32 interval;
   // last event ticks
   u32 ticks;
 } op_timer_t;

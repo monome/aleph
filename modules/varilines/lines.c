@@ -454,12 +454,8 @@ void module_process_frame(void) {
     // process filters
     // check integrators for filter params
 
-    if( !filter_1p_sync(&(svfCutSlew[i])) ) {
-      filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
-    }
-    if( !filter_1p_sync(&(svfRqSlew[i])) ) {
-      filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
-    }
+    filter_svf_set_coeff( &(svf[i]), filter_1p_lo_norm_next(&(svfCutSlew[i])) );
+    filter_svf_set_rq( &(svf[i]), filter_1p_lo_norm_next(&(svfRqSlew[i])) );
     tmpSvf = trunc_fr1x32(filter_svf_next( &(svf[i]), tmpDel << 16));
     // mix
     tmpDel = multr_fr1x16( tmpDel, mix_fdry[i] );

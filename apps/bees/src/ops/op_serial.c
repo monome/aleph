@@ -55,6 +55,7 @@ static op_in_fn op_serial_in_fn[2] = {
 };
 
 static const char* op_serial_instring  = "ADDR\0   DATA\0   ";
+static const char* op_serial_outstring = "ADDR\0   DATA\0   ";
 static const char* op_serial_opstring  = "SERIAL";
 
 //-------------------------------------------------
@@ -62,7 +63,7 @@ static const char* op_serial_opstring  = "SERIAL";
 void op_serial_init(void* mem) {
   op_serial_t* op = (op_serial_t*)mem;
   op->super.numInputs = 2;
-  op->super.numOutputs = 0;
+  op->super.numOutputs = 2;
 
   op->super.in_fn = op_serial_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_serial_pickle);
@@ -72,6 +73,7 @@ void op_serial_init(void* mem) {
   op->super.out = op->outs;
   op->super.opString = op_serial_opstring;
   op->super.inString = op_serial_instring;
+  op->super.outString = op_serial_outstring;
 
   op->super.type = eOpSerial;  
 

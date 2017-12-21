@@ -59,7 +59,8 @@ typedef struct op_kria_struct {
   volatile io_t clk;
   volatile io_t octave;
   volatile io_t tuning;
-  volatile io_t* in_val[4];
+  volatile io_t pattern;
+  volatile io_t* in_val[5];
   // outputs: a,b,c,d
   op_out_t outs[4];
   // internal:

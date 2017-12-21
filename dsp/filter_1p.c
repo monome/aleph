@@ -17,7 +17,7 @@
 #endif
 
 // a little under -120db
-#define FR32_COMP_THRESH 0x800
+#define FR32_COMP_THRESH 0x4000
 
 //-----------------------
 //---- static functions
@@ -67,6 +67,16 @@ fract32 filter_1p_lo_next(filter_1p_lo* f) {
 		     mult_fr1x32x32(f->c,
 				    sub_fr1x32(f->y, f->x)
 				    ));
+  return f->y;
+}
+
+fract32 filter_1p_lo_norm_next(filter_1p_lo* f) {
+  fract32 difference = sub_fr1x32(f->y, f->x);
+  fract32 radix = norm_fr1x32(difference);
+  f->y = add_fr1x32( f->x,
+		     shr_fr1x32(mult_fr1x32x32(f->c,
+					       shl_fr1x32(difference, radix)),
+				radix));
   return f->y;
 }
 

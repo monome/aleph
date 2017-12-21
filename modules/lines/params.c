@@ -445,110 +445,59 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_del1_dac3].radix = 1;
 
   // filter slew
+  strcpy(desc[eParamMixSlew].label, "mixSlew");
+  desc[eParamMixSlew].type = eParamTypeIntegrator;
+  desc[eParamMixSlew].min = SLEW_SECONDS_MIN;
+  desc[eParamMixSlew].max = SLEW_SECONDS_MAX;
+  desc[eParamMixSlew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamCut0Slew].label, "cut0Slew");
   desc[eParamCut0Slew].type = eParamTypeIntegrator;
-  desc[eParamCut0Slew].min = 0;
-  desc[eParamCut0Slew].max = FR32_MAX;
-  desc[eParamCut0Slew].radix = 32;
+  desc[eParamCut0Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamCut0Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamCut0Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamRq0Slew].label, "rq0Slew");
   desc[eParamRq0Slew].type = eParamTypeIntegrator;
-  desc[eParamRq0Slew].min = 0;
-  desc[eParamRq0Slew].max = FR32_MAX;
-  desc[eParamRq0Slew].radix = 32;
-
-  strcpy(desc[eParamLow0Slew].label, "low0Slew");
-  desc[eParamLow0Slew].type = eParamTypeIntegrator;
-  desc[eParamLow0Slew].min = 0;
-  desc[eParamLow0Slew].max = FR32_MAX;
-  desc[eParamLow0Slew].radix = 32;
-
-  strcpy(desc[eParamHigh0Slew].label, "high0Slew");
-  desc[eParamHigh0Slew].type = eParamTypeIntegrator;
-  desc[eParamHigh0Slew].min = 0;
-  desc[eParamHigh0Slew].max = FR32_MAX;
-  desc[eParamHigh0Slew].radix = 32;
-
-  strcpy(desc[eParamBand0Slew].label, "band0Slew");
-  desc[eParamBand0Slew].type = eParamTypeIntegrator;
-  desc[eParamBand0Slew].min = 0;
-  desc[eParamBand0Slew].max = FR32_MAX;
-  desc[eParamBand0Slew].radix = 32;
-
-  strcpy(desc[eParamNotch0Slew].label, "notch0Slew");
-  desc[eParamNotch0Slew].type = eParamTypeIntegrator;
-  desc[eParamNotch0Slew].min = 0;
-  desc[eParamNotch0Slew].max = FR32_MAX;
-  desc[eParamNotch0Slew].radix = 32;
+  desc[eParamRq0Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamRq0Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamRq0Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamDry0Slew].label, "dry0Slew");
   desc[eParamDry0Slew].type = eParamTypeIntegrator;
-  desc[eParamDry0Slew].min = 0;
-  desc[eParamDry0Slew].max = FR32_MAX;
-  desc[eParamDry0Slew].radix = 32;
+  desc[eParamDry0Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamDry0Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamDry0Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamWet0Slew].label, "wet0Slew");
   desc[eParamWet0Slew].type = eParamTypeIntegrator;
-  desc[eParamWet0Slew].min = 0;
-  desc[eParamWet0Slew].max = FR32_MAX;
-  desc[eParamWet0Slew].radix = 32;
+  desc[eParamWet0Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamWet0Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamWet0Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamCut1Slew].label, "cut1Slew");
   desc[eParamCut1Slew].type = eParamTypeIntegrator;
-  desc[eParamCut1Slew].min = 0;
-  desc[eParamCut1Slew].max = FR32_MAX;
-  desc[eParamCut1Slew].radix = 32;
+  desc[eParamCut1Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamCut1Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamCut1Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamRq1Slew].label, "rq1Slew");
   desc[eParamRq1Slew].type = eParamTypeIntegrator;
-  desc[eParamRq1Slew].min = 0;
-  desc[eParamRq1Slew].max = FR32_MAX;
-  desc[eParamRq1Slew].radix = 32;
-
-  strcpy(desc[eParamLow1Slew].label, "low1Slew");
-  desc[eParamLow1Slew].type = eParamTypeIntegrator;
-  desc[eParamLow1Slew].min = 0;
-  desc[eParamLow1Slew].max = FR32_MAX;
-  desc[eParamLow1Slew].radix = 32;
-
-  strcpy(desc[eParamHigh1Slew].label, "high1Slew");
-  desc[eParamHigh1Slew].type = eParamTypeIntegrator;
-  desc[eParamHigh1Slew].min = 0;
-  desc[eParamHigh1Slew].max = FR32_MAX;
-  desc[eParamHigh1Slew].radix = 32;
-
-  strcpy(desc[eParamBand1Slew].label, "band1Slew");
-  desc[eParamBand1Slew].type = eParamTypeIntegrator;
-  desc[eParamBand1Slew].min = 0;
-  desc[eParamBand1Slew].max = FR32_MAX;
-  desc[eParamBand1Slew].radix = 32;
-
-  strcpy(desc[eParamNotch1Slew].label, "notch1Slew");
-  desc[eParamNotch1Slew].type = eParamTypeIntegrator;
-  desc[eParamNotch1Slew].min = 0;
-  desc[eParamNotch1Slew].max = FR32_MAX;
-  desc[eParamNotch1Slew].radix = 32;
+  desc[eParamRq1Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamRq1Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamRq1Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamDry1Slew].label, "dry1Slew");
   desc[eParamDry1Slew].type = eParamTypeIntegrator;
-  desc[eParamDry1Slew].min = 0;
-  desc[eParamDry1Slew].max = FR32_MAX;
-  desc[eParamDry1Slew].radix = 32;
+  desc[eParamDry1Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamDry1Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamDry1Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamWet1Slew].label, "wet1Slew");
   desc[eParamWet1Slew].type = eParamTypeIntegrator;
-  desc[eParamWet1Slew].min = 0;
-  desc[eParamWet1Slew].max = FR32_MAX;
-  desc[eParamWet1Slew].radix = 32;
-
-  strcpy(desc[eParamMixSlew].label, "mixSlew");
-  desc[eParamMixSlew].type = eParamTypeIntegrator;
-  desc[eParamMixSlew].min = 0;
-  desc[eParamMixSlew].max = FR32_MAX;
-  desc[eParamMixSlew].radix = 32;
-
-  /////
+  desc[eParamWet1Slew].min = SLEW_SECONDS_MIN;
+  desc[eParamWet1Slew].max = SLEW_SECONDS_MAX;
+  desc[eParamWet1Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParam_cvVal0].label, "cv0");
   desc[eParam_cvVal0].type = eParamTypeFix; 
@@ -576,39 +525,39 @@ void fill_param_desc(ParamDesc* desc) {
 
   strcpy(desc[eParam_cvSlew0].label, "cvSlew0");
   desc[eParam_cvSlew0].type = eParamTypeIntegrator; 
-  desc[eParam_cvSlew0].min = 0x00000000; 
-  desc[eParam_cvSlew0].max = 0x7fffffff;
-  desc[eParam_cvSlew0].radix = 32;
+  desc[eParam_cvSlew0].min = SLEW_SECONDS_MIN;
+  desc[eParam_cvSlew0].max = SLEW_SECONDS_MAX;
+  desc[eParam_cvSlew0].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParam_cvSlew1].label, "cvSlew1");
   desc[eParam_cvSlew1].type = eParamTypeIntegrator; 
-  desc[eParam_cvSlew1].min = 0x00000000; 
-  desc[eParam_cvSlew1].max = 0x7fffffff;
-  desc[eParam_cvSlew1].radix = 32;
+  desc[eParam_cvSlew1].min = SLEW_SECONDS_MIN;
+  desc[eParam_cvSlew1].max = SLEW_SECONDS_MAX;
+  desc[eParam_cvSlew1].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParam_cvSlew2].label, "cvSlew2");
   desc[eParam_cvSlew2].type = eParamTypeIntegrator; 
-  desc[eParam_cvSlew2].min = 0x00000000; 
-  desc[eParam_cvSlew2].max = 0x7fffffff; 
-  desc[eParam_cvSlew2].radix = 32;
+  desc[eParam_cvSlew2].min = SLEW_SECONDS_MIN;
+  desc[eParam_cvSlew2].max = SLEW_SECONDS_MAX;
+  desc[eParam_cvSlew2].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParam_cvSlew3].label, "cvSlew3");
   desc[eParam_cvSlew3].type = eParamTypeIntegrator; 
-  desc[eParam_cvSlew3].min = 0x00000000; 
-  desc[eParam_cvSlew3].max = 0x7fffffff;
-  desc[eParam_cvSlew3].radix = 32;
+  desc[eParam_cvSlew3].min = SLEW_SECONDS_MIN;
+  desc[eParam_cvSlew3].max = SLEW_SECONDS_MAX;
+  desc[eParam_cvSlew3].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParam_cvSlew2].label, "cvSlew2");
   desc[eParam_cvSlew2].type = eParamTypeIntegrator; 
-  desc[eParam_cvSlew2].min = 0x00000000; 
-  desc[eParam_cvSlew2].max = 0x7fffffff; 
-  desc[eParam_cvSlew2].radix = 32;
+  desc[eParam_cvSlew2].min = SLEW_SECONDS_MIN;
+  desc[eParam_cvSlew2].max = SLEW_SECONDS_MAX;
+  desc[eParam_cvSlew2].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParam_cvSlew3].label, "cvSlew3");
   desc[eParam_cvSlew3].type = eParamTypeIntegrator; 
-  desc[eParam_cvSlew3].min = 0x00000000; 
-  desc[eParam_cvSlew3].max = 0x7fffffff;
-  desc[eParam_cvSlew3].radix = 32;
+  desc[eParam_cvSlew3].min = SLEW_SECONDS_MIN;
+  desc[eParam_cvSlew3].max = SLEW_SECONDS_MAX;
+  desc[eParam_cvSlew3].radix = SLEW_SECONDS_RADIX;
 
   strcpy(desc[eParamFade0].label, "fade0");
   desc[eParamFade0].type = eParamTypeFix;

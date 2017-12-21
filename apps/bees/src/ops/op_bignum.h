@@ -41,7 +41,7 @@ typedef struct op_bignum_struct {
   // pointers for external access
   volatile io_t* in_val[5];
   // no outputs
-  op_out_t outs[0];
+  op_out_t outs[1];
   // drawing region handler
   region reg;
   // drawing region data.
