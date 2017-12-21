@@ -66,7 +66,8 @@
 
 // enumerate parameters
 enum params {
-  eParamDummy,
+  // global time scaler param
+  eParamTimescale,
 
   // xfade time
   eParamFade0,
@@ -186,7 +187,6 @@ enum params {
   eParam_pre0,		       
   eParam_write0,	       
   eParam_delay0,	   
-  eParamTimescale,
 
   eParamNumParams
 };  
