@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apps=(bees mix)
-mods=(waves lines dsyn mix)
+mods=(acid analyser dacs dsyn fmsynth grains lines tape varilines voder waves)
 
 synopsis="usage: $0 [-h] [-a <app1>,<app2> ...] [-m <mod1>,<mod2> ...] /path/to/ALEPH"
 
