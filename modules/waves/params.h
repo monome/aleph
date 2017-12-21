@@ -65,7 +65,6 @@
 
 // parameters
 enum params {
-  eParamDummy,
 
   /// smoothers have to be processed first!
   eParamAmp0Slew,

@@ -3,11 +3,6 @@
 #include "params.h"
 
 void fill_param_desc(ParamDesc* desc) {
-  strcpy(desc[eParamDummy].label, "dummy");
-  desc[eParamDummy].type = eParamTypeBool;
-  desc[eParamDummy].min = 0;
-  desc[eParamDummy].max = 1;
-  desc[eParamDummy].radix = 2;
 
   strcpy(desc[eParamHz0].label, "hz0");
   desc[eParamHz0].type = eParamTypeNote;
