@@ -32,8 +32,24 @@ s32 scaler_note_val(void* scaler, io_t in) {
   print_dbg(" ; result: 0x");
   print_dbg_hex(tabVal[(u16)((u16)in >> inRshift)] );
   //  u16 uin = BIT_ABS_16((s16)in);
-  if(in < 0) { in = 0; }
-  return tabVal[(u16)((u16)in >> inRshift)];
+  u16 idx1, idx2;
+  u8 pan = (u16)in & 0x1f;
+  if(in < 0) {
+    idx1 = 0;
+    idx2 = 0;
+    pan = 0;
+  } else if (in >= 0x7FFF) {
+    idx1 = 0x7FFF >> inRshift;
+    idx2 = idx1;
+  } else {
+    idx1 = in >> inRshift;
+    idx2 = idx1 + 1;
+  }
+
+  s32 sa = tabVal [idx1] >> inRshift;
+  s32 sb = tabVal [idx2] >> inRshift;
+
+  return sb * pan + sa * ((1 << inRshift) - pan);
 }
 
 void scaler_note_str(char* dst, void* scaler,  io_t in) {
