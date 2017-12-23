@@ -30,14 +30,15 @@ static u32 shapeLimMul;
 //------------------
 //---- static functions
 
+// freq_to_phase in 2.30
+#define FREQ_TO_PHASE_CONST 0x57619F00
+
 // convert fix16 frequency to normalized fract32 phase increment
 static inline fract32 freq_to_phase(fix16 freq) {
-  return add_fr1x32(
-		    // int part
-		    (fract32)( ((int)(freq >> 16) * (int)(WAVE_IPS_NORM) ) ),
-		    // fract part
-		    mult_fr1x32x32( (freq & 0xffff) >> 1, (fract16)(WAVE_IPS_NORM) )
-		    );
+  u8 rad = norm_fr1x32(freq);
+  freq = shl_fr1x32(freq, rad);
+  fract32 ret = mult_fr1x32x32(freq, FREQ_TO_PHASE_CONST);
+  return shr_fr1x32(ret, rad - 1);
 }
 
   
