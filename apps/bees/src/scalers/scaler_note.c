@@ -33,12 +33,13 @@ s32 scaler_note_val(void* scaler, io_t in) {
   print_dbg_hex(tabVal[(u16)((u16)in >> inRshift)] );
   //  u16 uin = BIT_ABS_16((s16)in);
   u16 idx1, idx2;
-  u8 pan = (u16)in & 0x1f;
+  u16 shiftMask = (1 << inRshift) - 1;
+  u8 pan = (u16)in & shiftMask;
   if(in < 0) {
     idx1 = 0;
     idx2 = 0;
     pan = 0;
-  } else if (in >= 0x7FFF) {
+  } else if (in >= (0x7FFF & ~shiftMask)) {
     idx1 = 0x7FFF >> inRshift;
     idx2 = idx1;
   } else {
