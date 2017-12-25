@@ -58,7 +58,7 @@ void scaler_note_str(char* dst, void* scaler,  io_t in) {
   // top 7 bits are semitones (== midi note number)
   // low 3 bits are microtuning
   //// FIXME: print number.tune instead of hz ?
-  print_fix16(dst, tabVal[(u16)uin] );
+  print_fix16(dst, scaler_note_val(scaler, in));
 }
 
 // init function
