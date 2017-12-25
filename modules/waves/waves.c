@@ -341,8 +341,8 @@ void module_init(void) {
   param_setup(  eParamWet1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamDry0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamDry1Slew, PARAM_SLEW_DEFAULT );
-  param_setup(  eParamHz1, 	440 << 16 );
-  param_setup(  eParamHz0, 	660 << 16 );
+  param_setup(  eParamHz1, 	220 << 16 );
+  param_setup(  eParamHz0, 	330 << 16 );
   param_setup(  eParamTune1, 	FIX16_ONE );
   param_setup(  eParamTune0, 	FIX16_ONE );
   param_setup(  eParamWave1, 	0 );

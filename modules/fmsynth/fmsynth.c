@@ -216,6 +216,8 @@ void module_process_frame(void) {
   }
   out[0] = mult_fr1x32x32(out[0], noteVelocity);
   out[1] = mult_fr1x32x32(out[1], noteVelocity);
+  out[2] = out[0];
+  out[3] = out[1];
 }
 
 // parameter set function

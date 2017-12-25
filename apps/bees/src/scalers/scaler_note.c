@@ -32,8 +32,25 @@ s32 scaler_note_val(void* scaler, io_t in) {
   print_dbg(" ; result: 0x");
   print_dbg_hex(tabVal[(u16)((u16)in >> inRshift)] );
   //  u16 uin = BIT_ABS_16((s16)in);
-  if(in < 0) { in = 0; }
-  return tabVal[(u16)((u16)in >> inRshift)];
+  u16 idx1, idx2;
+  u16 shiftMask = (1 << inRshift) - 1;
+  u8 pan = (u16)in & shiftMask;
+  if(in < 0) {
+    idx1 = 0;
+    idx2 = 0;
+    pan = 0;
+  } else if (in >= (0x7FFF & ~shiftMask)) {
+    idx1 = 0x7FFF >> inRshift;
+    idx2 = idx1;
+  } else {
+    idx1 = in >> inRshift;
+    idx2 = idx1 + 1;
+  }
+
+  s32 sa = tabVal [idx1] >> inRshift;
+  s32 sb = tabVal [idx2] >> inRshift;
+
+  return sb * pan + sa * ((1 << inRshift) - pan);
 }
 
 void scaler_note_str(char* dst, void* scaler,  io_t in) {
@@ -41,7 +58,7 @@ void scaler_note_str(char* dst, void* scaler,  io_t in) {
   // top 7 bits are semitones (== midi note number)
   // low 3 bits are microtuning
   //// FIXME: print number.tune instead of hz ?
-  print_fix16(dst, tabVal[(u16)uin] );
+  print_fix16(dst, scaler_note_val(scaler, in));
 }
 
 // init function
