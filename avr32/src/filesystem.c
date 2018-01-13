@@ -21,7 +21,7 @@ volatile U8 pdcaRxBuf[FS_BUF_SIZE];
 volatile U8 pdcaTxBuf[FS_BUF_SIZE];
 
 // Used to indicate the end of PDCA transfer
-volatile u8 fsEndTransfer;
+//volatile u8 fsEndTransfer;
 
 //---- static
 // PDCA Channel pointer
@@ -34,41 +34,40 @@ volatile avr32_pdca_channel_t *pdcaTxChan;
 //---- low level i/o
 int media_read(unsigned long sector, unsigned char *buffer,
                unsigned long sector_count);
-int media_read(unsigned long sector, unsigned char *buffer,
-               unsigned long sector_count) {
+
+// PRGM SAMPLE TRANSFER PR, REMOVED FLAG!
+int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
     unsigned long i;
-
-    for (i = 0; i < sector_count; i++) {
-        pdca_load_channel(AVR32_PDCA_CHANNEL_SPI_RX, &pdcaRxBuf, FS_BUF_SIZE);
-
-        pdca_load_channel(AVR32_PDCA_CHANNEL_SPI_TX, (void *)&pdcaTxBuf,
-                          FS_BUF_SIZE);  // send dummy to activate the clock
-
-        fsEndTransfer = false;
-
-        if (sd_mmc_spi_read_open_PDCA(sector)) {
-            spi_write(SD_MMC_SPI, 0xFF);  // dummy byte synchronizes transfer
-
+    
+    for (i=0;i<sector_count;i++) {
+        pdca_load_channel( AVR32_PDCA_CHANNEL_SPI_RX,
+                          &pdcaRxBuf,
+                          FS_BUF_SIZE);
+        
+        pdca_load_channel( AVR32_PDCA_CHANNEL_SPI_TX,
+                          (void *)&pdcaTxBuf,
+                          FS_BUF_SIZE); //send dummy to activate the clock
+        
+        if(sd_mmc_spi_read_open_PDCA (sector)) {
+            
+            spi_write(SD_MMC_SPI,0xFF); // dummy byte synchronizes transfer
+            
             pdca_enable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
-            pdcaRxChan = (volatile avr32_pdca_channel_t *)pdca_get_handler(
-                AVR32_PDCA_CHANNEL_SPI_RX);
-            pdcaTxChan = (volatile avr32_pdca_channel_t *)pdca_get_handler(
-                AVR32_PDCA_CHANNEL_SPI_TX);
-            pdcaRxChan->cr =
-                AVR32_PDCA_TEN_MASK;  // Enable RX PDCA transfer first
-            pdcaTxChan->cr = AVR32_PDCA_TEN_MASK;  // and TX PDCA transfer
+            pdcaRxChan =(volatile avr32_pdca_channel_t*) pdca_get_handler(AVR32_PDCA_CHANNEL_SPI_RX);
+            pdcaTxChan =(volatile avr32_pdca_channel_t*) pdca_get_handler(AVR32_PDCA_CHANNEL_SPI_TX);
+            pdcaRxChan->cr = AVR32_PDCA_TEN_MASK; // Enable RX PDCA transfer first
+            pdcaTxChan->cr = AVR32_PDCA_TEN_MASK; // and TX PDCA transfer
             // wait for signal from ISR
-            while (!fsEndTransfer) {
-                ;
-                ;
-            }
+            while (!(pdcaRxChan->isr & AVR32_PDCA_ISR_TRC_MASK));
             // copy FIXME: could optimize away
-            for (i = 0; i < FS_BUF_SIZE; i++) { buffer[i] = pdcaRxBuf[i]; }
+            for(i=0; i<FS_BUF_SIZE; i++) {
+                buffer[i] = pdcaRxBuf[i];
+            }
         } else {
-            print_dbg("\r\n error opening PDCA at sector ");
+            print_dbg("\r\n error opening PDCA at sector "); 
             print_dbg_ulong(sector);
         }
-        sector++;
+        sector ++;
         buffer += FS_BUF_SIZE;
     }
     return 1;
@@ -126,3 +125,45 @@ int fat_init(void) {
         return 0;
     }
 }
+
+//PRGM SAMPLE TRANSFER PR; THIS COULD MAYBE LIVE SOMEWHER ELSE..
+int bfin_sample_transfer(unsigned long sector, unsigned long bytes) {
+    unsigned long i;
+    
+    if (sd_mmc_spi_read_open_PDCA(sector))
+    {
+        pdca_load_channel(AVR32_PDCA_CHANNEL_SPI_RX, &pdcaRxBuf, bytes);
+        pdca_load_channel(AVR32_PDCA_CHANNEL_SPI_TX, (void *)&pdcaTxBuf, bytes); //send dummy to activate the clock
+
+        spi_write(SD_MMC_SPI, 0xFF);
+            
+        pdca_enable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
+        
+        pdca_enable(AVR32_PDCA_CHANNEL_SPI_RX);
+        pdca_enable(AVR32_PDCA_CHANNEL_SPI_TX);
+            
+        //  wait for signal from ISR (irq_pdca)
+        while (!(pdcaRxChan->isr & AVR32_PDCA_ISR_TRC_MASK));
+
+        //  spi transfer
+        for (i=0; i<bytes; i+=4)
+        {            
+            BFIN_SPI->tdr = MSG_SAMPLE_COM << AVR32_SPI_TDR_TD_OFFSET;
+            while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+
+            BFIN_SPI->tdr = pdcaRxBuf[i] << AVR32_SPI_TDR_TD_OFFSET;
+            while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+            
+            BFIN_SPI->tdr = pdcaRxBuf[i + 1] << AVR32_SPI_TDR_TD_OFFSET;
+            while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+            
+            BFIN_SPI->tdr = pdcaRxBuf[i + 2] << AVR32_SPI_TDR_TD_OFFSET;
+            while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+
+            BFIN_SPI->tdr = pdcaRxBuf[i + 3] << AVR32_SPI_TDR_TD_OFFSET;
+            while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+        }
+    }
+    return 1;
+}
+
