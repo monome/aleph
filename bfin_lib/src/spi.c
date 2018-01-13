@@ -62,6 +62,15 @@ u8 spi_process(u8 rx) {
       processAudio = 0;
       return processAudio;
       break;
+        
+        case MSG_OFFSET_COM :
+            byte = eOffset0;
+            break;
+
+        case MSG_SAMPLE_COM :
+            byte = eSample0;
+            break;
+            
     default:
       break;
     }
@@ -259,6 +268,54 @@ u8 spi_process(u8 rx) {
     return 0;    // don't care
     break;
 
+      
+      //  set offset
+        case eOffset0 :
+            byte = eOffset1;
+            o.asByte[3] = rx;
+            return 0;
+            break;
+        case eOffset1 :
+            byte = eOffset2;
+            o.asByte[2] = rx;
+            return 0;
+            break;
+        case eOffset2 :
+            byte = eOffset3;
+            o.asByte[1] = rx;
+            return 0;
+            break;
+        case eOffset3 :
+            o.asByte[0] = rx;
+            module_set_offset(o.asInt);
+            byte = eCom;
+            return 0;
+            break;
+
+        //  set sample
+        case eSample0 :
+            byte = eSample1;
+            s.asByte[3] = rx;
+            return 0;
+            break;
+        case eSample1 :
+            byte = eSample2;
+            s.asByte[2] = rx;
+            return 0;
+            break;
+        case eSample2 :
+            byte = eSample3;
+            s.asByte[1] = rx;
+            return 0;
+            break;
+        case eSample3 :
+            s.asByte[0] = rx;
+            module_set_sample(s.asInt);
+            byte = eCom;
+            return 0;
+            break;
+      
+      
   default:
     byte = eCom; // reset
     return 0;
