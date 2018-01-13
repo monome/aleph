@@ -413,7 +413,7 @@ void bfin_fill_buffer(const s32* src, u32 bytes) {
     app_resume();
 }
 
-// PRGM SAMPLE TRANSFER PR
+// PRGM SAMPLE TRANSFER PR 
 void bfin_sample_start(s32 offset) {
     ParamValueSwap o;
 
