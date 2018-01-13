@@ -62,26 +62,30 @@ __attribute__((__interrupt__)) static void irq_usart(void);
 
 //---------------------------------
 //----- static function definitions
-__attribute__((__interrupt__)) static void irq_pdca(void) {
-    // Disable all interrupts.
-    //  Disable_global_interrupt();
+
+//PRGM SAMPLE TRANSFER PR
+__attribute__((__interrupt__))
+static void irq_pdca(void) {
+    //  disable all interrupts.
     cpu_irq_disable();
-    // Disable interrupt channel.
+  
+    //  disable interrupt channel.
     pdca_disable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
-    // unselects the SD/MMC memory.
+  
+    //  unselects the SD/MMC memory.
     sd_mmc_spi_read_close_PDCA();
-    //.... example has a 5000 clock gimpy delay here.
-    // using delay_us instead
-    delay_ms(10);
-    //  delay_ms(2);
-    // Disable unnecessary channel
+  
+    //REDUCED DELAY FROM MS TO US
+    delay_us(10);
+  
+    //  disable unnecessary channel
     pdca_disable(AVR32_PDCA_CHANNEL_SPI_TX);
     pdca_disable(AVR32_PDCA_CHANNEL_SPI_RX);
-    // Enable all interrupts.
+      
+    //  enable all interrupts.
     cpu_irq_enable();
-    //  Enable_global_interrupt();
-    //  print_dbg("\r\n handled PDCA interrupt. \r\n");
-    fsEndTransfer = true;
+    
+    //REMOVED FLAG, SEE filesystem.c
 }
 
 // timer irq
