@@ -64,5 +64,5 @@ done
 # modules
 for m in ${mods[@]}; do
     echo "=== mod: $m"
-    cp -v modules/${m}/${m}.{ldr,dsc} $install_root/mod/
+    cp -v modules/${m}/${m}.{ldr,dsc,lab} $install_root/mod/
 done
