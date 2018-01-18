@@ -124,6 +124,7 @@ const u8* op_random_unpickle(op_random_t* op, const u8* src) {
   src = unpickle_io(src, &(op->max));
   src = unpickle_io(src, &(op->trig));
   src = unpickle_io(src, &(op->seed));
+  op->x = op->seed;
   return src;
 }
 
