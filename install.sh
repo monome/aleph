@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apps=(bees mix)
-mods=(acid analyser dacs dsyn fmsynth grains lines tape varilines voder waves)
+mods=(acid dacs dsyn fmsynth grains lines waves)
 
 synopsis="usage: $0 [-h] [-a <app1>,<app2> ...] [-m <mod1>,<mod2> ...] /path/to/ALEPH"
 
@@ -64,5 +64,5 @@ done
 # modules
 for m in ${mods[@]}; do
     echo "=== mod: $m"
-    cp -v modules/${m}/${m}.{ldr,dsc} $install_root/mod/
+    cp -v modules/${m}/${m}.{ldr,dsc,lab} $install_root/mod/
 done
