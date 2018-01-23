@@ -109,6 +109,8 @@ typedef enum {
   eOpCkdiv,
   eOpLinlin,
   eOpList4,
+  eOpRoute2,
+  eOpHist2,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
