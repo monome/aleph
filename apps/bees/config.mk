@@ -60,7 +60,8 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_fade.c \
 	$(APP_DIR)/src/ops/op_gate.c \
 	$(APP_DIR)/src/ops/op_harry.c \
-	$(APP_DIR)/src/ops/op_hid_word.c \
+	$(APP_DIR)/src/ops/op_hid_word.c \	
+	$(APP_DIR)/src/ops/op_hist2.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
 	$(APP_DIR)/src/ops/op_iter.c \
@@ -93,6 +94,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_route.c \
+	$(APP_DIR)/src/ops/op_route2.c \
 	$(APP_DIR)/src/ops/op_route8.c \
 	$(APP_DIR)/src/ops/op_route16.c \
 	$(APP_DIR)/src/ops/op_screen.c \
