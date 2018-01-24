@@ -57,9 +57,4 @@ extern s32 bfin_get_control_cpu(void);
 //! fill a buffer on the blackfin with arbitrary data
 extern void bfin_fill_buffer(const s32* src, u32 bytes);
 
-//SAMPLE TRANSFER FROM PRGM
-extern void bfin_sample_start(s32 offset);
-extern void bfin_sample(s32 sample);
-extern void bfin_sample_end(void);
-
 #endif  // header guard
