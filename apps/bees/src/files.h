@@ -76,10 +76,5 @@ extern bool check_ext(char* str, const char* ext );
 
 // strip extension from the end of a string
 extern bool strip_ext(char* str);
-
-
-//PRGM SAMPLE TRANSFER PR
-extern void files_load_sample(u8 n);
-
 EXTERN_C_END
 #endif // header guard 
