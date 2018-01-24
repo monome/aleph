@@ -168,6 +168,33 @@ u8 app_launch(eLaunchState state) {
   print_dbg("\r\n pages_init...");
   pages_init();
 
+  //PRGM SAMPLE TRANSFER PR
+  //MAYBE NOT NECESSARY TO DO THIS EXACTLY HERE, BUT SOMEWHERE NEEDS TO BE A PLACE TO INITIATE AND COUNT THE SAMPLE TRANSFERS..
+  // -------------------------------------------------------------------------
+  bfin_disable();
+    
+    render_boot("loading samples...");
+    for (smpl = N_BUFFERS+1; smpl < n_samples; smpl++)
+    {
+        if (smpl < N_SAMPLES)
+        {
+            files_load_sample(smpl);
+        }
+        else
+        {
+            render_boot("sample file limit error");
+        }
+    }
+    
+    //  set last sample loop point and send to bfin
+    sample[smpl]->offset = sample[smpl-1]->offset + sample[smpl-1]->loop + 0xf;
+  
+    // THIS IS BECAUSE THE PRGM MODULE IS SETUP TO STORE THE OFFSETS, SO THAT THEY CAN BE CHANGED BY ONLY SENDING THE SAMPLE ID/NUMBER, ONE PARAMETER CHANGE INSTEAD OF TWO..
+    ctl_param_change(smpl, eParamSampleMarker, sample[smpl]->offset);
+    
+    bfin_enable();
+  // -------------------------------------------------------------------------
+  
   print_dbg("\r\n play_init...");
   play_init();
 
