@@ -84,8 +84,6 @@ static void irq_pdca(void) {
       
     //  enable all interrupts.
     cpu_irq_enable();
-    
-    //REMOVED FLAG, SEE filesystem.c
 }
 
 // timer irq
