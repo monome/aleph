@@ -210,6 +210,41 @@ void bfin_get_module_version(ModuleVersion* vers) {
     app_resume();
 }
 
+void bfin_sample_start(s32 offset) {
+    ParamValueSwap o;
+    
+    // send offset
+    o.asInt = offset;
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // set command
+    spi_write(BFIN_SPI, MSG_OFFSET_COM);
+    while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+    
+    // byte 1
+    spi_write(BFIN_SPI, o.asByte[0]);
+    while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+    
+    // byte 2
+    spi_write(BFIN_SPI, o.asByte[1]);
+    while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+    
+    // byte 3
+    spi_write(BFIN_SPI, o.asByte[2]);
+    while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+    
+    // byte 4
+    spi_write(BFIN_SPI, o.asByte[3]);
+    while (!(BFIN_SPI->sr & AVR32_SPI_SR_TXEMPTY_MASK)) { ;; };
+}
+
+void bfin_sample_end(void) {
+    bfin_wait();
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
 void bfin_enable(void) {
     // enable audio processing
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
