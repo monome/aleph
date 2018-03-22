@@ -14,6 +14,7 @@
 
 //! max size of blackfin ldr file
 #define BFIN_LDR_MAX_BYTES 0x12000
+#define BFIN_SDRAM_MAX_BYTES 0x4000000
 
 //! wait for busy pin to clear
 void bfin_wait(void);
@@ -35,6 +36,12 @@ void bfin_get_module_name(volatile char* buf);
 
 //! get loaded module version
 void bfin_get_module_version(ModuleVersion* vers);
+
+//! start sample transfer
+extern void bfin_sample_start(s32 offset);
+
+//! end sample transfer
+extern void bfin_sample_end(void);
 
 //! enable audio processing
 extern void bfin_enable(void);
