@@ -256,7 +256,7 @@ void init_bfin_resources(void) {
         .spck_delay = 0,
         //    .trans_delay  = 0,
         //// try and reduce this...
-        .trans_delay = 20,
+        .trans_delay = 1,
         .stay_act = 1,
         .spi_mode = 1,
         .modfdis = 1
