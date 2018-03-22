@@ -14,6 +14,7 @@
 
 //-- aleph/common headers
 #include "types.h"
+#include <string.h>
 
 //-- aleph/bfin-lib headers
 // global variables
@@ -34,120 +35,112 @@
 // parameter lists and constants
 #include "params.h"
 
-// customized module data structure
-// this will be located at the top of SDRAM (64MB)
-// all other variables (code, stack, heap) are located in SRAM (64K)
+#define BUFFERSIZE 0x100000
+
+typedef struct _sampleBuffer {
+    volatile fract32 *data;             //pointer to data
+    u32 samples;                        //count of samples
+} sampleBuffer;
+
+typedef struct _bufferHead {
+    sampleBuffer *buf;                  //pointer to buffer
+    u32 idx;                            //current idx
+} bufferHead;
+
+static void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples);
+static void buffer_head_init(bufferHead *head, sampleBuffer *buf);
+static s32 buffer_head_play(bufferHead *head);
+
 typedef struct _mixData {
-  //... here is where you would put other large data structures.
-
-  // for example, a multichannel delay module would need an audio buffer:
-  //  volatile fract32 audioBuffer[NUM_BUFS][FRAMES_PER_BUF];
-
-  // bear in mind that access to SDRAM is significantly slower than SRAM (10-20 cycles!)
-  // so don't put anything here that doesn't need the extra space.
+    ModuleData super;
+    ParamData mParamData[eParamNumParams];
+    
+    volatile fract32 sampleBuffer[BUFFERSIZE];
 } mixData;
 
-//-------------------------
-//----- extern variables (initialized here)
+ModuleData *gModuleData;
+mixData *data;
+sampleBuffer onchipbuffer[4];
+u32 offset = 0;
 
+bufferHead heads[4];
 
-// global pointer to module descriptor.
-// required by the aleph-bfin library!
-ModuleData* gModuleData;
+fract32 adcVal[4] = { 0, 0, 0, 0 };
+filter_1p_lo adcSlew[4];
+fract32 cvVal[4] = { 0, 0, 0, 0 };
+filter_1p_lo cvSlew[4];
+u8 cvChan = 0;
+fract32 outBus = 0;
 
-//-----------------------bfin_lib/src/
-//------ static variables
-
-/* 
-   here's the actual memory for module descriptor and param data
-   global pointers are to point at these here during module init.
-   we do it in this indirect way, because
-   a) modules have variable param count
-   b) in an extreme case, might need to locate param data in SDRAM
-      ( until recently, SDRAM contained full param descriptors.)
-*/
-static ModuleData super;
-static ParamData mParamData[eParamNumParams];
-
-// input values
-static fract32 adcVal[4];
-static filter_1p_lo adcSlew[4];
-
-
-// cv values (16 bits, but use fract32 and audio integrators)
-static fract32 cvVal[4];
-static filter_1p_lo cvSlew[4];
-// current channel to update - see below in process_cv() 
-static u8 cvChan = 0;
-
-// audio output bus
-static fract32 outBus = 0;
-
-//-----------------
-//--- static function declaration
-
-// update cv output
 static void process_cv(void);
-
-// small helper function to set parameter initial values
 static inline void param_setup(u32 id, ParamValue v) {
-  // set the input data so that bfin core will report it
-  // back to the controller via SPI, when requested. 
-  // (bees will make such a request of each param at launch to sync with network.)
-  // this is also how a polled analysis parameter would work.
-  gModuleData->paramData[id].value = v;
-  module_set_param(id, v);
+    gModuleData->paramData[id].value = v;
+    module_set_param(id, v);
 }
 
-
-//----------------------
-//----- external functions
-
 void module_init(void) {
-  // initialize module superclass data
-  // by setting global pointers to our own data
-  gModuleData = &super;
-  gModuleData->paramData = mParamData;
-  gModuleData->numParams = eParamNumParams;
+    data = (mixData*)SDRAM_ADDRESS;
+    gModuleData = &(data->super);
+    strcpy(gModuleData->name, "mix");
+    gModuleData->paramData = data->mParamData;
+    gModuleData->numParams = eParamNumParams;
 
-  // initialize 1pole filters for input attenuation slew
-  filter_1p_lo_init( &(adcSlew[0]), 0 );
-  filter_1p_lo_init( &(adcSlew[1]), 0 );
-  filter_1p_lo_init( &(adcSlew[2]), 0 );
-  filter_1p_lo_init( &(adcSlew[3]), 0 );
+    u32 n, i;
 
-  // initialize 1pole filters for cv output slew 
-  filter_1p_lo_init( &(cvSlew[0]), 0 );
-  filter_1p_lo_init( &(cvSlew[1]), 0 );
-  filter_1p_lo_init( &(cvSlew[2]), 0 );
-  filter_1p_lo_init( &(cvSlew[3]), 0 );
+    for(n=0; n<4; n++)
+    {
+        buffer_init(&(onchipbuffer[n]), data->sampleBuffer, BUFFERSIZE);
+    }
+    
+    for(n=0; n<4; n++)
+    {
+        buffer_head_init(&(heads[n]), &(onchipbuffer[n]));
+    }
 
+    for(i=0; i<BUFFERSIZE; i++)
+    {
+        data->sampleBuffer[i] = 0x00000000;
+    }
 
-  // set initial param values
-  // constants are from params.h
-  param_setup(eParam_cv0, 0 );
-  param_setup(eParam_cv1, 0 );
-  param_setup(eParam_cv2, 0 );
-  param_setup(eParam_cv3, 0 );
+    offset = 0;
+    
+    //  init parameters
+//    for(n=0; n<module_get_num_params(); n++) param_setup(n, 0);}
 
-  // set amp to 1/4 (-12db) with right-shift intrinsic
-  param_setup(eParam_adc0, PARAM_AMP_MAX >> 2 );
-  param_setup(eParam_adc1, PARAM_AMP_MAX >> 2 );
-  param_setup(eParam_adc2, PARAM_AMP_MAX >> 2 );
-  param_setup(eParam_adc3, PARAM_AMP_MAX >> 2 );
+    // initialize 1pole filters for input attenuation slew
+    filter_1p_lo_init( &(adcSlew[0]), 0 );
+    filter_1p_lo_init( &(adcSlew[1]), 0 );
+    filter_1p_lo_init( &(adcSlew[2]), 0 );
+    filter_1p_lo_init( &(adcSlew[3]), 0 );
 
-  // set slew defaults. the value is pretty arbitrary
-  param_setup(eParam_adcSlew0, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_adcSlew1, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_adcSlew2, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_adcSlew3, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew0, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew1, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew2, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew3, PARAM_SLEW_DEFAULT);
+    // initialize 1pole filters for cv output slew
+    filter_1p_lo_init( &(cvSlew[0]), 0 );
+    filter_1p_lo_init( &(cvSlew[1]), 0 );
+    filter_1p_lo_init( &(cvSlew[2]), 0 );
+    filter_1p_lo_init( &(cvSlew[3]), 0 );
 
+    // set initial param values
+    // constants are from params.h
+    param_setup(eParam_cv0, 0 );
+    param_setup(eParam_cv1, 0 );
+    param_setup(eParam_cv2, 0 );
+    param_setup(eParam_cv3, 0 );
 
+    // set amp to 1/4 (-12db) with right-shift intrinsic
+    param_setup(eParam_adc0, PARAM_AMP_MAX >> 2 );
+    param_setup(eParam_adc1, PARAM_AMP_MAX >> 2 );
+    param_setup(eParam_adc2, PARAM_AMP_MAX >> 2 );
+    param_setup(eParam_adc3, PARAM_AMP_MAX >> 2 );
 
+    // set slew defaults. the value is pretty arbitrary
+    param_setup(eParam_adcSlew0, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_adcSlew1, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_adcSlew2, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_adcSlew3, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_cvSlew0, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_cvSlew1, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_cvSlew2, PARAM_SLEW_DEFAULT);
+    param_setup(eParam_cvSlew3, PARAM_SLEW_DEFAULT);
 }
 
 // de-init (never actually used on blackfin, but maybe by emulator)
@@ -165,46 +158,33 @@ u32 module_get_num_params(void) {
 // frame process function! 
 // called each audio frame from codec interrupt handler
 // ( bad, i know, see github issues list )
-void module_process_frame(void) { 
+void module_process_frame(void) {
+    heads[0].idx += 1;
+    if (heads[0].idx > 48000)
+    {
+        heads[0].idx = 0;
+    }
 
-  //--- process slew
+    out[0] = out[1] = buffer_head_play(&(heads[0]));
 
-  // 
-  // update filters, calling "class method" on pointer to each
-  adcVal[0] = filter_1p_lo_next( &(adcSlew[0]) );
-  adcVal[1] = filter_1p_lo_next( &(adcSlew[1]) );
-  adcVal[2] = filter_1p_lo_next( &(adcSlew[2]) );
-  adcVal[3] = filter_1p_lo_next( &(adcSlew[3]) );
-
-  //--- mix
-
-  // zero the output bus
-  outBus = 0;
-
-  /* 
-     note the use of fract32 arithmetic intrinsics!
-     these are fast saturating multiplies/adds for 32bit signed fractions in [-1, 1)
-     there are also intrinsics for fr16, mixed modes, and conversions.
-     for details see:
-     http://blackfin.uclinux.org/doku.php?id=toolchain:built-in_functions
-  */
-  // scale each input and add it to the bus
-  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[0], adcVal[0]) );
-  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[1], adcVal[1]) );
-  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[2], adcVal[2]) );
-  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[3], adcVal[3]) );
-
-  // copy the bus to all the outputs
-  out[0] = outBus;
-  out[1] = outBus;
-  out[2] = outBus;
-  out[3] = outBus;
-
-
-  //--- cv
-  process_cv();
+    /*
+    const fract32 c = 1664525 ;
+    const fract32 a = 1013904223 ;
+    static fract32 x = 666;
+    x = x * c + a;
+    */
 }
 
+// sample offset
+void module_set_offset(ParamValue v) {
+    offset = v;
+}
+
+// sample
+void module_set_sample(ParamValue v) {
+    data->sampleBuffer[offset] = v;
+    offset++;
+}
 
 // parameter set function
 void module_set_param(u32 idx, ParamValue v) {
@@ -308,4 +288,18 @@ void process_cv(void) {
   if(++cvChan == 4) {
     cvChan = 0;
   }
+}
+
+void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples) {
+    buf->data = data;
+    buf->samples = samples;
+}
+
+void buffer_head_init(bufferHead *head, sampleBuffer *buf) {
+    head->buf = buf;
+    head->idx = 0;
+}
+
+s32 buffer_head_play(bufferHead *head) {
+    return head->buf->data[head->idx];
 }
