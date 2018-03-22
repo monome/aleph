@@ -61,6 +61,10 @@ extern void module_init(void);
 extern void module_deinit(void);
 // callback
 extern void module_process_frame(void);
+// sample offset
+extern void module_set_offset(s32 offset);
+// sample
+extern void module_set_sample(s32 sample);
 
 // set parameter  
 extern void module_set_param(u32 idx, ParamValue val);
