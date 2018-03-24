@@ -209,7 +209,7 @@ void handle_enc_2(s32 val) {
 void handle_enc_1(s32 val) {
   // scroll page
   if(val > 0) {
-    set_page(ePageOps);
+    set_page(ePageSamples);
   } else {
     set_page(ePageScenes);
   }
