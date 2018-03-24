@@ -47,8 +47,8 @@ const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 //--- static vars
 static char versionString[12] = VERSIONSTRING;
 
-#define DEFAULT_LDR "mix.ldr"
-#define DEFAULT_DSC "mix.dsc"
+#define DEFAULT_LDR "waves.ldr"
+#define DEFAULT_DSC "waves.dsc"
 
 // this is called during hardware initialization.
 // allocate memory.
@@ -130,9 +130,9 @@ u8 app_launch(eLaunchState state) {
     render_boot("waiting for DSP init...");
     bfin_wait_ready();
 
-    //    print_dbg("\r\n enable DSP audio...");
-    //render_boot("enabling audio");
-    //bfin_enable();
+    print_dbg("\r\n enable DSP audio...");
+    render_boot("enabling audio");
+    bfin_enable();
     
   } else {
 
@@ -162,15 +162,6 @@ u8 app_launch(eLaunchState state) {
     app_resume();
     
    }
-
-  // load samples
-  bfin_disable();    
-  print_dbg("\r\n load samples...");
-  files_load_samples();
-    
-  print_dbg("\r\n enable DSP audio...");
-  render_boot("enabling audio");
-  bfin_enable();
 
   // init pages (fill graphics buffers)
   render_boot("initializing gfx");
