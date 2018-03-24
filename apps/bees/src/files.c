@@ -80,7 +80,7 @@ static const char* list_get_name(dirList_t* list, u8 idx);
 // set size by pointer
 static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
 // load sample file with path
-static void load_sample_withPath(const char *path);
+static u32 load_sample_withPath(const char *path, u32 offset);
 
 
 // fake fread: no size arg, always byte
@@ -438,10 +438,22 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 
 ////////////////////////
 //// samples
+
+// return filename for sample given index in list
+const volatile char* files_get_sample_name(u8 idx) {
+    return list_get_name(&sampleList, idx);
+}
+
+// return count of sample files
+u8 files_get_sample_count(void) {
+    return sampleList.num;
+}
+
 void files_load_samples(void) {
     FL_DIR dirstat;
     struct fs_dir_ent dirent;
     sampleList.num = 0;
+    u32 offset = 0;
     
     char *fpath = (char*)alloc_mem(64 * (sizeof(char*)));
     
@@ -456,7 +468,7 @@ void files_load_samples(void) {
             {
                 strcpy(fpath, sampleList.path);
                 strcat(fpath, dirent.filename);
-                load_sample_withPath(fpath);
+                offset += load_sample_withPath(fpath, offset);
                 sampleList.num++;
             }
         }
@@ -727,11 +739,9 @@ void files_load_sample(u8 n) {
     }
 }
 
-static void load_sample_withPath(const char *path) {
+static u32 load_sample_withPath(const char *path, u32 offset) {
     void *fp;
     
-    static u32 sdramMemory = BFIN_SDRAM_MAX_BYTES;
-    static u32 sdramOffset = 0;
     u32 fsize, foffset, fchunk, ssize;
     
     delay_ms(10);
@@ -743,7 +753,7 @@ static void load_sample_withPath(const char *path) {
     ssize = fsize / sizeof(s32);
     
     //  verify available SDRAM
-    if ((sdramMemory -= ssize) > 0)
+    if (offset < BFIN_SDRAM_MAX_FRACT32)
     {
         if (fp != NULL)
         {
@@ -751,7 +761,7 @@ static void load_sample_withPath(const char *path) {
             
             app_pause();
             
-            bfin_sample_start(sdramOffset);
+            bfin_sample_start(offset);
             
             do
             {
@@ -774,22 +784,25 @@ static void load_sample_withPath(const char *path) {
             
             bfin_sample_end();
             
-            //  refresh sdram offset
-            sdramOffset += ssize;
-            
             fl_fclose(fp);
             
             app_resume();
+            
+            return ssize;
         }
         else
         {
             render_boot("sample file error");
             fl_fclose(fp);
+            
+            return 0;
         }
     }
     else
     {
         render_boot("SDRAM limit error");
         fl_fclose(fp);
+        
+        return 0;
     }
 }
