@@ -14,7 +14,7 @@
 //-- define
 
 //! number of pages (including modal pages)
-#define NUM_PAGES 8
+#define NUM_PAGES 9
 
 //! enum of key handlers per menu page
 typedef enum {
