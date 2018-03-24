@@ -37,6 +37,7 @@ typedef enum {
   ePageOps,
   ePageScenes,
   ePageDsp,
+  ePageSamples,
   ePageGathered,
   ePagePlay,
 } ePage;
@@ -90,6 +91,7 @@ extern void init_page_presets(void);
 extern void init_page_ops(void);
 extern void init_page_scenes(void);
 extern void init_page_dsp(void);
+extern void init_page_samples(void);
 extern void init_page_gathered(void);
 extern void init_page_play(void);
 
@@ -100,6 +102,7 @@ extern void select_presets(void);
 extern void select_ops(void);
 extern void select_scenes(void);
 extern void select_dsp(void);
+extern void select_samples(void);
 extern void select_gathered(void);
 extern void select_play(void);
 
@@ -111,6 +114,7 @@ extern void redraw_presets(void);
 extern void redraw_ops(void);
 extern void redraw_scenes(void);
 extern void redraw_dsp(void);
+extern void redraw_samples(void);
 extern void redraw_gathered(void);
 extern void redraw_play(void);
 
