@@ -754,7 +754,7 @@ static u32 load_sample_withPath(const char *path, u32 offset) {
     ssize = fsize / sizeof(s32);
     
     //  verify available SDRAM
-    if (offset < BFIN_SDRAM_MAX_FRACT32)
+    if ((offset + ssize) < BFIN_SDRAM_MAX_FRACT32)
     {
         if (fp != NULL)
         {
