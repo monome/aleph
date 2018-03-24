@@ -65,6 +65,8 @@ extern u8 files_get_scaler_count(void);
 extern u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize);
 
 //----- samples
+extern const volatile char* files_get_sample_name(u8 idx);
+extern u8 files_get_sample_count(void);
 extern void files_load_samples(void);
 
 //----- param descriptors
