@@ -163,6 +163,7 @@ void files_init(void) {
   list_fill(&dspList, DSP_PATH, ".ldr");
   list_fill(&sceneList, SCENES_PATH, ".scn");
   list_fill(&scalerList, SCALERS_PATH, ".dat");
+  list_fill(&sampleList, SAMPLES_PATH, ".pcm_s32be");
 }
 
 
