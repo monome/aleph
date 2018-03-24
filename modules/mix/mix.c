@@ -36,6 +36,7 @@
 #include "params.h"
 
 #define BUFFERSIZE 0x100000
+#define BUFFERSIZE_1 (0x1000000 - 1)
 
 typedef struct _sampleBuffer {
     volatile fract32 *data;             //pointer to data
@@ -62,6 +63,10 @@ ModuleData *gModuleData;
 mixData *data;
 sampleBuffer onchipbuffer[4];
 u32 offset = 0;
+fract32 param0 = 0; //output gain
+fract32 param1 = 0; //start
+fract32 param2 = 48000; //end
+fract32 param3 = 0; //speed
 
 bufferHead heads[4];
 
@@ -105,6 +110,11 @@ void module_init(void) {
     offset = 0;
     
     //  init parameters
+    param_setup(eParam0, PARAM_AMP_MAX >> 2);
+    param_setup(eParam1, 0);
+    param_setup(eParam2, 48000);
+    param_setup(eParam3, 0);
+
 //    for(n=0; n<module_get_num_params(); n++) param_setup(n, 0);}
 
     // initialize 1pole filters for input attenuation slew
@@ -160,19 +170,12 @@ u32 module_get_num_params(void) {
 // ( bad, i know, see github issues list )
 void module_process_frame(void) {
     heads[0].idx += 1;
-    if (heads[0].idx > 48000)
+    if (heads[0].idx > param2)
     {
-        heads[0].idx = 0;
+        heads[0].idx = param1;
     }
 
     out[0] = out[1] = buffer_head_play(&(heads[0]));
-
-    /*
-    const fract32 c = 1664525 ;
-    const fract32 a = 1013904223 ;
-    static fract32 x = 666;
-    x = x * c + a;
-    */
 }
 
 // sample offset
@@ -190,6 +193,36 @@ void module_set_sample(ParamValue v) {
 void module_set_param(u32 idx, ParamValue v) {
   // switch on the param index
   switch(idx) {
+        
+            switch(idx) {
+            //  level
+        case eParam0:
+            param0 = v;
+            break;
+            
+            //  start
+        case eParam1:
+            tmp = v;
+            if (tmp < 0) tmp = 0;
+            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
+            if (tmp > param2 - 48) tmp = param2 - 48;
+            param1 = tmp;
+            break;
+            
+            //  loop
+        case eParam2:
+            tmp = v;
+            if (tmp < 48) tmp = 48;
+            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
+            if (tmp < param1 + 48) tmp = param1 + 48;
+            param2 = tmp;
+            break;
+
+            //  speed
+        case eParam3:
+            param3 = v;
+            break;
+
     // cv output values
   case eParam_cv0 :
     filter_1p_lo_in( &(cvSlew[0]), v );
