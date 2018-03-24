@@ -61,6 +61,10 @@ page_t pages[NUM_PAGES] = {
     .select_fn = &select_dsp, // select function
     .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  0, 0, }, // encoder sens 
   },
+  { .name = "SAMPLES",
+    .select_fn = &select_samples, // select function
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  8, 8, }, // encoder sens
+  },
   // modal:
   { .name = "GATHERED", 
     .select_fn = &select_gathered , // select function
@@ -116,6 +120,7 @@ static u8 check_edit_char(char c) {
 void pages_init(void) {
   init_page_ins();
   init_page_dsp();
+  init_page_samples();
   init_page_ops();  
   init_page_outs();
   init_page_play();
@@ -131,6 +136,7 @@ void pages_init(void) {
   set_page(pageIdx);
 
   redraw_dsp();
+  redraw_samples();
   redraw_outs();
   redraw_ops();
   redraw_presets();
