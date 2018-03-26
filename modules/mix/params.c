@@ -16,31 +16,6 @@
 // this function
 extern void fill_param_desc(ParamDesc* desc) {
   
-    strcpy(desc[eParam0].label, "level");
-    desc[eParam0].type = eParamTypeAmp;
-    desc[eParam0].min = 0x00000000;
-    desc[eParam0].max = PARAM_AMP_MAX;
-    desc[eParam0].radix = 16;
-
-    strcpy(desc[eParam1].label, "start");
-    desc[eParam1].type = eParamTypeFix;
-    desc[eParam1].min = 0x00000000;
-    desc[eParam1].max = PARAM_SECONDS_MAX;
-    desc[eParam1].radix = PARAM_SECONDS_RADIX;
-    
-    strcpy(desc[eParam2].label, "loop");
-    desc[eParam2].type = eParamTypeFix;
-    desc[eParam2].min = 0x00000000;
-    desc[eParam2].max = PARAM_SECONDS_MAX;
-    desc[eParam2].radix = PARAM_SECONDS_RADIX;
-
-    strcpy(desc[eParam3].label, "speed");
-    desc[eParam3].type = eParamTypeFix;
-    desc[eParam3].min = 0x00000000;
-    desc[eParam3].max = PARAM_SECONDS_MAX;
-    desc[eParam3].radix = PARAM_SECONDS_RADIX;
-
-  
   // obviously, these could be done in other ways ( easier to read/edit maybe. )
   // but neither code space nor speed is a big deal here.
   // this code can also be script-generated easily enough.
