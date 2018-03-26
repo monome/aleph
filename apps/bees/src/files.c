@@ -43,6 +43,7 @@
 #define DSP_PATH     "/mod/"
 #define SCENES_PATH  "/data/bees/scenes/"
 #define SCALERS_PATH  "/data/bees/scalers/"
+#define SAMPLES_PATH  "/data/bees/samples/"
 
 // endinanness
 // #define SCALER_LE 1
@@ -66,6 +67,7 @@ typedef struct _dirList {
 static dirList_t dspList;
 static dirList_t sceneList;
 static dirList_t scalerList;
+static dirList_t sampleList;
 
 //----------------------------------
 //---- static functions
@@ -77,6 +79,8 @@ static const char* list_get_name(dirList_t* list, u8 idx);
 // get read file pointer if found (caller must close)
 // set size by pointer
 static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
+// load sample file with path
+static u32 load_sample_withPath(const char *path, u32 offset);
 
 
 // fake fread: no size arg, always byte
@@ -159,6 +163,7 @@ void files_init(void) {
   list_fill(&dspList, DSP_PATH, ".ldr");
   list_fill(&sceneList, SCENES_PATH, ".scn");
   list_fill(&scalerList, SCALERS_PATH, ".dat");
+  list_fill(&sampleList, SAMPLES_PATH, ".pcm_s32be");
 }
 
 
@@ -432,6 +437,46 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   return ret;
 }
 
+////////////////////////
+//// samples
+
+// return filename for sample given index in list
+const volatile char* files_get_sample_name(u8 idx) {
+    return list_get_name(&sampleList, idx);
+}
+
+// return count of sample files
+u8 files_get_sample_count(void) {
+    return sampleList.num;
+}
+
+void files_load_samples(void) {
+    FL_DIR dirstat;
+    struct fs_dir_ent dirent;
+    sampleList.num = 0;
+    u32 offset = 0;
+    
+    char *fpath = (char*)alloc_mem(64 * (sizeof(char*)));
+    
+    //  check directory for samples
+    strcpy(sampleList.path, SAMPLES_PATH);
+    
+    if (fl_opendir(sampleList.path, &dirstat))
+    {
+        while (fl_readdir(&dirstat, &dirent) == 0)
+        {
+            if(!(dirent.is_dir))
+            {
+                strcpy(fpath, sampleList.path);
+                strcat(fpath, dirent.filename);
+                offset += load_sample_withPath(fpath, offset);
+                sampleList.num++;
+            }
+        }
+    }
+    
+    free(fpath);
+}
 
 //---------------------
 //------ static
@@ -695,3 +740,70 @@ void files_load_sample(u8 n) {
     }
 }
 
+static u32 load_sample_withPath(const char *path, u32 offset) {
+    void *fp;
+    
+    u32 fsize, foffset, fchunk, ssize;
+    
+    delay_ms(10);
+    
+    fp = fl_fopen(path, "r");
+    fsize = ((FL_FILE*)(fp))->filelength;
+    foffset = ((FL_FILE*)(fp))->bytenum % FAT_SECTOR_SIZE;
+    
+    ssize = fsize / sizeof(s32);
+    
+    //  verify available SDRAM
+    if ((offset + ssize) < BFIN_SDRAM_MAX_FRACT32)
+    {
+        if (fp != NULL)
+        {
+            render_boot(path);
+            
+            app_pause();
+            
+            bfin_sample_start(offset);
+            
+            do
+            {
+                if (fsize < FAT_SECTOR_SIZE)
+                {
+                    fchunk = fsize;
+                }
+                else
+                {
+                    fchunk = FAT_SECTOR_SIZE;
+                }
+                fsize -= fchunk;
+                
+                bfin_sample_transfer(fl_return_sector(fp, foffset), fchunk);
+                
+                foffset += 1;
+                ((FL_FILE*)(fp))->bytenum += fchunk;
+            }
+            while (fsize > 0);
+            
+            bfin_sample_end();
+            
+            fl_fclose(fp);
+            
+            app_resume();
+            
+            return ssize;
+        }
+        else
+        {
+            render_boot("sample file error");
+            fl_fclose(fp);
+            
+            return 0;
+        }
+    }
+    else
+    {
+        render_boot("SDRAM limit error");
+        fl_fclose(fp);
+        
+        return 0;
+    }
+}

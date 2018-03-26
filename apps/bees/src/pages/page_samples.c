@@ -1,5 +1,5 @@
 /*
-  page_dsp.c
+  page_samples.c
 */
 
 // asf
@@ -21,7 +21,7 @@
 
 
 // constant pointer to this page's selection
-static s16* const pageSelect = &(pages[ePageDsp].select);
+static s16* const pageSelect = &(pages[ePageSamples].select);
 
 // scroll region
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
@@ -44,7 +44,7 @@ static void render_line(s16 idx, u16 max) {
   region_fill(lineRegion, 0x0);
   if((idx > max) || (idx < 0)) { return; }
   clearln();
-  appendln((const char*)files_get_dsp_name(idx));
+  appendln((const char*)files_get_sample_name(idx));
   endln();
   font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
 }
@@ -52,7 +52,7 @@ static void render_line(s16 idx, u16 max) {
 
 // scroll the current selection
 static void select_scroll(s32 dir) {
-  const s32 max = files_get_dsp_count() - 1;
+  const s32 max = files_get_sample_count() - 1;
   // index for new content
   s16 newIdx;
   s16 newSel;
@@ -143,7 +143,6 @@ font_string_region_clip(footRegion[1], "WRITE", 0, 0, 0xf, fill);
 }
 #endif
 
-
 static void show_foot(void) {
 show_foot0();
 #if BFIN_INTERNAL_FLASH
@@ -151,23 +150,25 @@ show_foot1();
 #endif
 }
 
-
 // function keys
 void handle_key_0(s32 val) {
   // load module
   if(val == 0) { return; }
   if(check_key(0)) {
-    notify("loading...");
+    notify("loading samples...");
 
     net_disconnect_params();
 
-    files_load_dsp(*pageSelect);
+    bfin_wait_ready();
+    bfin_disable();
+      
+    files_load_samples();
 
     bfin_wait_ready();
     bfin_enable();
 
     redraw_ins();
-    redraw_dsp();
+    redraw_samples();
 
     notify("finished loading.");
   }
@@ -209,9 +210,9 @@ void handle_enc_2(s32 val) {
 void handle_enc_1(s32 val) {
   // scroll page
   if(val > 0) {
-    set_page(ePageSamples);
+    set_page(ePageOps);
   } else {
-    set_page(ePageScenes);
+    set_page(ePageDsp);
   }
 }
 
@@ -222,10 +223,10 @@ void handle_enc_0(s32 val) {
 //----------------------
 // ---- extern 
 // init
-void init_page_dsp(void) {
+void init_page_samples(void) {
   u8 i, n;
-  u16 max = files_get_dsp_count() - 1;
-  print_dbg("\r\n alloc DSP page");
+  u16 max = files_get_sample_count() - 1;
+  print_dbg("\r\n alloc SAMPLES page");
   // allocate regions
   region_alloc(&scrollRegion);
   // init scroll
@@ -247,14 +248,14 @@ void init_page_dsp(void) {
 }
  
 // select 
-void select_dsp(void) {
+void select_samples(void) {
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   render_reset_custom_region();
   region_fill(headRegion, 0x0);
-  font_string_region_clip(headRegion, "MODULES", 0, 0, 0xf, 0x1);
+  font_string_region_clip(headRegion, "SAMPLES", 0, 0, 0xf, 0x1);
   show_foot();
   // assign handlers
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
@@ -268,7 +269,7 @@ void select_dsp(void) {
 }
 
 // redraw all lines, based on current selection
-void redraw_dsp(void) {
+void redraw_samples(void) {
   u8 i=0; 
   u8 n = *pageSelect - 3;
 
@@ -277,7 +278,7 @@ void redraw_dsp(void) {
   render_set_scroll(&centerScroll);
 
 
-  print_dbg("\r\n redraw_dsp() ");
+  print_dbg("\r\n redraw_samples() ");
   while(i<8) {
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);

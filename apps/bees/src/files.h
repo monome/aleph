@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "util.h"
+#include "filesystem.h" //includes fat_filelib.h
 EXTERN_C_BEGIN
 
 // initialize filesystem navigation
@@ -62,6 +63,11 @@ extern u8 files_get_scaler_count(void);
 // load scaler by filename
 // return 1 on success, 0 on failure
 extern u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize);
+
+//----- samples
+extern const volatile char* files_get_sample_name(u8 idx);
+extern u8 files_get_sample_count(void);
+extern void files_load_samples(void);
 
 //----- param descriptors
 // search for named .dsc file and load into network param desc memory

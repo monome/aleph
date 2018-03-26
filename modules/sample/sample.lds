@@ -253,3 +253,4 @@ __stack_end = ORIGIN(MEM_L1_SCRATCH) + LENGTH(MEM_L1_SCRATCH);
 
 /DISCARD/ : { *(.note.GNU-stack) }
 }
+

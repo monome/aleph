@@ -606,6 +606,75 @@ static uint32 _read_sectors(FL_FILE *file, uint32 offset, uint8 *buffer,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+// fl_return_sector: Return current file offset
+//-----------------------------------------------------------------------------
+
+uint32 fl_return_sector(FL_FILE *file, uint32 offset)
+{
+    uint32 Sector = 0;
+    uint32 ClusterIdx = 0;
+    uint32 Cluster = 0;
+    uint32 i;
+    
+    // Find cluster index within file & sector with cluster
+    ClusterIdx = offset / _fs.sectors_per_cluster;
+    Sector = offset - (ClusterIdx * _fs.sectors_per_cluster);
+    
+    // Quick lookup for next link in the chain
+    if (ClusterIdx == file->last_fat_lookup.ClusterIdx)
+        Cluster = file->last_fat_lookup.CurrentCluster;
+    // Else walk the chain
+    else
+    {
+        // Starting from last recorded cluster?
+        if (ClusterIdx && ClusterIdx == file->last_fat_lookup.ClusterIdx + 1)
+        {
+            i = file->last_fat_lookup.ClusterIdx;
+            Cluster = file->last_fat_lookup.CurrentCluster;
+        }
+        // Start searching from the beginning..
+        else
+        {
+            // Set start of cluster chain to initial value
+            i = 0;
+            Cluster = file->startcluster;
+        }
+        
+        // Follow chain to find cluster to read
+        for ( ;i<ClusterIdx; i++)
+        {
+            uint32 nextCluster;
+            
+            // Does the entry exist in the cache?
+            if (!fatfs_cache_get_next_cluster(&_fs, file, i, &nextCluster))
+            {
+                // Scan file linked list to find next entry
+                nextCluster = fatfs_find_next_cluster(&_fs, Cluster);
+                
+                // Push entry into cache
+                fatfs_cache_set_next_cluster(&_fs, file, i, nextCluster);
+            }
+            
+            Cluster = nextCluster;
+        }
+        
+        // Record current cluster lookup details (if valid)
+        if (Cluster != FAT32_LAST_CLUSTER)
+        {
+            file->last_fat_lookup.CurrentCluster = Cluster;
+            file->last_fat_lookup.ClusterIdx = ClusterIdx;
+        }
+    }
+    
+    // If end of cluster chain then return false
+    if (Cluster == FAT32_LAST_CLUSTER)
+        return 0;
+    
+    // Calculate sector address
+    return fatfs_lba_of_cluster(&_fs, Cluster) + Sector;
+}
+
+//-----------------------------------------------------------------------------
 // fl_init: Initialise library
 //-----------------------------------------------------------------------------
 void fl_init(void) {

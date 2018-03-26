@@ -34,8 +34,6 @@ volatile avr32_pdca_channel_t *pdcaTxChan;
 //---- low level i/o
 int media_read(unsigned long sector, unsigned char *buffer,
                unsigned long sector_count);
-
-// PRGM SAMPLE TRANSFER PR, REMOVED FLAG!
 int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
     unsigned long i;
     
@@ -126,7 +124,6 @@ int fat_init(void) {
     }
 }
 
-//PRGM SAMPLE TRANSFER PR; THIS COULD MAYBE LIVE SOMEWHER ELSE..
 int bfin_sample_transfer(unsigned long sector, unsigned long bytes) {
     unsigned long i;
     

@@ -32,9 +32,9 @@
 // get param change CPU use (0 - 0x7fffffff)
 #define MSG_GET_CONTROL_CPU_COM         10
 
-// PRGM SAMPLE TRANSFER, THESE WOULD BE ADDED WITH APPROPRIATE ID's!
-#define MSG_OFFSET_COM              X
-#define MSG_SAMPLE_COM              Y
+// sample transfer commands
+#define MSG_OFFSET_COM              11
+#define MSG_SAMPLE_COM              12
 
 // enumerate state-machine nodes for sending and receiving SPI.
 
@@ -95,6 +95,18 @@ typedef enum {
   eModuleVersionRev0,
   eModuleVersionRev1,
 
+  // sample offset
+  eOffset0,
+  eOffset1,
+  eOffset2,
+  eOffset3,
+    
+  // sample
+  eSample0,
+  eSample1,
+  eSample2,
+  eSample3,
+   
   // buffer 
   eBufferNumBytes0,
   eBufferNumBytes1,
@@ -112,18 +124,6 @@ typedef enum {
   eGetControlCpuData1,
   eGetControlCpuData2,
    
-   //  offset
-    eOffset0,
-    eOffset1,
-    eOffset2,
-    eOffset3,
-    
-    //  sample
-    eSample0,
-    eSample1,
-    eSample2,
-    eSample3,
-  
   eNumSpiBytes
 } eSpiByte;
 

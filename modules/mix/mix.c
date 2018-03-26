@@ -12,6 +12,10 @@
 
 */
 
+//-- blackfin toolchain headers
+// 1.32 and 1.15 fixed-point arithmeti
+#include "fract_math.h"
+
 //-- aleph/common headers
 #include "types.h"
 
@@ -22,7 +26,6 @@
 #include "cv.h"
 // gpio pin numbers
 #include "gpio.h"
-#include "fract_math.h"
 
 //-- dsp class headers
 // simple 1-pole integrator

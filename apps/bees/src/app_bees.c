@@ -130,7 +130,7 @@ u8 app_launch(eLaunchState state) {
     render_boot("waiting for DSP init...");
     bfin_wait_ready();
 
-    //    print_dbg("\r\n enable DSP audio...");
+    print_dbg("\r\n enable DSP audio...");
     render_boot("enabling audio");
     bfin_enable();
     

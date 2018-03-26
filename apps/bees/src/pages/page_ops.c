@@ -306,7 +306,7 @@ void handle_enc_1(s32 val) {
   if(val > 0) {
     set_page(ePageIns);
   } else {
-    set_page(ePageDsp);
+    set_page(ePageSamples);
   }
 }
 

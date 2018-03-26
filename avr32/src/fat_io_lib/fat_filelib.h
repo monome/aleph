@@ -81,6 +81,7 @@ int fl_attach_media(fn_diskio_read rd, fn_diskio_write wr);
 void fl_shutdown(void);
 
 // Standard API
+uint32 fl_return_sector(FL_FILE *file, uint32 offset);
 void *fl_fopen(const char *path, const char *modifiers);
 void fl_fclose(void *file);
 int fl_fflush(void *file);
