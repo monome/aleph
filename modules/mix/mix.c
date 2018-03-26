@@ -1,13 +1,23 @@
 /* 
    mix.c
    aleph-bfin
- //#define FR32_MAX 0x7fffffff         //2147483647
- //#define FR32_MIN 0x80000000         //-2147483648
+
+   a very simple template module.
+
+   applies attenuation with slew to each input signal,
+
+   then mixes all attenuated signals to all outputs.
+
+   also performs CV changes with slew.
+
 */
+
+//-- blackfin toolchain headers
+// 1.32 and 1.15 fixed-point arithmeti
+#include "fract_math.h"
 
 //-- aleph/common headers
 #include "types.h"
-#include <string.h>
 
 //-- aleph/bfin-lib headers
 // global variables
@@ -16,316 +26,289 @@
 #include "cv.h"
 // gpio pin numbers
 #include "gpio.h"
-#include "fract_math.h"
 
 //-- dsp class headers
 // simple 1-pole integrator
 #include "filter_1p.h"
-
 // global declarations for module data
 #include "module.h"
+
+//--- custom headers
+// parameter lists and constants
 #include "params.h"
 
-#define BUFFERSIZE 0x1000000
-#define BUFFERSIZE_1 (0x1000000 - 1)
-#define FR32_MAX1_2 0x3fffffff
-
-
-typedef struct _sampleBuffer {
-    volatile fract32 *data;             //pointer to data
-    u32 samples;                        //count of samples
-} sampleBuffer;
-
-typedef struct _bufferHead {
-    sampleBuffer *buf;                  //pointer to buffer
-    s32 idx;                            //current idx
-} bufferHead;
-
-static void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples);
-static void buffer_head_init(bufferHead *head, sampleBuffer *buf);
-static s32 buffer_head_play(bufferHead *head);
-
+// customized module data structure
+// this will be located at the top of SDRAM (64MB)
+// all other variables (code, stack, heap) are located in SRAM (64K)
 typedef struct _mixData {
-    ModuleData super;
-    ParamData mParamData[eParamNumParams];
-    
-    volatile fract32 sampleBuffer[BUFFERSIZE];
+  //... here is where you would put other large data structures.
+
+  // for example, a multichannel delay module would need an audio buffer:
+  //  volatile fract32 audioBuffer[NUM_BUFS][FRAMES_PER_BUF];
+
+  // bear in mind that access to SDRAM is significantly slower than SRAM (10-20 cycles!)
+  // so don't put anything here that doesn't need the extra space.
 } mixData;
 
-ModuleData *gModuleData;
-mixData *data;
-sampleBuffer onchipbuffer[4];
-u32 offset = 0;
+//-------------------------
+//----- extern variables (initialized here)
 
-bufferHead heads[4];
-fract32 level[4] = { PARAM_AMP_MAX >> 2, PARAM_AMP_MAX >> 2, PARAM_AMP_MAX >> 2, PARAM_AMP_MAX >> 2 };
-fract32 start[4] = { 0xff, 0xff, 0xff, 0xff };
-fract32 loop[4] = { 48000, 48000, 48000, 48000 };
-fract32 direction[4] = { 1, 1, 1, 1 };
-fract32 trig[4] = { 0, 0, 0, 0 };
 
+// global pointer to module descriptor.
+// required by the aleph-bfin library!
+ModuleData* gModuleData;
+
+//-----------------------bfin_lib/src/
+//------ static variables
+
+/* 
+   here's the actual memory for module descriptor and param data
+   global pointers are to point at these here during module init.
+   we do it in this indirect way, because
+   a) modules have variable param count
+   b) in an extreme case, might need to locate param data in SDRAM
+      ( until recently, SDRAM contained full param descriptors.)
+*/
+static ModuleData super;
+static ParamData mParamData[eParamNumParams];
+
+// input values
+static fract32 adcVal[4];
+static filter_1p_lo adcSlew[4];
+
+
+// cv values (16 bits, but use fract32 and audio integrators)
+static fract32 cvVal[4];
+static filter_1p_lo cvSlew[4];
+// current channel to update - see below in process_cv() 
+static u8 cvChan = 0;
+
+// audio output bus
+static fract32 outBus = 0;
+
+//-----------------
+//--- static function declaration
+
+// update cv output
+static void process_cv(void);
+
+// small helper function to set parameter initial values
 static inline void param_setup(u32 id, ParamValue v) {
-    gModuleData->paramData[id].value = v;
-    module_set_param(id, v);
+  // set the input data so that bfin core will report it
+  // back to the controller via SPI, when requested. 
+  // (bees will make such a request of each param at launch to sync with network.)
+  // this is also how a polled analysis parameter would work.
+  gModuleData->paramData[id].value = v;
+  module_set_param(id, v);
 }
 
+
+//----------------------
+//----- external functions
+
 void module_init(void) {
-    data = (mixData*)SDRAM_ADDRESS;
-    gModuleData = &(data->super);
-    strcpy(gModuleData->name, "mix");
-    gModuleData->paramData = data->mParamData;
-    gModuleData->numParams = eParamNumParams;
+  // initialize module superclass data
+  // by setting global pointers to our own data
+  gModuleData = &super;
+  gModuleData->paramData = mParamData;
+  gModuleData->numParams = eParamNumParams;
 
-    u32 n, i;
+  // initialize 1pole filters for input attenuation slew
+  filter_1p_lo_init( &(adcSlew[0]), 0 );
+  filter_1p_lo_init( &(adcSlew[1]), 0 );
+  filter_1p_lo_init( &(adcSlew[2]), 0 );
+  filter_1p_lo_init( &(adcSlew[3]), 0 );
 
-    for(n=0; n<4; n++)
-    {
-        buffer_init(&(onchipbuffer[n]), data->sampleBuffer, BUFFERSIZE);
-    }
-    
-    for(n=0; n<4; n++)
-    {
-        buffer_head_init(&(heads[n]), &(onchipbuffer[n]));
-    }
+  // initialize 1pole filters for cv output slew 
+  filter_1p_lo_init( &(cvSlew[0]), 0 );
+  filter_1p_lo_init( &(cvSlew[1]), 0 );
+  filter_1p_lo_init( &(cvSlew[2]), 0 );
+  filter_1p_lo_init( &(cvSlew[3]), 0 );
 
-    for(i=0; i<BUFFERSIZE; i++)
-    {
-        data->sampleBuffer[i] = 0x00000000;
-    }
 
-    offset = 0;
-    
-    //  init parameters
-    param_setup(eParam0, PARAM_AMP_MAX >> 2);
-    param_setup(eParam1, 0);
-    param_setup(eParam2, 48000);
-    param_setup(eParam3, 1);
-    param_setup(eParam4, 0);
+  // set initial param values
+  // constants are from params.h
+  param_setup(eParam_cv0, 0 );
+  param_setup(eParam_cv1, 0 );
+  param_setup(eParam_cv2, 0 );
+  param_setup(eParam_cv3, 0 );
 
-    param_setup(eParam5, PARAM_AMP_MAX >> 2);
-    param_setup(eParam6, 0);
-    param_setup(eParam7, 48000);
-    param_setup(eParam8, 1);
-    param_setup(eParam9, 0);
+  // set amp to 1/4 (-12db) with right-shift intrinsic
+  param_setup(eParam_adc0, PARAM_AMP_MAX >> 2 );
+  param_setup(eParam_adc1, PARAM_AMP_MAX >> 2 );
+  param_setup(eParam_adc2, PARAM_AMP_MAX >> 2 );
+  param_setup(eParam_adc3, PARAM_AMP_MAX >> 2 );
 
-    param_setup(eParam10, PARAM_AMP_MAX >> 2);
-    param_setup(eParam11, 0);
-    param_setup(eParam12, 48000);
-    param_setup(eParam13, 1);
-    param_setup(eParam14, 0);
+  // set slew defaults. the value is pretty arbitrary
+  param_setup(eParam_adcSlew0, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew1, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew2, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew3, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew0, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew1, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew2, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew3, PARAM_SLEW_DEFAULT);
 
-    param_setup(eParam15, PARAM_AMP_MAX >> 2);
-    param_setup(eParam16, 0);
-    param_setup(eParam17, 48000);
-    param_setup(eParam18, 1);
-    param_setup(eParam19, 0);
-    
-//    for(n=0; n<module_get_num_params(); n++) param_setup(n, 0);}
+
+
 }
 
 // de-init (never actually used on blackfin, but maybe by emulator)
 void module_deinit(void) {
+  ;;
 }
 
 // get number of parameters
 u32 module_get_num_params(void) {
-    return eParamNumParams;
+  return eParamNumParams;
 }
 
-void module_process_frame(void) {
-    u8 c;
-    static s64 x[4] = { FR32_MAX1_2, FR32_MAX1_2, FR32_MAX1_2, FR32_MAX1_2 };
 
-    //  linear idx
-    for (c=0; c<4; c++)
-    {
-        fract32 y0 = heads[c].idx;
-        fract32 y1 = heads[c].idx + 2;
-        
-        if (direction[c] > 0)
-        {
-            x[c] += direction[c];
-            
-            if (x[c] > FR32_MAX)
-            {
-                x[c] = FR32_MAX1_2;
-            }
-            
-            heads[c].idx = add_fr1x32(y0, mult_fr1x32x32(x[c], sub_fr1x32(y1, y0)));
-            if (heads[c].idx > loop[c])
-            {
-                heads[c].idx = start[c];
-            }
-            if (trig[c])
-            {
-                heads[c].idx = start[c];
-                trig[c] = 0;
-            }
-        }
-        else
-        {
-            x[c] += -direction[c];
-            
-            if (x[c] > FR32_MAX)
-            {
-                x[c] = FR32_MAX1_2;
-            }
-            
-            heads[c].idx = sub_fr1x32(y0, mult_fr1x32x32(x[c], sub_fr1x32(y1, y0)));
-            if (heads[c].idx < start[c])
-            {
-                heads[c].idx = loop[c];
-            }
-            if (trig[c])
-            {
-                heads[c].idx = loop[c];
-                trig[c] = 0;
-            }
-        }
-        
-        out[c] = mult_fr1x32x32(level[c], buffer_head_play(&(heads[c])));
-    }
+
+// frame process function! 
+// called each audio frame from codec interrupt handler
+// ( bad, i know, see github issues list )
+void module_process_frame(void) { 
+
+  //--- process slew
+
+  // 
+  // update filters, calling "class method" on pointer to each
+  adcVal[0] = filter_1p_lo_next( &(adcSlew[0]) );
+  adcVal[1] = filter_1p_lo_next( &(adcSlew[1]) );
+  adcVal[2] = filter_1p_lo_next( &(adcSlew[2]) );
+  adcVal[3] = filter_1p_lo_next( &(adcSlew[3]) );
+
+  //--- mix
+
+  // zero the output bus
+  outBus = 0;
+
+  /* 
+     note the use of fract32 arithmetic intrinsics!
+     these are fast saturating multiplies/adds for 32bit signed fractions in [-1, 1)
+     there are also intrinsics for fr16, mixed modes, and conversions.
+     for details see:
+     http://blackfin.uclinux.org/doku.php?id=toolchain:built-in_functions
+  */
+  // scale each input and add it to the bus
+  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[0], adcVal[0]) );
+  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[1], adcVal[1]) );
+  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[2], adcVal[2]) );
+  outBus = add_fr1x32( outBus, mult_fr1x32x32(in[3], adcVal[3]) );
+
+  // copy the bus to all the outputs
+  out[0] = outBus;
+  out[1] = outBus;
+  out[2] = outBus;
+  out[3] = outBus;
+
+
+  //--- cv
+  process_cv();
 }
 
-// sample offset
-void module_set_offset(ParamValue v) {
-    offset = v;
-}
-
-// sample
-void module_set_sample(ParamValue v) {
-    data->sampleBuffer[offset] = v;
-    offset++;
-}
 
 // parameter set function
 void module_set_param(u32 idx, ParamValue v) {
-    fract32 tmp;
-    
-    switch(idx) {
-            //  level 0
-        case eParam0:
-            level[0] = v;
-            break;
-            //  start 0
-        case eParam1:
-            tmp = v;
-            if (tmp < 0xff) tmp = 0xff;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            start[0] = tmp;
-            break;
-            //  loop 0
-        case eParam2:
-            tmp = v;
-            if (tmp < 0xff + 2) tmp = 0xff + 2;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            loop[0] = tmp;
-            break;
-            //  direction 0
-        case eParam3:
-            direction[0] = v;
-            break;
-            //  trig 0
-        case eParam4:
-            trig[0] = v;
-            break;
+  // switch on the param index
+  switch(idx) {
+    // cv output values
+  case eParam_cv0 :
+    filter_1p_lo_in( &(cvSlew[0]), v );
+    break;
+  case eParam_cv1 :
+    filter_1p_lo_in( &(cvSlew[1]), v );
+    break;
+  case eParam_cv2 :
+    filter_1p_lo_in( &(cvSlew[2]), v );
+    break;
+  case eParam_cv3 :
+    filter_1p_lo_in( &(cvSlew[3]), v );
 
-            //  level 1
-        case eParam5:
-            level[1] = v;
-            break;
-            //  start 1
-        case eParam6:
-            tmp = v;
-            if (tmp < 0xff) tmp = 0xff;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            start[1] = tmp;
-            break;
-            //  loop 1
-        case eParam7:
-            tmp = v;
-            if (tmp < 0xff + 2) tmp = 0xff + 2;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            loop[1] = tmp;
-            break;
-            //  direction 1
-        case eParam8:
-            direction[1] = v;
-            break;
-            //  trig 1
-        case eParam9:
-            trig[1] = v;
-            break;
+    // cv slew values
+    break;
+  case eParam_cvSlew0 :
+   filter_1p_lo_set_slew(&(cvSlew[0]), v);
+    break;
+  case eParam_cvSlew1 :
+    filter_1p_lo_set_slew(&(cvSlew[1]), v);
+    break;
+  case eParam_cvSlew2 :
+    filter_1p_lo_set_slew(&(cvSlew[2]), v);
+    break;
+  case eParam_cvSlew3 :
+    filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    break;
 
-            //  level 2
-        case eParam10:
-            level[2] = v;
-            break;
-            //  start 2
-        case eParam11:
-            tmp = v;
-            if (tmp < 0xff) tmp = 0xff;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            start[2] = tmp;
-            break;
-            //  loop 2
-        case eParam12:
-            tmp = v;
-            if (tmp < 0xff + 2) tmp = 0xff + 2;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            loop[2] = tmp;
-            break;
-            //  direction 2
-        case eParam13:
-            direction[2] = v;
-            break;
-            //  trig 2
-        case eParam14:
-            trig[2] = v;
-            break;
+    // input attenuation values
+  case eParam_adc0 :
+    filter_1p_lo_in( &(adcSlew[0]), v );
+    break;
+  case eParam_adc1 :
+    filter_1p_lo_in( &(adcSlew[1]), v );
+    break;
+  case eParam_adc2 :
+    filter_1p_lo_in( &(adcSlew[2]), v );
+    break;
+  case eParam_adc3 :
+    filter_1p_lo_in( &(adcSlew[3]), v );
 
-            //  level 3
-        case eParam15:
-            level[3] = v;
-            break;
-            //  start 3
-        case eParam16:
-            tmp = v;
-            if (tmp < 0xff) tmp = 0xff;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            start[3] = tmp;
-            break;
-            //  loop 3
-        case eParam17:
-            tmp = v;
-            if (tmp < 0xff + 2) tmp = 0xff + 2;
-            if (tmp > BUFFERSIZE_1) tmp = BUFFERSIZE_1;
-            loop[3] = tmp;
-            break;
-            //  direction 3
-        case eParam18:
-            direction[3] = v;
-            break;
-            //  trig 3
-        case eParam19:
-            trig[3] = v;
-            break;
- 
-        default:
-            break;
-    }
+    // input attenuation slew values
+    break;
+  case eParam_adcSlew0 :
+   filter_1p_lo_set_slew(&(adcSlew[0]), v);
+    break;
+  case eParam_adcSlew1 :
+    filter_1p_lo_set_slew(&(adcSlew[1]), v);
+    break;
+  case eParam_adcSlew2 :
+    filter_1p_lo_set_slew(&(adcSlew[2]), v);
+    break;
+  case eParam_adcSlew3 :
+    filter_1p_lo_set_slew(&(adcSlew[3]), v);
+    break;
+
+  default:
+    break;
+  }
 }
 
-void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples) {
-    buf->data = data;
-    buf->samples = samples;
-}
+//----- static function definitions
 
-void buffer_head_init(bufferHead *head, sampleBuffer *buf) {
-    head->buf = buf;
-    head->idx = 0;
-}
+//// NOTE / FIXME:
+/* CV updates are staggered, each channel on a separate audio frame. 
+   
+   the reason for this is that each channel takes some time to update.
+   for now, we just wait a full frame between channels,
+   and effectively reduce CV output sampling rate by a factor of 4.
+   (as well as changing the effecticve slew time, which is  not great.)
 
-s32 buffer_head_play(bufferHead *head) {
-    return head->buf->data[head->idx];
+   the more proper way to do this would be:
+   - enable DMA tx interrupt
+   - each ISR calls the next channel to be loaded
+   - last thing audio ISR does is call the first DAC channel to be loaded
+   - cv_update writes to 4x16 volatile buffer
+
+   this could give rise to its own problems:
+   audio frame processing is currently interrupt-driven per frame,
+   so CV tx interrupt could be masked by the next audio frame if the schedule is tight.
+*/
+// update cv output
+void process_cv(void) {
+  // process the current channel
+  // do nothing if the value is stable
+  if( filter_1p_sync( &(cvSlew[cvChan]) ) ) {
+    ;;
+  } else {
+    // update the slew filter and store the value
+      cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+      // send the value to the cv driver
+      cv_update( cvChan, cvVal[cvChan] );
+  }
+
+  // update the channel to be processed
+  if(++cvChan == 4) {
+    cvChan = 0;
+  }
 }
