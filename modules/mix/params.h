@@ -9,21 +9,12 @@
 #define PARAM_CV_MAX 	0x7fffffff
 #define PARAM_SLEW_MAX 	0x7fffffff
 
-#define PARAM_SECONDS_MAX 0x003c0000
-#define PARAM_SECONDS_RADIX 7
-
 // something pretty fast, but noticeable
 #define PARAM_SLEW_DEFAULT 	0x7ffecccc
 
 // enumerate parameters
 // the order defined here must be matched in the descriptor !
 enum params {
-  
-    eParam0,
-    eParam1,
-    eParam2,
-    eParam3,
-
   // cv slew
   eParam_cvSlew0,
   eParam_cvSlew1,
