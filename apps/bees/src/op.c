@@ -70,7 +70,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpPoly,
   eOpRandom,
   eOpRoute,
-  eOpRoute2
+  eOpRoute2,
   eOpRoute8,
   eOpRoute16,
   eOpScreen,
