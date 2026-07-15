@@ -12,6 +12,12 @@
 #   - includes left in source order (hand-grouped)
 #   - no column limit (long debug strings / decls stay put)
 #   - tabs (width 8) used only for line continuation / alignment
+#   - braced lists stay compact when they fit (BinPackArguments)
+#
+# Trailing commas in braced lists force one element per line (clang-format
+# design; no style option disables it). Omit trailing commas on large
+# numeric / array initializers that should stay packed:
+#   { 0, 0, 0, 0 }   not   { 0, 0, 0, 0, }
 #
 # Outliers exist (some files use 4-space indent, or `Type *name`, or
 # a space before function parens); DerivePointerAlignment reduces
