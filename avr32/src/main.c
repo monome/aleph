@@ -36,6 +36,7 @@
 #include "adc.h"
 #include "app.h"
 #include "bfin.h"
+#include "cdc.h"
 #include "conf_tc_irq.h"
 #include "debug.h"
 #include "encoders.h"
@@ -75,6 +76,7 @@ static u8 ftdiConnect = 0;
 static u8 monomeConnectMain = 0;
 static u8 hidConnect = 0;
 static u8 midiConnect = 0;
+static u8 cdcConnect = 0;
 
 //=================================================
 //==== static declarations
@@ -114,6 +116,21 @@ static void handler_MonomeConnect(s32 data) {
         // print_dbg("\r\n got monome device connection, saving flag for app
         // launch");
         monomeConnectMain = 1;
+    }
+}
+
+static void handler_SerialConnect(s32 data) {
+    if (!launch) {
+        print_dbg("\r\n got serial/cdc device connection, saving flag for app launch");
+        cdcConnect = 1;
+    }
+    monome_setup_mext();
+}
+
+static void handler_SerialDisconnect(s32 data) {
+    if (!launch) {
+        print_dbg("\r\n got serial/cdc device dis-connection, saving flag for app launch");
+        cdcConnect = 0;
     }
 }
 
@@ -177,6 +194,8 @@ static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventHidDisconnect] = &dummy_handler;
     app_event_handlers[kEventHidPacket] = &dummy_handler;
     app_event_handlers[kEventSerial] = &handler_Serial;
+    app_event_handlers[kEventSerialConnect] = &handler_SerialConnect;
+    app_event_handlers[kEventSerialDisconnect] = &handler_SerialDisconnect;
     app_event_handlers[kEventScreenRefresh] = &dummy_handler;
 }
 
@@ -244,6 +263,7 @@ static void init_avr32(void) {
     init_usb_host();
     // initialize usb class drivers
     init_monome();
+    // NOTE(ngwese): setup cdc here?
 
     print_dbg("\r\n ++++++++++++++++ avr32 init done ");
 }

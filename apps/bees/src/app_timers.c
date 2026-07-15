@@ -131,9 +131,11 @@ static void midi_poll_timer_callback(void* obj) {
 static void monome_poll_timer_callback(void* obj) {
   // asynchronous, non-blocking read
   // UHC callback spawns appropriate events
+  
 #if BEEKEEP
 #else
-  ftdi_read();
+  // ftdi_read();
+  serial_read();
 #endif
 }
 

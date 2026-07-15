@@ -32,6 +32,8 @@ $(LIB_AVR32)src/timers.c \
 $(LIB_AVR32)src/interrupts.c \
 $(LIB_AVR32)src/midi_common.c \
 $(LIB_AVR32)src/usb.c \
+$(LIB_AVR32)src/usb/cdc/uhi_cdc.c \
+$(LIB_AVR32)src/usb/cdc/cdc.c \
 $(LIB_AVR32)src/usb/ftdi/uhi_ftdi.c \
 $(LIB_AVR32)src/usb/ftdi/ftdi.c \
 $(LIB_AVR32)src/usb/hid/hid.c \
@@ -76,6 +78,7 @@ $(LIB_AVR32)src	   \
 $(LIB_AVR32)/conf/aleph	   \
 $(LIB_AVR32)src/fat_io_lib  \
 $(LIB_AVR32)src/usb     \
+$(LIB_AVR32)src/usb/cdc    \
 $(LIB_AVR32)src/usb/ftdi   \
 $(LIB_AVR32)src/usb/hid \
 $(LIB_AVR32)src/usb/midi   \
