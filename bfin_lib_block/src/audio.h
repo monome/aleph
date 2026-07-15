@@ -11,6 +11,10 @@
 #include "module_custom.h"
 #include "types.h"
 
+#ifndef MODULE_AUDIO_CONVERT_24_32
+#define MODULE_AUDIO_CONVERT_24_32 0
+#endif
+
 //! channel count
 #define AUDIO_CHANNELS 4
 //! bytes per sample

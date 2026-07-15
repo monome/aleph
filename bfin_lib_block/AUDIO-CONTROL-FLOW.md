@@ -19,7 +19,7 @@ Related prior review: [`dsp-block-test/DMA-REVIEW.md`](../dsp-block-test/DMA-REV
 | DMA | Autobuffer, single 4-word RX/TX | Descriptor ping-pong, 2D deinterleave |
 | Block size | 1 sample (implicit) | `MODULE_BLOCKSIZE` (spray: **16**) |
 | Deadline | ~20.8 µs @ 48 kHz | ~333 µs @ 16 / 48 kHz |
-| 24↔32 packing | Explicit `<<8` / `>>8` in ISR | **None** |
+| 24↔32 packing | Explicit `<<8` / `>>8` in ISR | Optional via `MODULE_AUDIO_CONVERT_24_32` (inlined in main; spray on) |
 | SPORT TX | `TFSR \| TCKFE` | `TFSR \| TCKFE \| LATFS` |
 | Params | Applied live in SPI ISR | Queued in SPI ISR, applied in TX ISR |
 | CV | SPORT1 + `cv_update()` | Not driven (spray CV is no-op) |
@@ -165,7 +165,10 @@ Ping-pong halves: `inputChannels0/1`, `outputChannels0/1`.
 | DMA1 RX complete | IVG10 | `sport0_rx_isr` | Flip `audioIn`, `audioRxDone=1`, clear IRQ |
 | SPI | IVG11 | `spi_isr` | Byte protocol → queue params |
 
-**No 24↔32 conversion** in either audio ISR — unlike frame path.
+**No 24↔32 conversion in the audio ISRs** — unlike frame path. When
+`MODULE_AUDIO_CONVERT_24_32` is enabled (see module `module_custom.h`),
+[`audio_convert.h`](src/audio_convert.h) inlines RX `<< 8` / TX `>> 8` around
+`module_process_block` in main.
 
 ### Main processing loop
 
@@ -198,11 +201,13 @@ called out as high-risk in [`DMA-REVIEW.md`](../dsp-block-test/DMA-REVIEW.md) §
 
 ### Sample format difference (distortion suspect #2)
 
-Frame ISR forces Q1.31-ish layout with `<< 8` / `>> 8`. Block path feeds raw
-SPORT 32-bit words into `mult_fr1x32x32`. Mix/spray DSP **assumes fract32**.
-Without the shift, gains and products are wrong (often harsh / crushed audio)
-even if DMA IRQ timing is perfect. Pass-through of identical bit patterns can
-sound “OK”; **math modules need the shift**.
+Frame ISR forces Q1.31-ish layout with `<< 8` / `>> 8`. Block path historically
+fed raw SPORT words into `mult_fr1x32x32`. Modules that need fract32 packing
+set `#define MODULE_AUDIO_CONVERT_24_32 1` in `module_custom.h` (spray does);
+[`main.c`](src/main.c) then calls inlined `audio_convert_rx_24_to_32` /
+`audio_convert_tx_32_to_24` around `module_process_block`. Default is off
+(`audio.h` defines it to 0 if omitted). Pass-through of identical bit patterns
+can still sound “OK” without convert; **math modules need the shift**.
 
 ### Control / params
 
@@ -288,7 +293,8 @@ Spray’s DSP algorithm matches mix’s mix math; the lib plumbing differs. Most
 plausible root causes for **heavy** distortion (before assuming “CPU too slow”):
 
 1. **Missing 24↔32 shift** on block I/O while using `mult_fr1x32x32` — frame does
-   this; block does not.
+   this in the ISR; block modules opt in via `MODULE_AUDIO_CONVERT_24_32`
+   (spray enabled).
 2. **`LATFS` on TX only** — framing mismatch vs working mix path.
 3. Less likely for constant heavy distortion (more for intermittent glitches):
    process overrun, non-volatile buffer pointers, param races.

@@ -4,6 +4,7 @@
 #include "ccblkfn.h"
 
 #include "audio.h"
+#include "audio_convert.h"
 #include "clock_ebiu.h"
 #include "cycle_count_aleph.h"
 #include "dma.h"
@@ -81,7 +82,13 @@ int main(void) {
 	 we start missing most param changes...
        */
 
+#if MODULE_AUDIO_CONVERT_24_32
+      audio_convert_rx_24_to_32(audioIn);
+#endif
       module_process_block(audioIn, audioOut);
+#if MODULE_AUDIO_CONVERT_24_32
+      audio_convert_tx_32_to_24(audioOut);
+#endif
       audioTxDone = 0;
       audioRxDone = 0;
       
