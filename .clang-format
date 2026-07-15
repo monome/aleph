@@ -1,67 +1,107 @@
+# clang-format style for aleph first-party C
+#
+# Compatible with clang-format 14 (shipped in aleph-builder).
+#
+# Tuned against apps/, avr32/, bfin_lib*/, dsp*/, modules/, and
+# libavr32/src to match the dominant existing conventions:
+#   - 2-space indent, braces attached
+#   - no space before '(' (if(x), for(i = 0; ...), foo())
+#   - short if/for/blocks may stay on one line
+#   - case labels not indented relative to switch
+#   - space before case colon: `case FOO :`
+#   - includes left in source order (hand-grouped)
+#   - no column limit (long debug strings / decls stay put)
+#   - tabs (width 8) used only for line continuation / alignment
+#
+# Outliers exist (some files use 4-space indent, or `Type *name`, or
+# a space before function parens); DerivePointerAlignment reduces
+# churn where local file style already differs on pointers.
+#
+# libavr32/ ships its own .clang-format with DisableFormat so ASF /
+# third-party headers are left alone.
+
 ---
-Language:        Cpp
-# BasedOnStyle:  Google
-AccessModifierOffset: -1
-AlignAfterOpenBracket: true
-AlignConsecutiveAssignments: false
-AlignEscapedNewlinesLeft: true
-AlignOperands:   true
+Language: Cpp
+BasedOnStyle: LLVM
+
+AccessModifierOffset: -2
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: None
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Left
+AlignOperands: Align
 AlignTrailingComments: true
+
+AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortBlocksOnASingleLine: true
+AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: All
-AllowShortIfStatementsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortLoopsOnASingleLine: true
-AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakBeforeMultilineStrings: true
-AlwaysBreakTemplateDeclarations: true
+
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+
 BinPackArguments: true
 BinPackParameters: true
+
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Attach
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializersBeforeComma: false
-ColumnLimit:     80
-CommentPragmas:  '^ IWYU pragma:'
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
-ConstructorInitializerIndentWidth: 4
-ContinuationIndentWidth: 4
-Cpp11BracedListStyle: false
+BreakStringLiterals: false
+
+ColumnLimit: 0
+CommentPragmas: '^ IWYU pragma:'
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: true
+
 DerivePointerAlignment: true
-DisableFormat:   false
-ExperimentalAutoDetectBinPacking: false
-ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
-IndentCaseLabels: true
-IndentWidth:     4
+DisableFormat: false
+
+IncludeBlocks: Preserve
+IndentCaseLabels: false
+IndentGotoLabels: true
+IndentPPDirectives: None
+IndentWidth: 2
 IndentWrappedFunctionNames: false
-KeepEmptyLinesAtTheStartOfBlocks: false
-MacroBlockBegin: ''
-MacroBlockEnd:   ''
-MaxEmptyLinesToKeep: 1
-NamespaceIndentation: None
-ObjCBlockIndentWidth: 2
-ObjCSpaceAfterProperty: false
-ObjCSpaceBeforeProtocolList: false
-PenaltyBreakBeforeFirstCallParameter: 1
+
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 2
+
+PenaltyBreakAssignment: 2
+PenaltyBreakBeforeFirstCallParameter: 19
 PenaltyBreakComment: 300
 PenaltyBreakFirstLessLess: 120
 PenaltyBreakString: 1000
 PenaltyExcessCharacter: 1000000
-PenaltyReturnTypeOnItsOwnLine: 200
+PenaltyReturnTypeOnItsOwnLine: 2000
+
 PointerAlignment: Left
+QualifierAlignment: Leave
+ReflowComments: false
+SeparateDefinitionBlocks: Leave
+SortIncludes: false
+
 SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
+SpaceBeforeCaseColon: true
+SpaceBeforeParens: Never
+SpaceBeforeSquareBrackets: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 2
-SpacesInAngles:  false
-SpacesInContainerLiterals: true
+SpacesInAngles: Never
 SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: true
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard:        Auto
-TabWidth:        8
-UseTab:          Never
-...
 
+Standard: Latest
+TabWidth: 8
+UseTab: ForContinuationAndIndentation
+...
