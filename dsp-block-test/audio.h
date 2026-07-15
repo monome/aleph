@@ -32,42 +32,23 @@ typedef fract32 buffer_t[CHANNELS][BLOCKSIZE];
 
 #if DMA_DEINTERLEAVE_PINGPONG
 
-//! current pointers to processing buffers
-buffer_t *audioIn;
-buffer_t *audioOut;
+//! current pointers to processing buffers (written in ISR, read in main)
+extern buffer_t * volatile audioIn;
+extern buffer_t * volatile audioOut;
 
 //! I/O buffers
-__attribute__((l1_data_A))
-__attribute__((aligned(32)))
 extern buffer_t inputChannels0;
-
-__attribute__((l1_data_B))
-__attribute__((aligned(32)))
 extern buffer_t inputChannels1;
-
-__attribute__((l1_data_A))
-__attribute__((aligned(32)))
 extern buffer_t outputChannels0;
-
-__attribute__((l1_data_B))
-__attribute__((aligned(32)))
 extern buffer_t outputChannels1;
 
 #else
 //! I/O buffers
-__attribute__((l1_data_A))
-__attribute__((aligned(32)))
 extern fract32 audioRxBuf[BLOCKSIZE*CHANNELS];
-
-__attribute__((l1_data_B))
-__attribute__((aligned(32)))
 extern fract32 audioTxBuf[BLOCKSIZE*CHANNELS];
 
 //! separate process buffers
-__attribute__((aligned(32)))
 extern buffer_t audioIn;
-
-__attribute__((aligned(32)))
 extern buffer_t audioOut;
 
 #endif // DMA_DEINTERLEAVE_PINGPONG

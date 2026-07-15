@@ -51,7 +51,8 @@ void init_sport0(void)
   // Sport0 transmit configuration
   // External CLK, External Frame sync, MSB first, Active Low
   // 24-bit data, Secondary side enable, Stereo frame sync enable
-  *pSPORT0_TCR1 = TFSR | TCKFE | LATFS;
+  // Match working bfin_lib (early FS on TX and RX; do not set LATFS alone).
+  *pSPORT0_TCR1 = TFSR | TCKFE;
   *pSPORT0_TCR2 = SLEN_24 | TXSE | TSFSE;
 }
 
