@@ -143,7 +143,12 @@ From [`audio.h`](src/audio.h) and spray
 - 48 kHz, 4 channels, `MODULE_BLOCKSIZE = 16`
 - Block period ≈ **333 µs**
 
-2D large-descriptor DMA deinterleaves into `[ch][frame]` ([`dma.c`](src/dma.c)):
+2D large-descriptor DMA deinterleaves into `[wire][frame]` ([`dma.c`](src/dma.c))
+in SPORT arrival order **L0, L1, R0, R1** (indices 0–3). Mix/app logical order is
+**L0, R0, L1, R1** (same remap as frame `INTERNAL_ADC_*` / `INTERNAL_DAC_*`).
+Modules should index via [`audio_channels.h`](src/audio_channels.h)
+(`IN_x_IDX` / `OUT_x_IDX`, `audio_in_channel` / `audio_out_channel`) rather than
+assuming wire index equals logical channel.
 
 ```c
 #define X_COUNT AUDIO_CHANNELS
