@@ -62,6 +62,11 @@ u8 spi_process(u8 rx) {
       processAudio = 0;
       return processAudio;
       break;
+    case MSG_GET_XRUN_COM:
+      /* frame lib has no block xrun counters; stream zeros */
+      byte = eGetXrunWindowRx0;
+      return 0;
+      break;
     default:
       break;
     }
@@ -257,6 +262,21 @@ u8 spi_process(u8 rx) {
   case eModuleVersionRev1 :
     byte = eCom; // reset
     return 0;    // don't care
+    break;
+
+  case eGetXrunWindowRx0:
+  case eGetXrunWindowRx1:
+  case eGetXrunWindowTx0:
+  case eGetXrunWindowTx1:
+  case eGetXrunClashRx0:
+  case eGetXrunClashRx1:
+  case eGetXrunClashTx0:
+    byte++;
+    return 0;
+    break;
+  case eGetXrunClashTx1:
+    byte = eCom;
+    return 0;
     break;
 
   default:

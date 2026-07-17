@@ -54,6 +54,16 @@ extern s32 bfin_get_audio_cpu(void);
 //! get param change cpu usage
 extern s32 bfin_get_control_cpu(void);
 
+//! block-audio xrun counters (zeros if MODULE_AUDIO_XRUN_DETECT is off)
+typedef struct {
+  u16 windowRx;
+  u16 windowTx;
+  u16 clashRx;
+  u16 clashTx;
+} bfin_xrun_t;
+
+void bfin_get_xruns(bfin_xrun_t *out);
+
 //! fill a buffer on the blackfin with arbitrary data
 extern void bfin_fill_buffer(const s32* src, u32 bytes);
 
