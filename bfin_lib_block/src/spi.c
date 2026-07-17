@@ -22,6 +22,10 @@ static u8 idx;
 // temp value
 static ParamValueSwap pval;
 
+// xrun SPI readout snapshot (8 bytes = 4 x u16 BE)
+static u8 xrunOut[8];
+static u8 xrunOutIdx;
+
 // -- static functions:
 static void spi_set_param(u32 idx, ParamValue pv) {
   // set the raw value here,
@@ -60,12 +64,41 @@ u8 spi_handle_byte(u8 rx) {
       break;
 
     case MSG_ENABLE_AUDIO:
+      audio_reset_xruns();
       processAudio = 1;
       return processAudio;
       break;
     case MSG_DISABLE_AUDIO:
       processAudio = 0;
       return processAudio;
+      break;
+
+    case MSG_GET_XRUN_COM: {
+      u16 xr[4];
+#if MODULE_AUDIO_XRUN_DETECT
+      xr[0] = xrunWindowRx;
+      xr[1] = xrunWindowTx;
+      xr[2] = xrunClashRx;
+      xr[3] = xrunClashTx;
+#else
+      xr[0] = 0;
+      xr[1] = 0;
+      xr[2] = 0;
+      xr[3] = 0;
+#endif
+      /* pack BE byte order into linear buffer for streaming */
+      xrunOut[0] = (u8)(xr[0] >> 8);
+      xrunOut[1] = (u8)(xr[0] & 0xff);
+      xrunOut[2] = (u8)(xr[1] >> 8);
+      xrunOut[3] = (u8)(xr[1] & 0xff);
+      xrunOut[4] = (u8)(xr[2] >> 8);
+      xrunOut[5] = (u8)(xr[2] & 0xff);
+      xrunOut[6] = (u8)(xr[3] >> 8);
+      xrunOut[7] = (u8)(xr[3] & 0xff);
+      xrunOutIdx = 1;
+      byte = eGetXrunWindowRx0;
+      return xrunOut[0];
+    }
       break;
 
       // disabling until we know what's up with cycle counter
@@ -272,6 +305,21 @@ u8 spi_handle_byte(u8 rx) {
   case eModuleVersionRev1 :
     byte = eCom; // reset
     return 0;    // don't care
+    break;
+
+  case eGetXrunWindowRx0:
+  case eGetXrunWindowRx1:
+  case eGetXrunWindowTx0:
+  case eGetXrunWindowTx1:
+  case eGetXrunClashRx0:
+  case eGetXrunClashRx1:
+  case eGetXrunClashTx0:
+    byte++;
+    return xrunOut[xrunOutIdx++];
+    break;
+  case eGetXrunClashTx1:
+    byte = eCom;
+    return xrunOut[xrunOutIdx];
     break;
 
     /*

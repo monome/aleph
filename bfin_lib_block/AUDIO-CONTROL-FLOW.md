@@ -23,7 +23,7 @@ Related prior review: [`dsp-block-test/DMA-REVIEW.md`](../dsp-block-test/DMA-REV
 | SPORT TX | `TFSR \| TCKFE` | `TFSR \| TCKFE \| LATFS` |
 | Params | Applied live in SPI ISR | Queued in SPI ISR, applied in TX ISR |
 | CV | SPORT1 + `cv_update()` | Not driven (spray CV is no-op) |
-| Overrun handling | None (implicit glitch) | None (implicit glitch + possible missed wake) |
+| Overrun handling | None (implicit glitch) | Optional `MODULE_AUDIO_XRUN_DETECT` + always-on `bfin_get_xruns` SPI |
 
 ---
 
@@ -273,7 +273,21 @@ Exactly one half of spare buffer time (= one block period) for DSP.
 
 **Deadline:** one block period after both done flags are set (~333 µs for spray).
 
-No overrun detector. Consequences:
+When `MODULE_AUDIO_XRUN_DETECT` is enabled (spray sets it to `1`; default `0`),
+two classes of xrun are counted (per direction):
+
+| Counter | Class | Meaning |
+|---------|-------|---------|
+| `xrunWindowRx` / `xrunWindowTx` | Window overrun | RX/TX ISR found the done flag already set |
+| `xrunClashRx` / `xrunClashTx` | Buffer clash | ISR about to hand DMA the half main still holds |
+
+Main publishes `audioProcBusy` + `audioProcIn`/`audioProcOut` around convert/process.
+Clash checks use the **next DMA fill target**, not the newly completed half.
+
+SPI readout is always available (`MSG_GET_XRUN_COM` / `bfin_get_xruns`): live counters
+when detect is on, all zeros when off. Spray polls ~2 Hz and `print_dbg`s on change.
+
+Without detection (or ignoring the counters), consequences of a late process:
 
 1. **DMA keeps cycling.** ISRs flip pointers and set done flags again while main
    still uses the **stale pointer values** from call entry.
@@ -286,9 +300,8 @@ No overrun detector. Consequences:
    the ping-pong halves (stale/torn). Overruns can cascade.
 4. `control_process()` still runs every TX ISR (params still update on block
    boundaries).
-5. Non-volatile `audioIn`/`audioOut` ([`audio.h`](src/audio.h) 35–36) under `-O3`
-   can theoretically reuse stale pointers even without overrun
-   ([DMA-REVIEW.md](../dsp-block-test/DMA-REVIEW.md) §2).
+5. Non-volatile `audioIn`/`audioOut` historically could reuse stale pointers under
+   `-O3`; they are now `volatile` in [`audio.h`](src/audio.h).
 
 ---
 

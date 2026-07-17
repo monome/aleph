@@ -1,21 +1,35 @@
 #include <blackfin.h>
-#include <cdefBF533.h>  
+#include <cdefBF533.h>
 #include "ccblkfn.h"
 
 #include "audio.h"
-#include "dma.h"
+#include "control.h"
 #include "gpio.h"
 #include "isr.h"
+#include "spi.h"
 
 // flags for pingpong processing
 static volatile u8 inBufFlag = 0;
 static volatile u8 outBufFlag = 0;
 
-__attribute((interrupt_handler)) 
+__attribute((interrupt_handler))
 void sport0_rx_isr(void) {
 
   READY_LO;
-  
+
+#if MODULE_AUDIO_XRUN_DETECT
+  if(audioRxDone) {
+    ++xrunWindowRx;
+  }
+  {
+    /* next DMA fill target is the half we are *not* about to publish */
+    buffer_t *nextFill = inBufFlag ? &inputChannels0 : &inputChannels1;
+    if(audioProcBusy && audioProcIn == nextFill) {
+      ++xrunClashRx;
+    }
+  }
+#endif
+
   if(inBufFlag) {
     audioIn = &inputChannels1;
     inBufFlag = 0;
@@ -28,16 +42,28 @@ void sport0_rx_isr(void) {
 
   *pDMA1_IRQ_STATUS = 0x0001;
   ssync();
-  
+
   READY_HI;
 }
 
 
-__attribute((interrupt_handler)) 
+__attribute((interrupt_handler))
 void sport0_tx_isr(void) {
-  
+
   READY_LO;
-  
+
+#if MODULE_AUDIO_XRUN_DETECT
+  if(audioTxDone) {
+    ++xrunWindowTx;
+  }
+  {
+    buffer_t *nextFill = outBufFlag ? &outputChannels0 : &outputChannels1;
+    if(audioProcBusy && audioProcOut == nextFill) {
+      ++xrunClashTx;
+    }
+  }
+#endif
+
   if(outBufFlag) {
     audioOut = &outputChannels1;
     outBufFlag = 0;
@@ -45,12 +71,12 @@ void sport0_tx_isr(void) {
     audioOut = &outputChannels0;
     outBufFlag = 1;
   }
-  
+
   audioTxDone = 1;
 
   // process pending param changes
   control_process();
-  
+
   *pDMA2_IRQ_STATUS = 0x0001;
   ssync();
 
@@ -58,7 +84,7 @@ void sport0_tx_isr(void) {
 }
 
 
-__attribute((interrupt_handler)) 
+__attribute((interrupt_handler))
 void spi_isr(void) {
   u8 rx, tx;
   READY_LO;
@@ -68,8 +94,8 @@ void spi_isr(void) {
   // if this completes a param change command, it will be queued.
   tx = spi_handle_byte(rx);
   *pSPI_TDBR = tx;
-  
-  READY_HI; 
+
+  READY_HI;
 }
 
 
@@ -86,7 +112,7 @@ void init_interrupts(void) {
   // sport0 tx (dma2) -> ID2 = IVG9
   // spi (dma5) -> ID4 = IVG11
   *pSIC_IAR1 = 0x88488238;
-  
+
   // nothing in IAR2
   *pSIC_IAR2 = 0x88888888;
 
@@ -94,11 +120,11 @@ void init_interrupts(void) {
   *pEVT10 = sport0_rx_isr;
   *pEVT9 = sport0_tx_isr;
   *pEVT11 = spi_isr;
-  
+
   // unmask peripheral interrupts
   *pSIC_IMASK=0x00002600;
-  
+
   // unmask vectors in the core event processor
     asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
-  
+
 }
