@@ -10,6 +10,7 @@
 void filter_ramp_init(filter_ramp* f) {
   f->y = 0;
   f->inc = 1 << 16;
+  f->sync = 1; /* idle — ready for start_fade_rd */
 }
 
 void filter_ramp_set_inc(filter_ramp* f, fract32 inc) {
