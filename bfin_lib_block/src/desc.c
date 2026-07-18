@@ -22,7 +22,6 @@ compile with
 
 #include "module_custom.h"
 #include "osc.h"
-#include "params.h"
 #include "pickle.h"
 #include "types.h"
 

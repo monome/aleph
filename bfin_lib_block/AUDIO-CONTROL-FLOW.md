@@ -188,7 +188,7 @@ while (1) {
 }
 ```
 
-Spray DSP ([`modules_block/spray/module.c`](../modules_block/spray/module.c)):
+Spray DSP ([`modules_block/spray/spray_module.c`](../modules_block/spray/spray_module.c)):
 for each of 16 frames, advance amp slews, mix four inputs to all four outputs.
 Interrupts stay **enabled** during this (CLI was abandoned — comments note User
 mode cannot use CLI).
@@ -342,5 +342,5 @@ distortion when CPU load is modest (16 samples of mix is light).
 | [`bfin_lib_block/src/dma.c`](src/dma.c) | Descriptor ping-pong |
 | [`bfin_lib_block/src/serial.c`](src/serial.c) | SPORT incl. `LATFS` |
 | [`bfin_lib_block/src/control.c`](src/control.c) | Param FIFO |
-| [`modules_block/spray/module.c`](../modules_block/spray/module.c) | `module_process_block` |
+| [`modules_block/spray/spray_module.c`](../modules_block/spray/spray_module.c) | `module_process_block` |
 | [`dsp-block-test/DMA-REVIEW.md`](../dsp-block-test/DMA-REVIEW.md) | Known block-path risks |
