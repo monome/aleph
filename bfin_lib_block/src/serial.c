@@ -1,17 +1,17 @@
 // bfin toolchain
 #include <blackfin.h>
-#include <cdefBF533.h>  
+#include <cdefBF533.h>
 #include "ccblkfn.h"
 
 #include "serial.h"
 
 
 // SPORT0 word length
-#define SLEN_24	0x0017
+#define SLEN_24 0x0017
 
 //--------------------------------------------------------------------//
 // init_spi_slave()
-// (re-)configure spi in slave mode to receive control data from avr32 
+// (re-)configure spi in slave mode to receive control data from avr32
 // FIXME: using pingpong DMA could halve the number of interrupts
 void init_spi_slave(void) {
   int j;
@@ -21,11 +21,11 @@ void init_spi_slave(void) {
   *pSPI_FLG = 0xff00;
 
   // try clearing the rx error bit? (sticky - W1C)
-  *pSPI_STAT |= 0x10;  
-  *pSPI_STAT |= 0x10;  
+  *pSPI_STAT |= 0x10;
+  *pSPI_STAT |= 0x10;
 
-  // slave mode, 
-  // 8 bit transfers (MSB first, non-dma rx mode, 
+  // slave mode,
+  // 8 bit transfers (MSB first, non-dma rx mode,
   // overwrite (interrupt when SPI_RDBR is full),
   // phase: seems crazy but bfin and avr32 have opposite definitions of clock phase!
   *pSPI_CTL = CPHA | GM | SZ;
@@ -40,14 +40,13 @@ void init_spi_slave(void) {
 }
 
 // configure sport0 for i2s mode with external clock
-void init_sport0(void)
-{
+void init_sport0(void) {
   // Sport0 receive configuration
   // External CLK, External Frame sync, MSB first, Active Low
   // 24-bit data, Secondary side enable, Stereo frame sync enable
   *pSPORT0_RCR1 = RFSR | RCKFE;
   *pSPORT0_RCR2 = SLEN_24 | RXSE | RSFSE;
-  
+
   // Sport0 transmit configuration
   // External CLK, External Frame sync, MSB first, Active Low
   // 24-bit data, Secondary side enable, Stereo frame sync enable
@@ -66,17 +65,16 @@ void init_sport1(void) {
   //// internal TFS                  : ITFS   = 1
   //// frame sync required           : TFSR  = 1
   //// no companding                 : TDTYPE = 00
-  //// MSB first                     : TLSBIT = 0  
+  //// MSB first                     : TLSBIT = 0
   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
- 
+
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
   //     *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE ;
+  *pSPORT1_TCR2 = 24 | TXSE;
   // tclk = sclk / ( 2 x (div + 1)
   /// DAC datasheet indicates we can go up to 50Mhz
   // here's 27 Mhz
   *pSPORT1_TCLKDIV = 1;
-
 }

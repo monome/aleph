@@ -18,7 +18,7 @@ in any case, there are some strange keywords in there. so putting the relevant m
 
 typedef volatile unsigned long cycle_t;
 
-#define COMPUTE_CPU_USE( CYCLES ) ( (u32)((u64)0x7fffffff * (u64)(CYCLES * AUDIO_SAMPLERATE) / (u64)(MODULE_BLOCKSIZE * PROCESSOR_CLOCK_HZ)) )
+#define COMPUTE_CPU_USE(CYCLES) ((u32)((u64)0x7fffffff * (u64)(CYCLES * AUDIO_SAMPLERATE) / (u64)(MODULE_BLOCKSIZE * PROCESSOR_CLOCK_HZ)))
 
 //! start a cycle counter by storing current cycles in supplied long int
 /*
@@ -35,4 +35,4 @@ typedef volatile unsigned long cycle_t;
   (COUNT) = (COUNT) - (START) - 4
 */
 
-#endif // h guard
+#endif  // h guard

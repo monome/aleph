@@ -14,12 +14,12 @@
 #include "types.h"
 
 #define SDRAM_ADDRESS 0x00000000
-#define SDRAM_SIZE    0x07ffffff
+#define SDRAM_SIZE 0x07ffffff
 
 //! global module data type
 typedef struct _moduleData {
   char name[MODULE_NAME_LEN];
-  ParamData* paramData; 
+  ParamData* paramData;
   u16 numParams;
 } ModuleData;
 
@@ -33,9 +33,9 @@ extern ModuleData* gModuleData;
 extern void module_init(void);
 
 //! process a block of frames
-extern void module_process_block(buffer_t *inChannels, buffer_t *outChannels);
+extern void module_process_block(buffer_t* inChannels, buffer_t* outChannels);
 
-//! set parameter  
+//! set parameter
 extern void module_set_param(u32 idx, ParamValue val);
 
 #endif

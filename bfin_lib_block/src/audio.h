@@ -26,7 +26,7 @@
 //! channel count
 #define AUDIO_CHANNELS 4
 //! bytes per sample
-#define AUDIO_SAMPLESIZE 4 // sizeof(fract32)
+#define AUDIO_SAMPLESIZE 4  // sizeof(fract32)
 //! samples per second
 #define AUDIO_SAMPLERATE 48000
 
@@ -47,14 +47,14 @@ extern void audio_reset_xruns(void);
 typedef fract32 buffer_t[AUDIO_CHANNELS][MODULE_BLOCKSIZE];
 
 //! current pointers to processing buffers
-extern buffer_t * volatile audioIn;
-extern buffer_t * volatile audioOut;
+extern buffer_t* volatile audioIn;
+extern buffer_t* volatile audioOut;
 
 #if MODULE_AUDIO_XRUN_DETECT
 //! main publishes these while converting/processing a block
 extern volatile u8 audioProcBusy;
-extern buffer_t * volatile audioProcIn;
-extern buffer_t * volatile audioProcOut;
+extern buffer_t* volatile audioProcIn;
+extern buffer_t* volatile audioProcOut;
 
 //! xrun counters (wrap on overflow)
 extern volatile u16 xrunWindowRx;
@@ -65,20 +65,16 @@ extern volatile u16 xrunClashTx;
 
 //! I/O buffers
 __attribute__((l1_data_A))
-__attribute__((aligned(32)))
-extern buffer_t inputChannels0;
+__attribute__((aligned(32))) extern buffer_t inputChannels0;
 
 __attribute__((l1_data_A))
-__attribute__((aligned(32)))
-extern buffer_t inputChannels1;
+__attribute__((aligned(32))) extern buffer_t inputChannels1;
 
 __attribute__((l1_data_B))
-__attribute__((aligned(32)))
-extern buffer_t outputChannels0;
+__attribute__((aligned(32))) extern buffer_t outputChannels0;
 
 __attribute__((l1_data_B))
-__attribute__((aligned(32)))
-extern buffer_t outputChannels1;
+__attribute__((aligned(32))) extern buffer_t outputChannels1;
 
 
-#endif // header guard
+#endif  // header guard

@@ -12,8 +12,7 @@
 static volatile u8 inBufFlag = 0;
 static volatile u8 outBufFlag = 0;
 
-__attribute((interrupt_handler))
-void sport0_rx_isr(void) {
+__attribute((interrupt_handler)) void sport0_rx_isr(void) {
 
   READY_LO;
 
@@ -47,8 +46,7 @@ void sport0_rx_isr(void) {
 }
 
 
-__attribute((interrupt_handler))
-void sport0_tx_isr(void) {
+__attribute((interrupt_handler)) void sport0_tx_isr(void) {
 
   READY_LO;
 
@@ -84,8 +82,7 @@ void sport0_tx_isr(void) {
 }
 
 
-__attribute((interrupt_handler))
-void spi_isr(void) {
+__attribute((interrupt_handler)) void spi_isr(void) {
   u8 rx, tx;
   READY_LO;
 
@@ -101,7 +98,7 @@ void spi_isr(void) {
 
 // assign interrupts
 void init_interrupts(void) {
-  int i=0;
+  int i = 0;
 
   // nothing in IAR0
   // NB: doesn't matter what we put for masked peripherals,
@@ -122,9 +119,8 @@ void init_interrupts(void) {
   *pEVT11 = spi_isr;
 
   // unmask peripheral interrupts
-  *pSIC_IMASK=0x00002600;
+  *pSIC_IMASK = 0x00002600;
 
   // unmask vectors in the core event processor
-    asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
-
+  asm volatile("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;" : "+d"(i));
 }

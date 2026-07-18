@@ -17,13 +17,13 @@ buffer_t inputChannels1;
 buffer_t outputChannels0;
 buffer_t outputChannels1;
 
-buffer_t * volatile audioIn = &inputChannels0;
-buffer_t * volatile audioOut = &outputChannels0;
+buffer_t* volatile audioIn = &inputChannels0;
+buffer_t* volatile audioOut = &outputChannels0;
 
 #if MODULE_AUDIO_XRUN_DETECT
 volatile u8 audioProcBusy = 0;
-buffer_t * volatile audioProcIn = 0;
-buffer_t * volatile audioProcOut = 0;
+buffer_t* volatile audioProcIn = 0;
+buffer_t* volatile audioProcOut = 0;
 
 volatile u16 xrunWindowRx = 0;
 volatile u16 xrunWindowTx = 0;
