@@ -11,7 +11,7 @@
 #   - space before case colon: `case FOO :`
 #   - includes left in source order (hand-grouped)
 #   - no column limit (long debug strings / decls stay put)
-#   - tabs (width 8) used only for line continuation / alignment
+#   - spaces only for indentation (no tabs)
 #   - braced lists stay compact when they fit (BinPackArguments)
 #
 # Trailing commas in braced lists force one element per line (clang-format
@@ -109,5 +109,5 @@ SpacesInSquareBrackets: false
 
 Standard: Latest
 TabWidth: 8
-UseTab: ForContinuationAndIndentation
+UseTab: Never
 ...
