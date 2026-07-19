@@ -58,6 +58,6 @@ $(bfin_lib_objdir)%.o : # $(bfin_lib_srcdir)%.c
 	$(LDR) -T $(CPU) -c $(LDRFLAGS) $@ $<
 
 bfin_lib_clean:
-	rm $(bfin_lib_objdir)*.o
+	rm -f $(bfin_lib_objdir)*.o
 
 .PHONY: bfin_lib_target bfin_lib_clean
