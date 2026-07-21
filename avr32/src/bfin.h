@@ -64,6 +64,17 @@ typedef struct {
 
 void bfin_get_xruns(bfin_xrun_t *out);
 
+//! meter bank peaks (zeros if MODULE_AUDIO_METER is off / unknown bank)
+#define BFIN_METER_BANK_IN   0
+#define BFIN_METER_BANK_OUT  1
+#define BFIN_METER_CH        4
+
+typedef struct {
+  fract32 ch[BFIN_METER_CH];
+} bfin_meter_bank_t;
+
+void bfin_get_meter_bank(u8 bank, bfin_meter_bank_t *out);
+
 //! fill a buffer on the blackfin with arbitrary data
 extern void bfin_fill_buffer(const s32* src, u32 bytes);
 

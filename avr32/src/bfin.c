@@ -442,6 +442,45 @@ void bfin_get_xruns(bfin_xrun_t *out) {
     app_resume();
 }
 
+// get meter bank peaks (4 x fract32 BE)
+void bfin_get_meter_bank(u8 bank, bfin_meter_bank_t *out) {
+    ParamValueSwap words[4];
+    u16 x;
+    u8 i;
+    u8 b;
+
+    app_pause();
+    bfin_wait();
+
+    /* Command: MISO stale; first data byte loaded for next clock. */
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_GET_METER_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    /* Bank id; MISO returns first peak byte. */
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bank);
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    words[0].asByte[0] = (u8)x;
+
+    for(i = 0; i < 4; i++) {
+        for(b = (i == 0) ? 1 : 0; b < 4; b++) {
+            spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+            spi_write(BFIN_SPI, 0);  // don't care
+            spi_read(BFIN_SPI, &x);
+            spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+            words[i].asByte[b] = (u8)x;
+        }
+    }
+
+    for(i = 0; i < BFIN_METER_CH; i++) {
+        out->ch[i] = (fract32)words[i].asInt;
+    }
+
+    app_resume();
+}
+
 // fill a buffer on the blackfin with arbitrary data
 void bfin_fill_buffer(const s32* src, u32 bytes) {
     u16 x;
