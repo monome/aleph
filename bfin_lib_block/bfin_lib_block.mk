@@ -10,6 +10,8 @@ common_dir = $(bfin_lib_dir)/../common
 audio_dir = $(bfin_lib_dir)/../dsp
 module_dir = ./
 
+dsp_block_dir = $(bfin_lib_dir)/../dsp_block
+
 bfin_lib_src = audio.c \
 	clock_ebiu.c \
 	control.c \
@@ -17,6 +19,7 @@ bfin_lib_src = audio.c \
 	dma.c \
 	isr.c \
 	main.c \
+	meters.c \
 	serial.c \
 	spi.c
 
@@ -26,6 +29,7 @@ INC += -I$(bfin_lib_srcdir) \
 	-I$(bfin_lib_srcdir)/libfixmath \
 	-I$(common_dir) \
 	-I$(audio_dir) \
+	-I$(dsp_block_dir) \
 	-I$(module_dir)
 
 CROSS_COMPILE = bfin-elf-

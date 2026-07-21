@@ -10,6 +10,7 @@
 #include "dma.h"
 #include "gpio.h"
 #include "isr.h"
+#include "meters.h"
 #include "module.h"
 #include "serial.h"
 #include "types.h"
@@ -34,6 +35,7 @@ int main(void) {
   init_dma();
 
   module_init();
+  meters_init();
   //  isModuleInit = 1;
 
   enable_dma_sport0();
@@ -59,6 +61,9 @@ int main(void) {
       audio_convert_rx_24_to_32(audioIn);
 #endif
       module_process_block(audioIn, audioOut);
+#if MODULE_AUDIO_METER
+      meters_process(audioIn, audioOut);
+#endif
 #if MODULE_AUDIO_CONVERT_24_32
       audio_convert_tx_32_to_24(audioOut);
 #endif

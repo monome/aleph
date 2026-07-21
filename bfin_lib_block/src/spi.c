@@ -6,6 +6,7 @@
 #include "cycle_count_aleph.h"
 #include "audio.h"
 #include "control.h"
+#include "meters.h"
 #include "module.h"
 #include "types.h"
 #include "spi.h"
@@ -25,6 +26,10 @@ static ParamValueSwap pval;
 // xrun SPI readout snapshot (8 bytes = 4 x u16 BE)
 static u8 xrunOut[8];
 static u8 xrunOutIdx;
+
+// meter SPI readout snapshot (16 bytes = 4 x u32 BE fract32 peaks)
+static u8 meterOut[16];
+static u8 meterOutIdx;
 
 // -- static functions:
 static void spi_set_param(u32 idx, ParamValue pv) {
@@ -99,6 +104,11 @@ u8 spi_handle_byte(u8 rx) {
       byte = eGetXrunWindowRx0;
       return xrunOut[0];
     }
+      break;
+
+    case MSG_GET_METER_COM :
+      byte = eGetMeterBank;
+      return 0;
       break;
 
       // disabling until we know what's up with cycle counter
@@ -320,6 +330,58 @@ u8 spi_handle_byte(u8 rx) {
   case eGetXrunClashTx1:
     byte = eCom;
     return xrunOut[xrunOutIdx];
+    break;
+
+  case eGetMeterBank : {
+    ParamValueSwap mt[4];
+    fract32 peaks[4];
+    u8 i;
+    meters_snapshot_bank(rx, peaks);
+    for(i = 0; i < 4; i++) {
+      mt[i].asInt = (s32)peaks[i];
+    }
+    meterOut[0] = mt[0].asByte[3];
+    meterOut[1] = mt[0].asByte[2];
+    meterOut[2] = mt[0].asByte[1];
+    meterOut[3] = mt[0].asByte[0];
+    meterOut[4] = mt[1].asByte[3];
+    meterOut[5] = mt[1].asByte[2];
+    meterOut[6] = mt[1].asByte[1];
+    meterOut[7] = mt[1].asByte[0];
+    meterOut[8] = mt[2].asByte[3];
+    meterOut[9] = mt[2].asByte[2];
+    meterOut[10] = mt[2].asByte[1];
+    meterOut[11] = mt[2].asByte[0];
+    meterOut[12] = mt[3].asByte[3];
+    meterOut[13] = mt[3].asByte[2];
+    meterOut[14] = mt[3].asByte[1];
+    meterOut[15] = mt[3].asByte[0];
+    meterOutIdx = 1;
+    byte = eGetMeter0;
+    return meterOut[0];
+  } break;
+
+  case eGetMeter0 :
+  case eGetMeter1 :
+  case eGetMeter2 :
+  case eGetMeter3 :
+  case eGetMeter4 :
+  case eGetMeter5 :
+  case eGetMeter6 :
+  case eGetMeter7 :
+  case eGetMeter8 :
+  case eGetMeter9 :
+  case eGetMeter10 :
+  case eGetMeter11 :
+  case eGetMeter12 :
+  case eGetMeter13 :
+  case eGetMeter14 :
+    byte++;
+    return meterOut[meterOutIdx++];
+    break;
+  case eGetMeter15 :
+    byte = eCom;
+    return meterOut[meterOutIdx];
     break;
 
     /*
