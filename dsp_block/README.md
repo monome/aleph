@@ -28,3 +28,4 @@ meaningful. Native block-rate integrator tables are a future bees change
 | File | Types |
 |------|--------|
 | `filter_1p_blk.*` | `filter_1p_lo_blk` |
+| `filter_bp_blk.*` | `filter_hp_blk`, `filter_lp_blk`, `filter_bp_blk` |
