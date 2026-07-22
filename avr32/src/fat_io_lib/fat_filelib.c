@@ -859,6 +859,7 @@ static uint32 _write_sectors(FL_FILE *file, uint32 offset, uint8 *buf,
 int fl_fflush(void *f) {
 #if FATFS_INC_WRITE_SUPPORT
     FL_FILE *file = (FL_FILE *)f;
+    int ok = 0;
 
     // If first call to library, initialise
     CHECK_FL_INIT();
@@ -872,12 +873,17 @@ int fl_fflush(void *f) {
             if (_write_sectors(file, file->file_data_address,
                                file->file_data_sector, 1))
                 file->file_data_dirty = 0;
+            else
+                ok = -1;
         }
 
         FL_UNLOCK(&_fs);
     }
-#endif
+    return ok;
+#else
+    (void)f;
     return 0;
+#endif
 }
 //-----------------------------------------------------------------------------
 // fl_fclose: Close an open file
@@ -891,8 +897,15 @@ void fl_fclose(void *f) {
     if (file) {
         FL_LOCK(&_fs);
 
-        // Flush un-written data to file
-        fl_fflush(f);
+        // Flush un-written data to file (inline — fl_fflush also takes FL_LOCK)
+#if FATFS_INC_WRITE_SUPPORT
+        if (file->file_data_dirty) {
+            if (_write_sectors(file, file->file_data_address,
+                               file->file_data_sector, 1))
+                file->file_data_dirty = 0;
+            /* on failure dirty stays set but handle must still be freed */
+        }
+#endif
 
         // File size changed?
         if (file->filelength_changed) {
@@ -1208,17 +1221,24 @@ int fl_fwrite(const void *data, int size, int count, void *f) {
     offset = file->bytenum % FAT_SECTOR_SIZE;
 
     while (bytesWritten < length) {
-        // Whole sector or more to be written?
-        if ((offset == 0) && ((length - bytesWritten) >= FAT_SECTOR_SIZE)) {
+            // Whole sector or more to be written?
+            if ((offset == 0) && ((length - bytesWritten) >= FAT_SECTOR_SIZE)) {
             uint32 sectorsWrote;
 
             // Buffered sector, flush back to disk
             if (file->file_data_address != 0xFFFFFFFF) {
-                // Flush un-written data to file
-                if (file->file_data_dirty) fl_fflush(file);
+                if (file->file_data_dirty) {
+                    /* inline flush — avoid nested fl_fflush lock/unlock */
+                    if (!_write_sectors(file, file->file_data_address,
+                                        file->file_data_sector, 1)) {
+                        FL_UNLOCK(&_fs);
+                        if (size <= 0) return 0;
+                        return (int)(bytesWritten / (uint32)size);
+                    }
+                    file->file_data_dirty = 0;
+                }
 
                 file->file_data_address = 0xFFFFFFFF;
-                file->file_data_dirty = 0;
             }
 
             // Write as many sectors as possible
@@ -1248,8 +1268,15 @@ int fl_fwrite(const void *data, int size, int count, void *f) {
 
             // Do we need to read a new sector?
             if (file->file_data_address != sector) {
-                // Flush un-written data to file
-                if (file->file_data_dirty) fl_fflush(file);
+                if (file->file_data_dirty) {
+                    if (!_write_sectors(file, file->file_data_address,
+                                        file->file_data_sector, 1)) {
+                        FL_UNLOCK(&_fs);
+                        if (size <= 0) return 0;
+                        return (int)(bytesWritten / (uint32)size);
+                    }
+                    file->file_data_dirty = 0;
+                }
 
                 // If we plan to overwrite the whole sector, we don't need to
                 // read it first!
@@ -1298,7 +1325,9 @@ int fl_fwrite(const void *data, int size, int count, void *f) {
 
     FL_UNLOCK(&_fs);
 
-    return (size * count);
+    /* stdio-compatible: report how many nmemb elements were actually written */
+    if (size <= 0) return 0;
+    return (int)(bytesWritten / (uint32)size);
 }
 #endif
 //-----------------------------------------------------------------------------
