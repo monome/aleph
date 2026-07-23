@@ -763,7 +763,23 @@ void *fl_fopen(const char *path, const char *mode) {
         if ((flags & FILE_CREATE) && !file)
             if (flags & (FILE_WRITE | FILE_APPEND)) file = _open_file(path);
 
-    if (file) file->flags = flags;
+    if (file) {
+        file->flags = flags;
+#if FATFS_INC_WRITE_SUPPORT
+        /* "w" / "w+" set FILE_ERASE but it was never applied: reopening an
+         * existing file kept the old FileSize, so a shorter rewrite left the
+         * previous tail visible (garbage lines after the new content). */
+        if (flags & FILE_ERASE) {
+            file->bytenum = 0;
+            file->file_data_address = 0xFFFFFFFF;
+            file->file_data_dirty = 0;
+            if (file->filelength != 0) {
+                file->filelength = 0;
+                file->filelength_changed = 1;
+            }
+        }
+#endif
+    }
 
     FL_UNLOCK(&_fs);
     return file;
