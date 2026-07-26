@@ -22,7 +22,7 @@ Related prior review: [`dsp-block-test/DMA-REVIEW.md`](../dsp-block-test/DMA-REV
 | 24↔32 packing | Explicit `<<8` / `>>8` in ISR | Optional via `MODULE_AUDIO_CONVERT_24_32` (inlined in main; spray on) |
 | SPORT TX | `TFSR \| TCKFE` | `TFSR \| TCKFE \| LATFS` |
 | Params | Applied live in SPI ISR | Queued in SPI ISR, applied in TX ISR |
-| CV | SPORT1 + `cv_update()` | Not driven (spray CV is no-op) |
+| CV | SPORT1 + `cv_update()` | SPORT1 + `cv_set`/`cv_commit` (DMA4 4-word burst) |
 | Overrun handling | None (implicit glitch) | Optional `MODULE_AUDIO_XRUN_DETECT` + always-on `bfin_get_xruns` SPI |
 
 ---
@@ -129,9 +129,11 @@ Result: clicks / repeated samples / missing input frames — not a clean mute.
 
 ### Boot
 
-[`bfin_lib_block/src/main.c`](src/main.c): clock, EBIU, SPI slave, SPORT0,
-interrupts, DMA descriptors, `module_init()`, enable DMA/SPORT, codec reset,
-then READY high.
+[`bfin_lib_block/src/main.c`](src/main.c): clock, EBIU, SPI slave, CV DAC
+(`init_cv` / `init_sport1` / `init_dma_cv`), SPORT0, interrupts, DMA
+descriptors, `module_init()`, enable DMA/SPORT0 and SPORT1, codec reset,
+then READY high. modules drive CV via `cv_set` / `cv_commit` (see
+[`SPEC_CV.md`](SPEC_CV.md)); unused modules simply never commit.
 
 `processAudio` still gated by SPI `MSG_ENABLE_AUDIO`.
 

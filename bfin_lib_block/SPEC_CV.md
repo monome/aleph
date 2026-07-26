@@ -368,13 +368,13 @@ do **not** call `cv_commit` from the SPORT0 RX/TX ISRs. keep CV on the main
 
 ## implementation checklist
 
-- [ ] add `src/cv.c` / `src/cv.h` (shadow, pack, commit, busy/wait)
-- [ ] DMA4 init/enable for 4-word TX buffer; wire into boot `main`
-- [ ] call `init_cv`, `init_sport1`, `enable_dma_sport1` from `main`
+- [x] add `src/cv.c` / `src/cv.h` (shadow, pack, commit, busy/wait)
+- [x] DMA4 init/enable for 4-word TX buffer; wire into boot `main`
+- [x] call `init_cv`, `init_sport1`, `enable_dma_sport1` from `main`
 - [ ] optional `MODULE_AUDIO_CV` gate + stubs
 - [ ] double-buffer TX words if mid-block multi-commit is supported in v1
-- [ ] document one `modules_block` example (or mx44 CV outs) using the API
-- [ ] update [`AUDIO-CONTROL-FLOW.md`](./AUDIO-CONTROL-FLOW.md) CV row from
+- [x] document one `modules_block` example (or mx44 CV outs) using the API
+- [x] update [`AUDIO-CONTROL-FLOW.md`](./AUDIO-CONTROL-FLOW.md) CV row from
       “not driven” to this spec once implemented
 
 ---
