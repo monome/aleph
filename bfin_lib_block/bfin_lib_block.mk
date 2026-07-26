@@ -15,6 +15,7 @@ dsp_block_dir = $(bfin_lib_dir)/../dsp_block
 bfin_lib_src = audio.c \
 	clock_ebiu.c \
 	control.c \
+	cv.c \
 	gpio.c \
 	dma.c \
 	isr.c \

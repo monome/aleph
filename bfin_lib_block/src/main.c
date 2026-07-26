@@ -6,6 +6,7 @@
 #include "audio.h"
 #include "audio_convert.h"
 #include "clock_ebiu.h"
+#include "cv.h"
 #include "cycle_count_aleph.h"
 #include "dma.h"
 #include "gpio.h"
@@ -30,6 +31,10 @@ int main(void) {
 
   init_spi_slave();
 
+  init_cv();
+  init_sport1();
+  init_dma_cv();
+
   init_sport0();
   init_interrupts();
   init_dma();
@@ -39,6 +44,7 @@ int main(void) {
   //  isModuleInit = 1;
 
   enable_dma_sport0();
+  enable_dma_sport1();
 
   // reset the codec
   init_codec();
