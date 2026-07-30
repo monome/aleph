@@ -100,14 +100,15 @@ flowchart LR
 
 ### DMA model (v1)
 
-prefer a **4-word buffer** with a **one-shot / stop-mode** (or short
-descriptor) transfer started by `cv_commit()`:
+use a **4-word buffer** with **continuous autobuffer** (`FLOW_1`), enabled
+once at boot (same spirit as frame lib’s always-on DMA4, but looping all
+four channels instead of one word):
 
-- pack all four channel words into `cvTxWords[4]`.
-- start DMA4 with `X_COUNT = 4` (or four descriptor hops).
-- do **not** continuous-autobuffer a single word (that is the frame race).
-- if a previous commit is still busy, either wait briefly (~10 µs worst case)
-  or drop/coalesce (module policy; default: wait).
+- pack all four channel words into `cvTxWords[4]` in `cv_commit()`.
+- DMA4 runs continuously with `X_COUNT = 4`; no per-commit DMA restart.
+- `enable_dma_sport1()` sets DMAEN + SPORT1 TSPEN together at boot.
+- overwriting `cvTxWords` while DMA runs has the same class of race as
+  frame’s single-word `cvTxBuf` update; acceptable for panel CV rates.
 
 CPU cost of commit ≈ pack four words + write DMA registers. SPI shifts in
 parallel with later DSP / idle time if the module does not poll.
@@ -362,7 +363,7 @@ do **not** call `cv_commit` from the SPORT0 RX/TX ISRs. keep CV on the main
 | `cv_update(ch, v)` every sample, rotate `cvChan` | `cv_set` + one `cv_commit` per block |
 | slew at sample rate, one ch/frame | slew at block rate (or N steps), all ch |
 | effective 12 kHz / ch staggered | 3 kHz simultaneous (blocksize 16), or higher via multi-commit |
-| DMA4 single-word autobuffer | DMA4 4-word one-shot burst |
+| DMA4 single-word autobuffer | DMA4 4-word continuous autobuffer |
 
 ---
 
@@ -434,7 +435,7 @@ notes:
 | choice | default for v1 |
 |--------|----------------|
 | when to commit | module calls `cv_commit()` at end of `module_process_block` |
-| busy policy | `cv_commit` waits for prior burst (short spin) |
+| busy policy | n/a — DMA always on; `cv_commit` only refreshes TX words |
 | LDAC synchronous update | future; v1 uses write-and-update cmd `0x3` |
 | auto-commit in `main` | no |
 | multi-commit / block | supported via `cv_wait` + `cv_commit`; ring DMA later |

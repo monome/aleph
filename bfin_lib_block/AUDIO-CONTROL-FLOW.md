@@ -22,7 +22,7 @@ Related prior review: [`dsp-block-test/DMA-REVIEW.md`](../dsp-block-test/DMA-REV
 | 24↔32 packing | Explicit `<<8` / `>>8` in ISR | Optional via `MODULE_AUDIO_CONVERT_24_32` (inlined in main; spray on) |
 | SPORT TX | `TFSR \| TCKFE` | `TFSR \| TCKFE \| LATFS` |
 | Params | Applied live in SPI ISR | Queued in SPI ISR, applied in TX ISR |
-| CV | SPORT1 + `cv_update()` | SPORT1 + `cv_set`/`cv_commit` (DMA4 4-word burst) |
+| CV | SPORT1 + `cv_update()` | SPORT1 + `cv_set`/`cv_commit` (DMA4 4-word autobuffer) |
 | Overrun handling | None (implicit glitch) | Optional `MODULE_AUDIO_XRUN_DETECT` + always-on `bfin_get_xruns` SPI |
 
 ---

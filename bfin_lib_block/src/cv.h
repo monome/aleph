@@ -8,7 +8,7 @@
 /* bring AD5686 out of reset. call once at boot before SPORT1/DMA enable. */
 void init_cv(void);
 
-/* DMA4 → SPORT1 setup / enable for 4-word CV bursts. */
+/* DMA4 → SPORT1 continuous 4-word autobuffer setup / enable. */
 void init_dma_cv(void);
 void enable_dma_sport1(void);
 
@@ -23,15 +23,16 @@ void cv_set(u8 ch, fract32 val);
 fract32 cv_get(u8 ch);
 
 /*
- * pack shadow[0..3] into DMA words and start a 4-channel burst.
- * waits for any prior burst. returns 0 on kick, non-zero on wait timeout.
+ * pack shadow[0..3] into the DMA TX words.
+ * DMA4 autobuffers those words continuously; no DMA restart.
+ * always returns 0.
  */
 u8 cv_commit(void);
 
-/* 1 if DMA4 CV burst is still in flight. */
+/* always 0 — DMA runs continuously; kept for API compatibility. */
 u8 cv_busy(void);
 
-/* spin until !cv_busy(), with a short timeout. returns 0 ok, 1 on timeout. */
+/* always 0 — no burst wait; kept for API compatibility. */
 u8 cv_wait(void);
 
 #endif

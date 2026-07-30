@@ -9,14 +9,10 @@
 #define CV_DAC_COM_LSHIFT 20
 #define CV_DAC_ADDR_LSHIFT 16
 
-/* DMA4_IRQ_STATUS: bit0 = DMA_DONE, bit3 = DMA_RUN */
-#define CV_DMA_DONE 0x0001
-#define CV_DMA_RUN 0x0008
-
-/* stop-mode 32-bit memory words (FLOW = 0); SPORT1 SLEN sends 24 bits */
-#define CV_DMA_CONFIG WDSIZE_32
-
-#define CV_WAIT_SPINS 100000
+/* continuous autobuffer (FLOW_1 = 0x1000), like frame lib but 4 words;
+ * WDSIZE_32 memory words, SPORT1 SLEN sends 24 bits */
+#define CV_DMA_FLOW_1 0x1000
+#define CV_DMA_CONFIG (WDSIZE_32 | CV_DMA_FLOW_1)
 
 static fract32 cvShadow[CV_CHANNELS];
 static volatile u32 cvTxWords[CV_CHANNELS];
@@ -50,7 +46,7 @@ void init_dma_cv(void) {
     cvTxWords[ch] = cv_pack(ch, 0);
   }
 
-  /* map DMA4 to SPORT1 TX */
+  /* map DMA4 to SPORT1 TX; loop all four channel words forever */
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   *pDMA4_CONFIG = CV_DMA_CONFIG;
   *pDMA4_START_ADDR = (void *)(&cvTxWords[0]);
@@ -59,7 +55,7 @@ void init_dma_cv(void) {
 }
 
 void enable_dma_sport1(void) {
-  /* SPORT1 TX; DMA4 is kicked per cv_commit() in stop mode */
+  *pDMA4_CONFIG = (*pDMA4_CONFIG | DMAEN);
   *pSPORT1_TCR1 = (*pSPORT1_TCR1 | TSPEN);
 }
 
@@ -78,37 +74,19 @@ fract32 cv_get(u8 ch) {
 }
 
 u8 cv_busy(void) {
-  return (*pDMA4_IRQ_STATUS & CV_DMA_RUN) != 0;
+  /* DMA runs continuously; commits only refresh the TX buffer. */
+  return 0;
 }
 
 u8 cv_wait(void) {
-  u32 spins = CV_WAIT_SPINS;
-
-  while(cv_busy()) {
-    if(spins == 0) {
-      return 1;
-    }
-    spins--;
-  }
   return 0;
 }
 
 u8 cv_commit(void) {
   u8 ch;
-  u8 timed_out;
-
-  timed_out = cv_wait();
 
   for(ch = 0; ch < CV_CHANNELS; ++ch) {
     cvTxWords[ch] = cv_pack(ch, cvShadow[ch]);
   }
-
-  /* clear completion sticky; reprogram and start one-shot burst */
-  *pDMA4_IRQ_STATUS = CV_DMA_DONE;
-  *pDMA4_START_ADDR = (void *)(&cvTxWords[0]);
-  *pDMA4_X_COUNT = CV_CHANNELS;
-  *pDMA4_X_MODIFY = 4;
-  *pDMA4_CONFIG = CV_DMA_CONFIG | DMAEN;
-
-  return timed_out;
+  return 0;
 }
