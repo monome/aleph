@@ -69,12 +69,14 @@ void init_sport1(void) {
   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
 
   //// secondary side enabled : TXSE  = 1
-  ///// 24-bit word length
-  //     *pSPORT1_TCR2 = 23 | TXSE ;
-  //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE;
+  //// 24-bit AD5686 frame
+  *pSPORT1_TCR2 = SLEN_24 | TXSE;
   // tclk = sclk / ( 2 x (div + 1)
   /// DAC datasheet indicates we can go up to 50Mhz
-  // here's 27 Mhz
+  // here's 27 Mhz (~37 ns/bit at 108 MHz sclk)
   *pSPORT1_TCLKDIV = 1;
+  /* AD5686: SYNC must stay high ≥20 ns between write sequences.
+   * frame period = TFSDIV+1 TCLKs; word = 24 bits.
+   * TFSDIV = 24 → one idle TCLK (~37 ns) between frames. */
+  *pSPORT1_TFSDIV = 24;
 }

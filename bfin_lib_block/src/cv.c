@@ -4,7 +4,7 @@
 #include "cv.h"
 #include "gpio.h"
 
-/* AD5686R 16-bit quad DAC — same wire format as bfin_lib */
+/* AD5686R 16-bit quad DAC — 24-bit write-and-update frames */
 #define CV_DAC_COM_WRITE 0x3
 #define CV_DAC_COM_LSHIFT 20
 #define CV_DAC_ADDR_LSHIFT 16
@@ -13,7 +13,7 @@
 #define CV_DMA_DONE 0x0001
 #define CV_DMA_RUN 0x0008
 
-/* stop-mode 32-bit transfers (FLOW = 0) */
+/* stop-mode 32-bit memory words (FLOW = 0); SPORT1 SLEN sends 24 bits */
 #define CV_DMA_CONFIG WDSIZE_32
 
 #define CV_WAIT_SPINS 100000
@@ -28,8 +28,7 @@ static u32 cv_pack(u8 ch, fract32 val) {
   buf |= (CV_DAC_COM_WRITE << CV_DAC_COM_LSHIFT);
   buf |= ((1 << ch) << CV_DAC_ADDR_LSHIFT);
   buf |= (val >> 15) & 0xffff;
-  /* extra bit for FS timing kludge (need 25 clocks) */
-  return buf << 1;
+  return buf;
 }
 
 void init_cv(void) {
