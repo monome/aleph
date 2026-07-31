@@ -52,6 +52,7 @@ deploy: $(prefix)$(module_name).ldr
 	make desc
 	./$(module_name)_desc_build
 	cp $(prefix)$(module_name).ldr $(prefix)$(module_name)-$(maj).$(min).$(rev).ldr
+	cp $(prefix)$(module_name).dsc $(prefix)$(module_name)-$(maj).$(min).$(rev).dsc
 
 .PHONY: clean
 	deploy
