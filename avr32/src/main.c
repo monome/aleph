@@ -360,7 +360,11 @@ void check_startup(void) {
 // app event loop
 void check_events(void) {
     static event_t e;
-    if (event_next(&e)) { (app_event_handlers)[e.type](e.data); }
+    if (event_next(&e)) {
+        (app_event_handlers)[e.type](e.data);
+    } else if (app_idle_handler != NULL) {
+        (*app_idle_handler)();
+    }
 }
 
 // !!!!!!!!!!!!!
