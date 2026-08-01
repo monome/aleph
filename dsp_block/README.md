@@ -29,4 +29,17 @@ meaningful. Native block-rate integrator tables are a future bees change
 |------|--------|
 | `filter_1p_blk.*` | `filter_1p_lo_blk` |
 | `filter_bp_blk.*` | `filter_hp_blk`, `filter_lp_blk`, `filter_bp_blk` |
+| `filter_bp_alpha_tab.*` | semitone → coefficient tables for `filter_bp_blk` |
 | `peak_meter_blk.*` | `peak_meter_blk` (abs peak-hold + block-rate decay) |
+
+## Base-width filter coefficients
+
+`filter_bp_blk` takes its alphas from the caller. `filter_bp_alpha_tab`
+supplies them from two `fract32` tables indexed by **semitone above a
+1 Hz root** (`f = 2^(st/12)` Hz), interpolated on the fix16 fraction —
+no divides, no transcendentals, and the log axis is what makes a fixed
+"width" hold a constant octave span as "base" sweeps.
+
+Both tables terminate in identity coefficients, so a fully open filter is
+transparent (HP to 47 LSB of 2^31, LP exactly) and needs no bypass branch.
+Regenerate with `utils/param_scaling/gen_bp_alpha_tab.py`.

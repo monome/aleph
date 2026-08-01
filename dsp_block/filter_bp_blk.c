@@ -21,8 +21,14 @@ void filter_bp_blk_init(filter_bp_blk *f) {
 }
 
 fract32 filter_hp_blk_next(filter_hp_blk *f, fract32 in, fract32 alpha) {
-  fract32 out = add_fr1x32(mult_fr1x32x32(alpha, f->lastOut),
-			   mult_fr1x32x32(alpha, sub_fr1x32(in, f->lastIn)));
+  /* out = alpha * (lastOut + in - lastIn), evaluated at half scale: a
+     full-scale input reaches |in - lastIn| = 1.93 near Nyquist, which would
+     clip sub_fr1x32. the sum is out/2 and so always in range. */
+  fract32 diff =
+      sub_fr1x32(shr_fr1x32(in, 1), shr_fr1x32(f->lastIn, 1));
+  fract32 half = add_fr1x32(mult_fr1x32x32(alpha, shr_fr1x32(f->lastOut, 1)),
+			    mult_fr1x32x32(alpha, diff));
+  fract32 out = shl_fr1x32(half, 1);
   f->lastOut = out;
   f->lastIn = in;
   return out;
@@ -36,9 +42,10 @@ fract32 filter_lp_blk_next(filter_lp_blk *f, fract32 in, fract32 alpha) {
   return out;
 }
 
-void filter_bp_blk_prepare(filter_bp_blk *f, fract32 hp_freq, fract32 lp_freq) {
-  f->hp_alpha = filter_bp_blk_hpf_freq_calc(hp_freq);
-  f->lp_alpha = filter_bp_blk_lpf_freq_calc(lp_freq);
+void filter_bp_blk_set_alpha(filter_bp_blk *f, fract32 hpAlpha,
+			     fract32 lpAlpha) {
+  f->hp_alpha = hpAlpha;
+  f->lp_alpha = lpAlpha;
 }
 
 fract32 filter_bp_blk_next(filter_bp_blk *f, fract32 in) {
