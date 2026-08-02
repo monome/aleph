@@ -62,6 +62,16 @@ u8 spi_process(u8 rx) {
       processAudio = 0;
       return processAudio;
       break;
+    case MSG_GET_XRUN_COM:
+      /* frame lib has no block xrun counters; stream zeros */
+      byte = eGetXrunWindowRx0;
+      return 0;
+      break;
+    case MSG_GET_METER_COM:
+      /* frame lib has no meters; wait for bank then stream zeros */
+      byte = eGetMeterBank;
+      return 0;
+      break;
     default:
       break;
     }
@@ -257,6 +267,48 @@ u8 spi_process(u8 rx) {
   case eModuleVersionRev1 :
     byte = eCom; // reset
     return 0;    // don't care
+    break;
+
+  case eGetXrunWindowRx0:
+  case eGetXrunWindowRx1:
+  case eGetXrunWindowTx0:
+  case eGetXrunWindowTx1:
+  case eGetXrunClashRx0:
+  case eGetXrunClashRx1:
+  case eGetXrunClashTx0:
+    byte++;
+    return 0;
+    break;
+  case eGetXrunClashTx1:
+    byte = eCom;
+    return 0;
+    break;
+
+  case eGetMeterBank:
+    byte = eGetMeter0;
+    return 0;
+    break;
+  case eGetMeter0:
+  case eGetMeter1:
+  case eGetMeter2:
+  case eGetMeter3:
+  case eGetMeter4:
+  case eGetMeter5:
+  case eGetMeter6:
+  case eGetMeter7:
+  case eGetMeter8:
+  case eGetMeter9:
+  case eGetMeter10:
+  case eGetMeter11:
+  case eGetMeter12:
+  case eGetMeter13:
+  case eGetMeter14:
+    byte++;
+    return 0;
+    break;
+  case eGetMeter15:
+    byte = eCom;
+    return 0;
     break;
 
   default:

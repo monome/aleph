@@ -164,17 +164,18 @@ extern u8 font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   return cols;
 }
 
-// fixed_width variant
+// fixed_width variant: always paint FONT_CHARW columns from data[0..],
+// including leading/trailing blank columns already stored in the glyph.
+// (Do not apply first as an index offset — that reads past data[].)
 extern u8 font_glyph_fixed(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 i=0;
   u8 j;
   u8 * p = buf;
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
 
-  // columns to draw
   while(i < FONT_CHARW) {
     for(j=0; j<FONT_CHARH; j++) {
-      *p = gl->data[i + gl->first] & (1 << j) ? a : b;
+      *p = gl->data[i] & (1 << j) ? a : b;
       // point at next row
       p += w;
     }

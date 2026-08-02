@@ -400,6 +400,86 @@ s32 bfin_get_control_cpu(void) {
 }
 #endif
 
+// get block audio xrun counters (4 x u16)
+void bfin_get_xruns(bfin_xrun_t *out) {
+    u16 vals[4];
+    u16 x;
+    u8 i;
+    u8 hi;
+    u8 lo;
+
+    app_pause();
+    bfin_wait();
+
+    /* Command only: MISO on this transfer is stale. The Blackfin loads the
+       first data byte into TDBR for the *next* clock (same as get_param). */
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_GET_XRUN_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    for(i = 0; i < 4; i++) {
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, 0);  // don't care
+        spi_read(BFIN_SPI, &x);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        hi = (u8)x;
+
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, 0);  // don't care
+        spi_read(BFIN_SPI, &x);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        lo = (u8)x;
+
+        /* wire is BE; AVR32 is BE so assemble MSB-first */
+        vals[i] = (u16)(((u16)hi << 8) | lo);
+    }
+
+    out->windowRx = vals[0];
+    out->windowTx = vals[1];
+    out->clashRx = vals[2];
+    out->clashTx = vals[3];
+
+    app_resume();
+}
+
+// get meter bank peaks (4 x fract32 BE)
+void bfin_get_meter_bank(u8 bank, bfin_meter_bank_t *out) {
+    ParamValueSwap words[4];
+    u16 x;
+    u8 i;
+    u8 b;
+
+    app_pause();
+    bfin_wait();
+
+    /* Command: MISO stale; Blackfin waits for bank id next. */
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_GET_METER_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    /* Bank id: MISO is the command response (don't care). Snapshot loads
+       the first peak byte for the *next* clock — same lag as get_param. */
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bank);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    for(i = 0; i < 4; i++) {
+        for(b = 0; b < 4; b++) {
+            spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+            spi_write(BFIN_SPI, 0);  // don't care
+            spi_read(BFIN_SPI, &x);
+            spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+            words[i].asByte[b] = (u8)x;
+        }
+    }
+
+    for(i = 0; i < BFIN_METER_CH; i++) {
+        out->ch[i] = (fract32)words[i].asInt;
+    }
+
+    app_resume();
+}
+
 // fill a buffer on the blackfin with arbitrary data
 void bfin_fill_buffer(const s32* src, u32 bytes) {
     u16 x;

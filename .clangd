@@ -1,0 +1,89 @@
+# Path-scoped compile flags for clangd (bfin vs avr32).
+#
+# PathMatch is against paths relative to this file (e.g. bfin_lib/src/gpio.h),
+# not absolute filesystem paths.
+#
+# Relative -I/-isystem paths are resolved from the compile working directory.
+# compile_flags.txt at the repo root sets that CWD to the project root so
+# _ref/... works. Prefer disabling Microsoft C/C++ IntelliSense so it does
+# not fight clangd (C_Cpp.intelliSenseEngine = "disabled").
+
+---
+If:
+  PathMatch: (bfin_lib|bfin_lib_block|modules|modules_block|dsp|dsp-block-test)/.*
+CompileFlags:
+  Add:
+    - -std=c99
+    - -D__ADSPBF533__
+    - -isystem
+    - _ref/bfin-headers
+    - -Ibfin_lib/src
+    - -Ibfin_lib/src/libfixmath
+    - -Ibfin_lib_block/src
+    - -Ibfin_lib_block/src/libfixmath
+    - -Icommon
+    - -Idsp
+
+---
+If:
+  PathMatch: utils/bfin_[^/]+/.*
+CompileFlags:
+  Add:
+    - -std=c99
+    - -D__ADSPBF533__
+    - -isystem
+    - _ref/bfin-headers
+    - -Ibfin_lib/src
+    - -Ibfin_lib/src/libfixmath
+    - -Ibfin_lib_block/src
+    - -Ibfin_lib_block/src/libfixmath
+    - -Icommon
+    - -Idsp
+
+---
+If:
+  PathMatch: (avr32|libavr32|apps)/.*
+CompileFlags:
+  Add:
+    - -std=c99
+    - -DARCH_AVR32=1
+    - -DBOARD=USER_BOARD
+    - -D__AVR32_UC3A0512__
+    - -isystem
+    - _ref/avr-headers
+    - -Iavr32/src
+    - -Iavr32/src/fat_io_lib
+    - -Ilibavr32/src
+    - -Ilibavr32/conf
+    - -Ilibavr32/asf
+    - -Ilibavr32/asf/avr32/utils
+    - -Ilibavr32/asf/avr32/utils/preprocessor
+    - -Ilibavr32/asf/avr32/drivers
+    - -Ilibavr32/asf/common/boards
+    - -Ilibavr32/asf/common/services
+    - -Ilibavr32/asf/common/utils
+    - -Icommon
+
+---
+If:
+  PathMatch: utils/avr32_[^/]+/.*
+CompileFlags:
+  Add:
+    - -std=c99
+    - -DARCH_AVR32=1
+    - -DBOARD=USER_BOARD
+    - -D__AVR32_UC3A0512__
+    - -isystem
+    - _ref/avr-headers
+    - -Iavr32/src
+    - -Iavr32/src/fat_io_lib
+    - -Ilibavr32/src
+    - -Ilibavr32/conf
+    - -Ilibavr32/asf
+    - -Ilibavr32/asf/avr32/utils
+    - -Ilibavr32/asf/avr32/utils/preprocessor
+    - -Ilibavr32/asf/avr32/drivers
+    - -Ilibavr32/asf/common/boards
+    - -Ilibavr32/asf/common/services
+    - -Ilibavr32/asf/common/utils
+    - -Icommon

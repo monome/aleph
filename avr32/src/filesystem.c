@@ -94,12 +94,12 @@ int media_write(unsigned long sector, unsigned char *buffer,
 
     for (i = 0; i < sector_count; i++) {
         status = sd_mmc_spi_write_sector_from_ram(buffer);
-        /////////// dbg
         if (status == false) {
             print_dbg("\r\n error writing sd_mmc_spi, sector: ");
             print_dbg_hex(sector);
+            sd_mmc_spi_write_close();
+            return 0;
         }
-        //////////////
         sector++;
         buffer += 512;
     }

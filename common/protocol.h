@@ -31,6 +31,10 @@
 #define MSG_GET_AUDIO_CPU_COM           9
 // get param change CPU use (0 - 0x7fffffff)
 #define MSG_GET_CONTROL_CPU_COM         10
+// get block audio xrun counters (4 x u16: windowRx, windowTx, clashRx, clashTx)
+#define MSG_GET_XRUN_COM                11
+// get meter bank peaks (bank byte + 4 x u32 BE fract32)
+#define MSG_GET_METER_COM               12
 
 // enumerate state-machine nodes for sending and receiving SPI.
 
@@ -107,7 +111,36 @@ typedef enum {
   eGetControlCpuData0,
   eGetControlCpuData1,
   eGetControlCpuData2,
-  
+
+  // get block audio xrun counters (8 bytes after command returns first)
+  eGetXrunWindowRx0,
+  eGetXrunWindowRx1,
+  eGetXrunWindowTx0,
+  eGetXrunWindowTx1,
+  eGetXrunClashRx0,
+  eGetXrunClashRx1,
+  eGetXrunClashTx0,
+  eGetXrunClashTx1,
+
+  // get meter bank (bank id byte, then 16 payload bytes)
+  eGetMeterBank,
+  eGetMeter0,
+  eGetMeter1,
+  eGetMeter2,
+  eGetMeter3,
+  eGetMeter4,
+  eGetMeter5,
+  eGetMeter6,
+  eGetMeter7,
+  eGetMeter8,
+  eGetMeter9,
+  eGetMeter10,
+  eGetMeter11,
+  eGetMeter12,
+  eGetMeter13,
+  eGetMeter14,
+  eGetMeter15,
+
   eNumSpiBytes
 } eSpiByte;
 
