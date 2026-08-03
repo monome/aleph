@@ -29,14 +29,13 @@ void control_add(u32 idx, ParamValue val) {
   //  if(!isModuleInit) { return; }
   if(qCount >= CONTROL_Q_SIZE) {
     // queue is full! indicate with LED3
-    LED3_LO; 
-  } else {  
+    LED3_LO;
+  } else {
     q[qIdxWr].idx = idx;
     q[qIdxWr].val = val;
     qIdxWr = (qIdxWr + 1) & (CONTROL_Q_SIZE - 1);
     qCount++;
   }
-   
 }
 
 void control_process(void) {
@@ -45,8 +44,8 @@ void control_process(void) {
   u32 idx;
 
   //  START_CYCLE_COUNT(startCycleCount);
- 
-  for(i=0; i<qCount; i++) {
+
+  for(i = 0; i < qCount; i++) {
     idx = q[qIdxRd].idx;
     val = q[qIdxRd].val;
     module_set_param(idx, val);

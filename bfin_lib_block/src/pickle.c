@@ -6,7 +6,7 @@
 //// FIXME: should probably byteswap,
 ///  so that other systems can more easily parse the resultant blobs?
 /// nah, doesn't really matter.
- 
+
 // 32-bit store to bytestream
 // return updated stream pointer
 u8* pickle_32(const u32 src, u8* dst) {
@@ -37,7 +37,7 @@ const u8* unpickle_32(const u8* src, u32* dst) {
   *dst = 0;
   // print_dbg("\r\n unpickling src: 0x");
   // print_dbg_hex(*((u32*)src));
-  
+
   *dst |= *src;
   // print_dbg("\r\n unpickled: 0x");
   // print_dbg_hex(*dst);
@@ -75,5 +75,3 @@ const u8* unpickle_16(const u8* src, u16* dst) {
 /* #else */
 /* // other architectures... ?? */
 /* #endif */
-
-

@@ -15,15 +15,22 @@ void init_flags(void) {
 }
 
 // configure audio codec ( AD1939 )
-void init_codec(void) { 
+void init_codec(void) {
   volatile u32 del;
 
   //// reset codec
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
-  del = 100; while(del--) { ;; } 
+  del = 100;
+  while(del--) {
+    ;
+    ;
+  }
   *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
-  del = 10000; while(del--) { ;; } 
+  del = 10000;
+  while(del--) {
+    ;
+    ;
+  }
   return;
 
-} // init_codec
-
+}  // init_codec

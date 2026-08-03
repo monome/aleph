@@ -1,5 +1,5 @@
 #include <blackfin.h>
-#include <cdefBF533.h>  
+#include <cdefBF533.h>
 #include "ccblkfn.h"
 
 #include "audio.h"
@@ -8,8 +8,8 @@
 // use large descriptor mode to perform pingpong and deinterleave
 
 typedef struct {
-  void *next;        // NDPL, NDPH
-  void *start;       // SAL, SAH
+  void *next;   // NDPL, NDPH
+  void *start;  // SAL, SAH
 } dma_desc_t;
 
 // for deinterleaving, inner loop over number of channels
@@ -23,22 +23,22 @@ typedef struct {
 
 // large descriptor list, first 4 registers only (NDPL, NDPH, SAL, SAH)
 #define DMA_FLOW_DESC 0x7400
-// NB: need interrupt on both TX and RX to ensure correct process order 
-#define DMA_CONFIG ( DMA_FLOW_DESC | WDSIZE_32 | DI_EN | DMA2D )
+// NB: need interrupt on both TX and RX to ensure correct process order
+#define DMA_CONFIG (DMA_FLOW_DESC | WDSIZE_32 | DI_EN | DMA2D)
 
-dma_desc_t descRx1 = { NULL, inputChannels1 };
-dma_desc_t descRx0 = { &descRx1, inputChannels0 };
-dma_desc_t descTx1 = { NULL, outputChannels1 };
-dma_desc_t descTx0 = { &descTx1, outputChannels0 };
+dma_desc_t descRx1 = {NULL, inputChannels1};
+dma_desc_t descRx0 = {&descRx1, inputChannels0};
+dma_desc_t descTx1 = {NULL, outputChannels1};
+dma_desc_t descTx0 = {&descTx1, outputChannels0};
 
 
 void init_dma(void) {
 
   // map DMA1 to sport0 RX
-  *pDMA1_PERIPHERAL_MAP = 0x1000;  
+  *pDMA1_PERIPHERAL_MAP = 0x1000;
   // map DMA2 to sport0 TX
   *pDMA2_PERIPHERAL_MAP = 0x2000;
-  
+
   // ping-pong
   descRx1.next = &descRx0;
   descTx1.next = &descTx0;
@@ -59,9 +59,9 @@ void init_dma(void) {
 }
 
 
-void enable_dma_sport0(void) { 
-  *pDMA2_CONFIG	= (*pDMA2_CONFIG | DMAEN);
-  *pDMA1_CONFIG	= (*pDMA1_CONFIG | DMAEN);
-  *pSPORT0_TCR1 	= (*pSPORT0_TCR1 | TSPEN);
-  *pSPORT0_RCR1 	= (*pSPORT0_RCR1 | RSPEN);
+void enable_dma_sport0(void) {
+  *pDMA2_CONFIG = (*pDMA2_CONFIG | DMAEN);
+  *pDMA1_CONFIG = (*pDMA1_CONFIG | DMAEN);
+  *pSPORT0_TCR1 = (*pSPORT0_TCR1 | TSPEN);
+  *pSPORT0_RCR1 = (*pSPORT0_RCR1 | RSPEN);
 }
