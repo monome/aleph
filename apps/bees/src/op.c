@@ -39,6 +39,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMonomeGridRaw, // "gridraw"
   eOpHarry,
   eOpHid,
+  eOpHist2,
   eOpHistory,
   eOpIs,
   eOpIter,
@@ -69,6 +70,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpPoly,
   eOpRandom,
   eOpRoute,
+  eOpRoute2,
   eOpRoute8,
   eOpRoute16,
   eOpScreen,
@@ -420,6 +422,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "LIST4",
     .size = sizeof(op_list4_t),
     .init = &op_list4_init,
+    .deinit = NULL
+  }, {
+    .name = "ROUTE2",
+    .size = sizeof(op_route2_t),
+    .init = &op_route2_init,
+    .deinit = NULL
+  }, {
+    .name = "HIST2",
+    .size = sizeof(op_hist2_t),
+    .init = &op_hist2_init,
     .deinit = NULL
   }
 };
